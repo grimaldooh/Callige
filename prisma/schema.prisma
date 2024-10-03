@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model School {
+  id       Int      @id @default(autoincrement())
+  name     String
+  location String
+  groups   Group[]  // Relación uno a muchos con grupos
+  admin    Admin?   @relation // Relación uno a uno con admin
+}
+
+model Group {
+  id        Int       @id @default(autoincrement())
+  name      String
+  school    School?    @relation(fields: [school_id], references: [id])
+  school_id  Int?
+  students  Student[] // Relación uno a muchos con estudiantes
+  teacher   Teacher?  @relation
+}
+
+model Student {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String 
+  group_id  Int?
+  Group    Group? @relation(fields: [group_id], references: [id])
+}
+
+model Teacher {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String 
+  Group    Group? @relation(fields: [group_id], references: [id])
+  group_id Int?   @unique
+}
+
+model Admin {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String   // Contraseña para el admin
+  school   School?  @relation(fields: [school_id], references: [id]) // Relación uno a uno con escuela
+  school_id Int?     @unique // ID de la escuela asociada, marcado como único
+}

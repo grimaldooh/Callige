@@ -1,0 +1,200 @@
+"use client";
+
+import { useState } from 'react';
+import ModalAddStudent from '../../components/Modales/ModalAddStudent';
+import ModalAddTeacher from '../../components/Modales/ModalAddTeacher'; // Modal para profesores
+import ModalAddGroup from '../../components/Modales/ModalAddClass'; // Importa el modal para añadir grupos
+
+
+export default function AdminPage() {
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [totalTeachers, setTotalTeachers] = useState(0);
+  const [totalParents, setTotalParents] = useState(0);
+  const [totalGroups, setTotalGroups] = useState(0); // Nuevo estado para contar grupos
+  
+  // Estados para manejar los modales
+  const [isModalStudentOpen, setIsModalStudentOpen] = useState(false);
+  const [isModalTeacherOpen, setIsModalTeacherOpen] = useState(false);
+  const [isModalGroupOpen, setIsModalGroupOpen] = useState(false); // Estado para el modal de grupo
+
+
+  // Funciones para abrir y cerrar modales
+  const handleOpenStudentModal = () => setIsModalStudentOpen(true);
+  const handleCloseStudentModal = () => setIsModalStudentOpen(false);
+
+  const handleOpenTeacherModal = () => setIsModalTeacherOpen(true);
+  const handleCloseTeacherModal = () => setIsModalTeacherOpen(false);
+
+  const handleOpenGroupModal = () => setIsModalGroupOpen(true); 
+  const handleCloseGroupModal = () => setIsModalGroupOpen(false); 
+
+  // Función para añadir estudiantes
+  const handleAddStudent = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const group_id = parseInt(formData.get('group_id'), 10);    
+    console.log(name, email, password, group_id);
+
+    try {
+      const response = await fetch('/api/students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email , password, group_id}),
+      });
+
+      if (response.ok) {
+        setTotalStudents(totalStudents + 1);
+        handleCloseStudentModal(); // Cierra el modal
+      } else {
+        console.error('Failed to add student');
+      }
+    } catch (error) {
+      console.error('Error adding student:', error);
+    }
+  };
+
+  // Función para añadir profesores
+  const handleAddTeacher = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const group_id = parseInt(formData.get('group_id'), 10);
+
+    try {
+      const response = await fetch('/api/teachers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email , password, group_id}),
+      });
+
+      if (response.ok) {
+        setTotalTeachers(totalTeachers + 1); // Actualiza el contador de profesores
+        handleCloseTeacherModal(); // Cierra el modal
+      } else {
+        console.error('Failed to add teacher');
+      }
+    } catch (error) {
+      console.error('Error adding teacher:', error);
+    }
+  };
+
+    // Función para añadir grupos
+    const handleAddGroup = async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const name = formData.get('name');
+      const school_id = parseInt(formData.get('school_id'), 10);
+  
+      try {
+        const response = await fetch('/api/groups', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, school_id}),
+        });
+  
+        if (response.ok) {
+          setTotalGroups(totalGroups + 1); // Incrementa el total de grupos
+          handleCloseGroupModal(); // Cierra el modal
+        } else {
+          console.error('Failed to add group');
+        }
+      } catch (error) {
+        console.error('Error adding group:', error);
+      }
+    };
+
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Panel de Administración</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white p-4 shadow-md rounded-lg">
+          <h2 className="text-xl font-semibold">Estudiantes Totales</h2>
+          <p className="text-3xl font-bold">{totalStudents}</p>
+        </div>
+
+        <div className="bg-white p-4 shadow-md rounded-lg">
+          <h2 className="text-xl font-semibold">Profesores Totales</h2>
+          <p className="text-3xl font-bold">{totalTeachers}</p>
+        </div>
+
+        <div className="bg-white p-4 shadow-md rounded-lg">
+          <h2 className="text-xl font-semibold">Grupos Totales</h2>
+          <p className="text-3xl font-bold">{totalGroups}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 shadow-md rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Bienestar Estudiantil</h2>
+          <p>Estadísticas de bienestar físico, mental, académico...</p>
+        </div>
+
+        <div className="bg-white p-6 shadow-md rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Próximos Eventos</h2>
+          <ul>
+            <li>- Evento 1</li>
+            <li>- Evento 2</li>
+            <li>- Evento 3</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Acciones Rápidas</h2>
+        <div className="flex space-x-4">
+          <button
+            onClick={handleOpenStudentModal}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Añadir Estudiante
+          </button>
+          <button
+            onClick={handleOpenTeacherModal}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Añadir Profesor
+          </button>
+          <button
+            onClick={handleOpenGroupModal} // Botón para abrir modal grupo
+            className="bg-purple-500 text-white px-4 py-2 rounded"
+          >
+            Añadir Grupo
+          </button>
+        </div>
+      </div>
+
+      {/* Modal para añadir estudiantes */}
+      <ModalAddStudent
+        isOpen={isModalStudentOpen}
+        onClose={handleCloseStudentModal}
+        onSubmit={handleAddStudent}
+      />
+
+      {/* Modal para añadir profesores */}
+      <ModalAddTeacher
+        isOpen={isModalTeacherOpen}
+        onClose={handleCloseTeacherModal}
+        onSubmit={handleAddTeacher}
+      />
+
+      {/* Modal para añadir grupos */}
+      <ModalAddGroup
+        isOpen={isModalGroupOpen} // Nuevo modal para grupos
+        onClose={handleCloseGroupModal}
+        onSubmit={handleAddGroup}
+      />
+    </div>
+  );
+}
