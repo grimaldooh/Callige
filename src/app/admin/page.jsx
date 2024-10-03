@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import ModalAddStudent from '../../components/Modales/ModalAddStudent';
 import ModalAddTeacher from '../../components/Modales/ModalAddTeacher'; // Modal para profesores
 import ModalAddGroup from '../../components/Modales/ModalAddClass'; // Importa el modal para añadir grupos
@@ -17,6 +17,12 @@ export default function AdminPage() {
   const [isModalTeacherOpen, setIsModalTeacherOpen] = useState(false);
   const [isModalGroupOpen, setIsModalGroupOpen] = useState(false); // Estado para el modal de grupo
 
+  // Estados para obtencion de grupos y alumnos 
+  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   // Funciones para abrir y cerrar modales
   const handleOpenStudentModal = () => setIsModalStudentOpen(true);
@@ -25,8 +31,40 @@ export default function AdminPage() {
   const handleOpenTeacherModal = () => setIsModalTeacherOpen(true);
   const handleCloseTeacherModal = () => setIsModalTeacherOpen(false);
 
-  const handleOpenGroupModal = () => setIsModalGroupOpen(true); 
+  const handleOpenGroupAddModal = () => setIsModalGroupOpen(true); 
   const handleCloseGroupModal = () => setIsModalGroupOpen(false); 
+
+  useEffect(() => {
+    async function fetchGroups() {
+      try {
+        const response = await fetch('/api/groups?schoolId=1');
+        const data = await response.json();
+        setGroups(data);
+      } catch (error) {
+        console.error('Error fetching groups:', error);
+      }
+    }
+
+    fetchGroups();
+  }, []);
+
+  const handleOpenGroupModal = async (groupId) => {
+    try {
+      const response = await fetch(`/api/groups?groupId=${groupId}`);
+      const data = await response.json();
+      setStudents(data);
+      setSelectedGroup(groupId);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedGroup(null);
+    setStudents([]);
+  };
 
   // Función para añadir estudiantes
   const handleAddStudent = async (event) => {
@@ -167,13 +205,55 @@ export default function AdminPage() {
             Añadir Profesor
           </button>
           <button
-            onClick={handleOpenGroupModal} // Botón para abrir modal grupo
+            onClick={handleOpenGroupAddModal} // Botón para abrir modal grupo
             className="bg-purple-500 text-white px-4 py-2 rounded"
           >
             Añadir Grupo
           </button>
         </div>
       </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Grupos de la Escuela</h2>
+        <ul>
+          {groups.map((group) => (
+            <li key={group.id}>
+              <button
+                onClick={() => handleOpenGroupModal(group.id)}
+                className="text-blue-500 underline"
+              >
+                {group.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Modal para mostrar estudiantes del grupo seleccionado */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-1/2">
+            <h2 className="text-xl font-semibold mb-4">
+              Estudiantes del Grupo {selectedGroup}
+            </h2>
+            <ul>
+              {students.length > 0 ? (
+                students.map((student) => (
+                  <li key={student.id}>{student.name}</li>
+                ))
+              ) : (
+                <p>No hay estudiantes en este grupo.</p>
+              )}
+            </ul>
+            <button
+              onClick={handleCloseModal}
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal para añadir estudiantes */}
       <ModalAddStudent

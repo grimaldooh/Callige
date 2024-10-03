@@ -2,7 +2,7 @@
 node_modules/
 
 # Next.js build output
-.next/
+.next
 
 # Tailwind config files
 tailwind.config.js

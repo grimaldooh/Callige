@@ -3,14 +3,28 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    // Obtener grupos
+    const { schoolId, groupId } = req.query;
+
     try {
-      const groups = await prisma.group.findMany();
-      res.status(200).json(groups);
+      if (schoolId) {
+        // Obtener grupos de una escuela específica
+        const groups = await prisma.group.findMany({
+          where: { school_id: parseInt(schoolId, 10) },
+        });
+        res.status(200).json(groups);
+      } else if (groupId) {
+        // Obtener estudiantes de un grupo específico
+        const students = await prisma.student.findMany({
+          where: { group_id: parseInt(groupId, 10) },
+        });
+        res.status(200).json(students);
+      } else {
+        res.status(400).json({ error: 'School ID or Group ID required' });
+      }
     } catch (error) {
-      res.status(500).json({ error: 'Error fetching groups' });
+      res.status(500).json({ error: 'Error fetching data' });
     }
-  } else if (req.method === 'POST') {
+  }  else if (req.method === 'POST') {
     // Añadir un nuevo grupo
     const { name, school_id} = req.body;
 
