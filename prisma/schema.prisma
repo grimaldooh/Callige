@@ -15,7 +15,31 @@ model School {
   name     String
   location String
   groups   Group[]  // Relación uno a muchos con grupos
-  admin    Admin?   @relation // Relación uno a uno con admin
+  admins   Admin[]  // Relación uno a muchos con admins
+  events   Event[]  // Relación uno a muchos con eventos
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  name      String
+  description String
+  date      DateTime
+  location  String
+  //image      String?  // URL or path to the stored image
+  school    School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
+  school_id Int
+  teacher   Teacher  @relation(fields: [teacher_id], references: [id]) // Relación muchos a uno con teacher
+  teacher_id Int
+  //adyuame a crear un campo mas para anadir una imagen en el evento
+}
+
+model Admin {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String   
+  school   School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
+  school_id Int
 }
 
 model Group {
@@ -26,7 +50,6 @@ model Group {
   students  Student[] // Relación uno a muchos con estudiantes
   teacher   Teacher?  @relation
 }
-
 model Student {
   id       Int    @id @default(autoincrement())
   name     String
@@ -43,13 +66,7 @@ model Teacher {
   password String 
   Group    Group? @relation(fields: [group_id], references: [id])
   group_id Int?   @unique
+  events   Event[] // Relación uno a muchos con eventos
 }
 
-model Admin {
-  id       Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  password String   // Contraseña para el admin
-  school   School?  @relation(fields: [school_id], references: [id]) // Relación uno a uno con escuela
-  school_id Int?     @unique // ID de la escuela asociada, marcado como único
-}
+

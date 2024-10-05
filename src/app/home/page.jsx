@@ -1,7 +1,9 @@
 // src/app/home/page.jsx
 'use client';
 
+
 import { useEffect, useState } from 'react';
+import CameraFedd from '../../components/CameraFeed';
 
 const HomePage = () => {
   const [students, setStudents] = useState([]);
@@ -23,11 +25,7 @@ const HomePage = () => {
   return (
     <div>
       <h1>Bienvenido al sistema de gestión de estudiantes</h1>
-      <ul>
-        {students.map((student) => (
-          <li key={student.id}>{student.name}</li>
-        ))}
-      </ul>
+      <CameraFedd />
     </div>
   );
 };
