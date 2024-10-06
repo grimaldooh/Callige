@@ -25,7 +25,7 @@ model Event {
   description String
   date      DateTime
   location  String
-  //image      String?  // URL or path to the stored image
+  imageUrl String?  // Campo para la URL de la imagen
   school    School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
   school_id Int
   teacher   Teacher  @relation(fields: [teacher_id], references: [id]) // Relación muchos a uno con teacher
@@ -54,10 +54,10 @@ model Student {
   id       Int    @id @default(autoincrement())
   name     String
   email    String @unique
-  password String 
-  group_id  Int?
-  //Añadir campo para la imagen del estudiante 
-  Group    Group? @relation(fields: [group_id], references: [id])
+  password String
+  group_id Int?
+  imageUrl String?  // Campo para la URL de la imagen
+  Group    Group?   @relation(fields: [group_id], references: [id])
 }
 
 model Teacher {

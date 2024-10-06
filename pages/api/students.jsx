@@ -1,5 +1,18 @@
 import { PrismaClient } from '@prisma/client';
+const { uploadImage } = require('../../azure/blob'); // Ruta del archivo donde tienes la lógica de Azure
 const prisma = new PrismaClient();
+const multer = require('multer');
+
+// Configura Multer para almacenar los archivos en memoria
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
+
+export const config = {
+  api: {
+    bodyParser: false,  // Necesario para que multer maneje el body del request
+  },
+};
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -11,37 +24,45 @@ export default async function handler(req, res) {
       res.status(500).json({ error: 'Error fetching students' });
     }
   } else if (req.method === 'POST') {
-    // Añadir un nuevo estudiante
-    const { name, email, password, group_id } = req.body;
-    console.log(req.body);
-
-    // Validación de entrada
-    if (!name || !email || !password || !group_id) {
-      return res.status(400).json({ error: 'Name, email, password and group_id are required' });
-    }
-
-    try {
-      console.log({ name, email, password, group_id }); // Verifica que los datos se estén pasando correctamente
-
-      const newStudent = await prisma.student.create({
-        data: {
-          password: String(password), 
-          name: String(name),
-          email: String(email),
-          group_id: group_id ? Number(group_id) : null,   
-        },
-      });
-      res.status(201).json(newStudent);
-      console.log(newStudent);
-    } catch (error) {
-      // Manejar error por email duplicado
-      if (error.code === 'P2002') {
-        res.status(400).json({ error: 'Email already exists' });
-      } else {
-        console.error('Error adding student:', error);
-        res.status(500).json({ error: 'Error adding student' });
+    // Usa el middleware de multer para manejar la subida de archivos
+    upload.single('image')(req, res, async function (err) {
+      if (err) {
+        return res.status(500).json({ error: 'Error uploading image' });
       }
-    }
+
+      const { name, email, password, group_id } = req.body;
+      console.log('req.body:', req.body);
+
+      // Valida que los datos están completos
+      if (!name || !email || !password || !group_id) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+      }
+
+      try {
+        // Subir imagen a Azure Blob Storage si hay archivo
+        let imageUrl = null;
+        if (req.file) {
+          imageUrl = await uploadImage(req.file) // Sube la imagen y obtén la URL
+          console.log('URL de la imagen:', imageUrl);
+        }
+
+        // Crear un nuevo estudiante con la URL de la imagen
+        const newStudent = await prisma.student.create({
+          data: {
+            name,
+            email,
+            password,
+            group_id: parseInt(group_id, 10),
+            imageUrl, // Guarda la URL de la imagen
+          },
+        });
+
+        res.status(201).json(newStudent);
+      } catch (error) {
+        console.error('Error creando el estudiante:', error);
+        res.status(500).json({ error: 'Error creando el estudiante' });
+      }
+    });
   } else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

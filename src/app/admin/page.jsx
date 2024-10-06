@@ -120,24 +120,7 @@ export default function AdminPage() {
     const school_id = parseInt(formData.get('school_id'), 10);
     const teacher_id = parseInt(formData.get('teacher_id'), 10);
     
-    // const uploadImage = async (file) => {
-    //   const imageData = new FormData();
-    //   imageData.append('file', file);
-  
-    //   // Adjust this based on your upload API (local, S3, etc.)
-    //   const response = await fetch('/api/upload', {
-    //     method: 'POST',
-    //     body: imageData,
-    //   });
-  
-    //   if (response.ok) {
-    //     const imagePath = await response.json();
-    //     return imagePath;
-    //   } else {
-    //     throw new Error('Error uploading image');
-    //   }
-    // };
-  
+    
     try {
       //const imageUrl = selectedFile ? await uploadImage(selectedFile) : null;
       
@@ -195,22 +178,15 @@ export default function AdminPage() {
   // Función para añadir estudiantes
   const handleAddStudent = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const group_id = parseInt(formData.get("group_id"), 10);
-    console.log(name, email, password, group_id);
-
+  
+    const formData = new FormData(event.target); // Ya no necesitas obtener campos por separado
+  
     try {
       const response = await fetch("/api/students", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password, group_id }),
+        body: formData,  // Enviar el formData con el archivo de imagen incluido
       });
-
+  
       if (response.ok) {
         setTotalStudents(totalStudents + 1);
         handleCloseStudentModal(); // Cierra el modal
