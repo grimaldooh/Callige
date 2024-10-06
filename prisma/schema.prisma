@@ -56,6 +56,7 @@ model Student {
   email    String @unique
   password String 
   group_id  Int?
+  //Añadir campo para la imagen del estudiante 
   Group    Group? @relation(fields: [group_id], references: [id])
 }
 

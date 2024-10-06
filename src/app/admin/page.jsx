@@ -5,14 +5,17 @@ import ModalAddStudent from '../../components/Modales/ModalAddStudent';
 import ModalAddTeacher from '../../components/Modales/ModalAddTeacher'; // Modal para profesores
 import ModalAddGroup from '../../components/Modales/ModalAddClass'; // Importa el modal para añadir grupos
 import ModalAddAdmin from '../../components/Modales/ModalAddAdmin'; // Importa el modal para añadir admin
-import ModalAddEvent from '../../components/Modales/ModalAddEvent'; // Importa el modal para añadir eventos
-
+import ModalAddEvent from '../../components/Modales/Events/ModalAddEvent'; // Importa el modal para añadir eventos
+import ModalEventDetails from '../../components/Modales/Events/EventDetails'; // Importa el modal para ver detalles de eventos
+import SchoolGroups from '../../components/Group/SchoolGroups'; // Importa el componente para mostrar grupos
+import GroupList from '../../components/Group/GroupList'; // Importa el componente para mostrar grupos
 
 export default function AdminPage() {
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalTeachers, setTotalTeachers] = useState(0);
   const [totalParents, setTotalParents] = useState(0);
   const [totalGroups, setTotalGroups] = useState(0); // Nuevo estado para contar grupos
+  const [events, setEvents] = useState([]);
 
   // Estados para manejar los modales
   const [isModalAdminOpen, setIsModalAdminOpen] = useState(false); // Estado para el modal de admin
@@ -20,6 +23,8 @@ export default function AdminPage() {
   const [isModalTeacherOpen, setIsModalTeacherOpen] = useState(false);
   const [isModalGroupOpen, setIsModalGroupOpen] = useState(false); // Estado para el modal de grupo
   const [isModalEventOpen, setIsModalEventOpen] = useState(false);
+  const [isModalEventDetailsOpen, setIsModalEventDetailsOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   // Estados para obtencion de grupos y alumnos
   const [groups, setGroups] = useState([]);
@@ -55,8 +60,37 @@ export default function AdminPage() {
       }
     }
 
+    async function fetchStats() {
+      try {
+        const response = await fetch("/api/stats");
+        const data = await response.json();
+        setTotalStudents(data.totalStudents);
+        setTotalTeachers(data.totalTeachers);
+        setTotalGroups(data.totalGroups);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    }
+
+    async function fetchEvents() {
+      try {
+        const response = await fetch("/api/events");
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    }
+
+    fetchEvents();
+    fetchStats();
     fetchGroups();
   }, []);
+
+  const handleViewEventDetails = (event) => {
+    setSelectedEvent(event);
+    setIsModalEventDetailsOpen(true);
+  };
 
   const handleOpenGroupModal = async (groupId) => {
     try {
@@ -274,9 +308,20 @@ export default function AdminPage() {
         <div className="bg-white p-6 shadow-md rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Próximos Eventos</h2>
           <ul>
-            <li>- Evento 1</li>
-            <li>- Evento 2</li>
-            <li>- Evento 3</li>
+            {events.map((event) => (
+              <li
+                key={event.id}
+                className="flex justify-between items-center mb-2"
+              >
+                <span>{event.name}</span>
+                <button
+                  onClick={() => handleViewEventDetails(event)}
+                  className="text-blue-500 underline"
+                >
+                  Ver Detalles
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -308,6 +353,7 @@ export default function AdminPage() {
           >
             Añadir Admin
           </button>
+          <div className="flex-grow"></div> {/* Espaciador flexible */}
           <button
             onClick={handleOpenEventModal}
             className="bg-red-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-red-700 shadow-md transition-all"
@@ -317,46 +363,19 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Grupos de la Escuela</h2>
-        <ul>
-          {groups.map((group) => (
-            <li key={group.id}>
-              <button
-                onClick={() => handleOpenGroupModal(group.id)}
-                className="text-blue-500 underline"
-              >
-                {group.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <SchoolGroups
+        groups={groups}
+        handleOpenGroupModal={handleOpenGroupModal}
+      />
 
       {/* Modal para mostrar estudiantes del grupo seleccionado */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-1/2">
-            <h2 className="text-xl font-semibold mb-4">
-              Estudiantes del Grupo {selectedGroup}
-            </h2>
-            <ul>
-              {students.length > 0 ? (
-                students.map((student) => (
-                  <li key={student.id}>{student.name}</li>
-                ))
-              ) : (
-                <p>No hay estudiantes en este grupo.</p>
-              )}
-            </ul>
-            <button
-              onClick={handleCloseModal}
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+        <GroupList
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          students={students}
+          selectedGroup={selectedGroup}
+        />
       )}
 
       {/* Modal para añadir eventos */}
@@ -364,6 +383,13 @@ export default function AdminPage() {
         isOpen={isModalEventOpen}
         onClose={handleCloseEventModal}
         onSubmit={handleAddEvent}
+      />
+
+      {/* Modal para mostrar detalles de eventos */}
+      <ModalEventDetails
+        isOpen={isModalEventDetailsOpen}
+        onClose={() => setIsModalEventDetailsOpen(false)}
+        event={selectedEvent}
       />
 
       {/* Modal para añadir admin */}

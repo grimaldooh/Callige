@@ -2,26 +2,18 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    const { schoolId } = req.query;
-
-    try {
-      if (schoolId) {
-        // Obtener eventos de una escuela específica
-        const events = await prisma.event.findMany({
-          where: { school_id: parseInt(schoolId, 10) },
-        });
-        res.status(200).json(events);
-      } else {
-        // Si no se proporciona schoolId, devuelve todos los eventos
-        const events = await prisma.event.findMany();
-        res.status(200).json(events);
-      }
-    } catch (error) {
-      console.error('Error fetching events:', error);
-      res.status(500).json({ error: 'Error fetching events' });
-    }
-  } else if (req.method === 'POST') {
+    if (req.method === 'GET') {
+        try {
+          const events = await prisma.event.findMany({
+            where: { date: { gte: new Date() } }, // Solo eventos futuros
+            orderBy: { date: 'asc' }, // Ordenar por fecha
+          });
+          res.status(200).json(events);
+        } catch (error) {
+          res.status(500).json({ error: 'Error fetching events' });
+          console.error('Error fetching events:', error);
+        }
+    }else if (req.method === 'POST') {
     const { name, date, description,location, school_id, teacher_id } = req.body;
     console.log(req.body);
     // Validación de entrada
