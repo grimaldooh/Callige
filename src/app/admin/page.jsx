@@ -113,23 +113,14 @@ export default function AdminPage() {
   const handleAddEvent = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const name = formData.get('name');
-    const date = formData.get('date');
-    const location = formData.get('location');
-    const description = formData.get('description');
-    const school_id = parseInt(formData.get('school_id'), 10);
-    const teacher_id = parseInt(formData.get('teacher_id'), 10);
-    
     
     try {
       //const imageUrl = selectedFile ? await uploadImage(selectedFile) : null;
       
       const response = await fetch('/api/events', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, date, description,location, school_id, teacher_id }),
+        
+        body: formData,
       });
   
       if (response.ok) {
