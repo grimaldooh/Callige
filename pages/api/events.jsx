@@ -34,7 +34,7 @@ export default async function handler(req, res) {
             }
 
             // Acceder a los datos del cuerpo
-            const { name, date, description, location, school_id, teacher_id } = req.body;
+            const { name, date, description, location, school_id } = req.body;
 
             // Validación de entrada
             if (!name || !date || !description || !location) {
@@ -55,7 +55,6 @@ export default async function handler(req, res) {
                         date: new Date(date),
                         location: String(location),
                         description: String(description),
-                        teacher_id: teacher_id ? Number(teacher_id) : null,
                         school_id: school_id ? Number(school_id) : null,
                         imageUrl, // Guardar la URL de la imagen si está presente
                     },

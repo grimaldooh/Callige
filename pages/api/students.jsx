@@ -30,11 +30,11 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'Error uploading image' });
       }
 
-      const { name, email, password, group_id } = req.body;
+      const { name, email, password} = req.body;
       console.log('req.body:', req.body);
 
       // Valida que los datos están completos
-      if (!name || !email || !password || !group_id) {
+      if (!name || !email || !password ) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
       }
 
@@ -52,7 +52,6 @@ export default async function handler(req, res) {
             name,
             email,
             password,
-            group_id: parseInt(group_id, 10),
             imageUrl, // Guarda la URL de la imagen
           },
         });

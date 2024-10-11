@@ -36,15 +36,7 @@ const ModalAddTeacher = ({ isOpen, onClose, onSubmit }) => {
               required
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Grupo</label>
-            <input
-              type="number"
-              name="group_id"
-              className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+          
           <div className="flex justify-end space-x-4">
             <button
               type="button"

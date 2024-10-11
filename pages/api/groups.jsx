@@ -14,9 +14,13 @@ export default async function handler(req, res) {
         res.status(200).json(groups);
       } else if (groupId) {
         // Obtener estudiantes de un grupo específico
-        const students = await prisma.student.findMany({
-          where: { group_id: parseInt(groupId, 10) },
+        const students = await prisma.group.findUnique({
+          where: { id: parseInt(groupId, 10) },
+          include: {
+            students: true,  // Incluir los estudiantes asociados al grupo
+          },
         });
+        console.log('students:', students);
         res.status(200).json(students);
       } else {
         res.status(400).json({ error: 'School ID or Group ID required' });

@@ -12,9 +12,9 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     // Añadir un nuevo profesor
-    const { name, email, password, group_id } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !email || !password || !group_id) {
+    if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email, password and group_id are required' });
     }
     try {
@@ -23,7 +23,6 @@ export default async function handler(req, res) {
           password: String(password), 
           name: String(name),
           email: String(email),
-          group_id: group_id ? Number(group_id) : null,   
         },
       });
       res.status(201).json(newTeacher);

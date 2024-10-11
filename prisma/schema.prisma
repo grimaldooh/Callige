@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,17 +19,15 @@ model School {
 }
 
 model Event {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id          Int      @id @default(autoincrement())
+  name        String
   description String
-  date      DateTime
-  location  String
-  imageUrl String?  // Campo para la URL de la imagen
-  school    School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
-  school_id Int
-  teacher   Teacher  @relation(fields: [teacher_id], references: [id]) // Relación muchos a uno con teacher
-  teacher_id Int
-  //adyuame a crear un campo mas para anadir una imagen en el evento
+  date        DateTime
+  location    String
+  imageUrl    String?  // Campo para la URL de la imagen
+  school      School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
+  school_id   Int
+  teachers    Teacher[] // Relación uno a muchos con profesores
 }
 
 model Admin {
@@ -43,31 +40,51 @@ model Admin {
 }
 
 model Group {
-  id        Int       @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   name      String
-  school    School?    @relation(fields: [school_id], references: [id])
-  school_id  Int?
-  students  Student[] // Relación uno a muchos con estudiantes
-  teacher   Teacher?  @relation
+  school    School?       @relation(fields: [school_id], references: [id])
+  school_id Int?
+  
+  students  Student[]     @relation("GroupStudents") // Relación muchos a muchos con estudiantes
+  teachers  Teacher[]     @relation("GroupTeachers") // Relación muchos a muchos con profesores
+  attendanceLists AttendanceList[]  // Relación uno a muchos con listas de asistencia
 }
+
+model AttendanceList {
+  id        Int      @id @default(autoincrement())
+  fecha     DateTime
+  materia   String
+  grupo     Group    @relation(fields: [group_id], references: [id]) // Relación muchos a uno con grupo
+  group_id  Int
+  attendances Attendance[] // Relación uno a muchos con las asistencias de los estudiantes
+}
+
+model Attendance {
+  id             Int      @id @default(autoincrement())
+  attendanceList AttendanceList @relation(fields: [attendanceList_id], references: [id])
+  attendanceList_id Int
+  student        Student  @relation(fields: [student_id], references: [id]) // Relación muchos a uno con estudiantes
+  student_id     Int
+  present        Int  // Indica si el estudiante asistió o no
+}
+
 model Student {
-  id       Int    @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   name     String
-  email    String @unique
+  email    String   @unique
   password String
-  group_id Int?
   imageUrl String?  // Campo para la URL de la imagen
-  Group    Group?   @relation(fields: [group_id], references: [id])
+  groups   Group[]  @relation("GroupStudents") // Relación muchos a muchos con grupos
+  attendances Attendance[] // Relación uno a muchos con las asistencias
+
 }
 
 model Teacher {
-  id       Int    @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   name     String
-  email    String @unique
-  password String 
-  Group    Group? @relation(fields: [group_id], references: [id])
-  group_id Int?   @unique
-  events   Event[] // Relación uno a muchos con eventos
+  email    String   @unique
+  password String
+  groups   Group[]  @relation("GroupTeachers") // Relación muchos a muchos con grupos
+  events   Event[]  // Relación uno a muchos con eventos
 }
-
 

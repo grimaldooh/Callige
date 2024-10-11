@@ -9,6 +9,7 @@ import ModalAddEvent from '../../components/Modales/Events/ModalAddEvent'; // Im
 import ModalEventDetails from '../../components/Modales/Events/EventDetails'; // Importa el modal para ver detalles de eventos
 import SchoolGroups from '../../components/Group/SchoolGroups'; // Importa el componente para mostrar grupos
 import GroupList from '../../components/Group/GroupList'; // Importa el componente para mostrar grupos
+import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
 
 export default function AdminPage() {
   const [totalStudents, setTotalStudents] = useState(0);
@@ -97,6 +98,7 @@ export default function AdminPage() {
       const response = await fetch(`/api/groups?groupId=${groupId}`);
       const data = await response.json();
       setStudents(data);
+      console.log('studentes:', data);
       setSelectedGroup(groupId);
       setIsModalOpen(true);
     } catch (error) {
@@ -143,7 +145,6 @@ export default function AdminPage() {
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
-    const school_id = parseInt(formData.get("school_id"), 10);
 
     try {
       const response = await fetch("/api/admins", {
@@ -151,7 +152,7 @@ export default function AdminPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password , school_id}),
+        body: JSON.stringify({ name, email, password}),
       });
 
       if (response.ok) {
@@ -196,15 +197,14 @@ export default function AdminPage() {
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
-    const group_id = parseInt(formData.get("group_id"), 10);
 
     try {
-      const response = await fetch("/api/teachers", {
+      const response = await fetch("/api/teacher/teachers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, group_id }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       if (response.ok) {
@@ -223,7 +223,6 @@ export default function AdminPage() {
     event.preventDefault();
     const formData = new FormData(event.target);
     const name = formData.get("name");
-    const school_id = parseInt(formData.get("school_id"), 10);
 
     try {
       const response = await fetch("/api/groups", {
@@ -335,12 +334,17 @@ export default function AdminPage() {
         handleOpenGroupModal={handleOpenGroupModal}
       />
 
+      {/* Componente para mostrar la lista de asistencia si hay un grupo seleccionado */}
+    {selectedGroup && (
+      <AttendanceList groupId={selectedGroup} />
+    )}
+
       {/* Modal para mostrar estudiantes del grupo seleccionado */}
       {isModalOpen && (
         <GroupList
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          students={students}
+          data={students}
           selectedGroup={selectedGroup}
         />
       )}
