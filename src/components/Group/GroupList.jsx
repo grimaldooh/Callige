@@ -10,7 +10,7 @@ const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-1/2">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-1/2 max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">
           Estudiantes del Grupo {selectedGroup}
         </h2>

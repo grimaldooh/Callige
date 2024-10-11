@@ -223,14 +223,14 @@ export default function AdminPage() {
     event.preventDefault();
     const formData = new FormData(event.target);
     const name = formData.get("name");
-
+    const school_id = parseInt(formData.get("school_id"), 10);
     try {
       const response = await fetch("/api/groups", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, school_id }),
+        body: JSON.stringify({ name, school_id}),
       });
 
       if (response.ok) {

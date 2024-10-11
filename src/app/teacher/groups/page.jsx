@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import SchoolGroups from '../../components/Group/SchoolGroups';
+import GroupList from '../../components/Group/GroupList';
 
 const TeachersPage = () => {
   const [groups, setGroups] = useState([]);
@@ -8,6 +10,8 @@ const TeachersPage = () => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [students, setStudents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  //handleclose modal
+  //is modal open
 
   useEffect(() => {
     // Lógica para obtener los grupos vinculados al profesor
@@ -47,6 +51,12 @@ const TeachersPage = () => {
     } catch (error) {
       console.error("Error fetching students:", error);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedGroup(null);
+    setStudents([]);
   };
 
   return (
@@ -90,19 +100,24 @@ const TeachersPage = () => {
       <div className="groups-section mt-16 mb-24">
         <h2 className="text-4xl font-bold mb-8 text-center">Grupos Vinculados</h2>
         {groups.length > 0 ? (
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {groups.map((group) => (
-              <li key={group.id} className="group-card bg-white shadow-lg p-6 rounded-lg text-center">
-                <h3 className="text-2xl font-semibold">{group.name}</h3>
-                <p className="text-gray-600 mt-2">Grupo: {group.id}</p>
-              </li>
-            ))}
-          </ul>
+            <SchoolGroups groups={groups} handleOpenGroupModal={handleOpenGroupModal}/>
         ) : (
           <p className="text-center text-xl text-gray-600">No estás vinculado a ningún grupo.</p>
         )}
       </div>
+
+       {/* Modal para mostrar estudiantes del grupo seleccionado */}
+       {isModalOpen && (
+        <GroupList
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          data={students}
+          selectedGroup={selectedGroup}
+        />
+      )}
     </div>
+
+    
 
   );
 };
