@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const TeachersPage = () => {
   const [groups, setGroups] = useState([]);
@@ -13,8 +14,9 @@ const TeachersPage = () => {
     // Lógica para obtener los grupos vinculados al profesor
     const fetchGroups = async () => {
       try {
-        const response = await fetch('/api/teacher/groups?teacherId=10');
+        const response = await fetch('/api/teacher/groups?teacherId=9');
         const data = await response.json();
+        console.log('data:', data);
         setGroups(data.groups);
       } catch (error) {
         console.error('Error fetching groups:', error);
@@ -51,17 +53,26 @@ const TeachersPage = () => {
 
   return (
     <div className="container mx-auto ">
-      <h1 className="text-5xl font-extrabold text-center mt-32">Panel del Docente</h1>
+      <h1 className="text-5xl font-extrabold text-center mt-32">
+        Panel del Docente
+      </h1>
 
       {/* Sección de Eventos */}
       <div className="events-section mt-16">
-        <h2 className="text-4xl font-bold mb-8 text-center">Eventos del Docente</h2>
+        <h2 className="text-4xl font-bold mb-8 text-center">
+          Eventos del Docente
+        </h2>
         {events.length === 0 ? (
-          <p className="text-center text-xl text-gray-600">No hay eventos disponibles.</p>
+          <p className="text-center text-xl text-gray-600">
+            No hay eventos disponibles.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
             {events.map((event) => (
-              <div key={event.id} className="event-card bg-white shadow-lg rounded-lg overflow-hidden">
+              <div
+                key={event.id}
+                className="event-card bg-white shadow-lg rounded-lg overflow-hidden"
+              >
                 {/* Imagen del evento */}
                 {event.imageUrl && (
                   <img
@@ -73,7 +84,8 @@ const TeachersPage = () => {
                 <div className="p-6">
                   <h3 className="text-2xl font-semibold mb-2">{event.name}</h3>
                   <p className="text-gray-600 mb-4">
-                    {new Date(event.date).toLocaleDateString()} - {event.location}
+                    {new Date(event.date).toLocaleDateString()} -{" "}
+                    {event.location}
                   </p>
                   <p className="text-gray-800 mb-6">{event.description}</p>
                   <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -88,22 +100,33 @@ const TeachersPage = () => {
 
       {/* Sección de Grupos */}
       <div className="groups-section mt-16 mb-24">
-        <h2 className="text-4xl font-bold mb-8 text-center">Grupos Vinculados</h2>
+        <h2 className="text-4xl font-bold mb-8 text-center">
+          Grupos Vinculados
+        </h2>
         {groups.length > 0 ? (
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {groups.map((group) => (
-              <li key={group.id} className="group-card bg-white shadow-lg p-6 rounded-lg text-center">
-                <h3 className="text-2xl font-semibold">{group.name}</h3>
+              <li
+                key={group.id}
+                className="group-card bg-white shadow-lg p-6 rounded-lg text-center"
+              >
+                <Link
+                  href={`/teacher/group/${group.id}`}
+                  className="text-2xl font-semibold"
+                >
+                  {group.name}
+                </Link>
                 <p className="text-gray-600 mt-2">Grupo: {group.id}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-center text-xl text-gray-600">No estás vinculado a ningún grupo.</p>
+          <p className="text-center text-xl text-gray-600">
+            No estás vinculado a ningún grupo.
+          </p>
         )}
       </div>
     </div>
-
   );
 };
 
