@@ -13,7 +13,7 @@ const TeachersPage = () => {
     // Lógica para obtener los grupos vinculados al profesor
     const fetchGroups = async () => {
       try {
-        const response = await fetch('/api/teacher/groups');
+        const response = await fetch('/api/teacher/groups?teacherId=10');
         const data = await response.json();
         setGroups(data.groups);
       } catch (error) {
@@ -24,7 +24,7 @@ const TeachersPage = () => {
     // Obtener los eventos vinculados al profesor
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/teacher/events?teacherId=9');
+        const response = await fetch('/api/teacher/events?teacherId=10');
         const data = await response.json();
         setEvents(data.events);
       } catch (error) {

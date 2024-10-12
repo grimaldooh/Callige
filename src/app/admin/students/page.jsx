@@ -1,5 +1,6 @@
 'use client';
 
+//src/app/admin/students/page.jsx
 import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Students/LinkStudentModal';
 

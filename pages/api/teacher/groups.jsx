@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const teacherId = req.query.teacherId; // Assume teacherId is passed through the query
+      const teacherId = parseInt(req.query.teacherId, 10); // Assume teacherId is passed through the query
       const groups = await prisma.group.findMany({
         where: {
           teachers: {
