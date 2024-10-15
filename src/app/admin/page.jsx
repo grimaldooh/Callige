@@ -116,9 +116,7 @@ export default function AdminPage() {
     event.preventDefault();
     const formData = new FormData(event.target);
     
-    try {
-      //const imageUrl = selectedFile ? await uploadImage(selectedFile) : null;
-      
+    try {      
       const response = await fetch('/api/events', {
         method: 'POST',
         

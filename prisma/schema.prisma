@@ -48,6 +48,7 @@ model Group {
   students  Student[]     @relation("GroupStudents") // Relación muchos a muchos con estudiantes
   teachers  Teacher[]     @relation("GroupTeachers") // Relación muchos a muchos con profesores
   attendanceLists AttendanceList[]  // Relación uno a muchos con listas de asistencia
+  justificantes Justificante[]  // Relación uno a muchos con justificantes
 }
 
 model AttendanceList {
@@ -66,6 +67,23 @@ model Attendance {
   student        Student  @relation(fields: [student_id], references: [id]) // Relación muchos a uno con estudiantes
   student_id     Int
   present        Int  // Indica si el estudiante asistió o no
+  justificante   Justificante?
+  justificante_id Int? // Relación uno a uno con Justificante (puede ser null)
+}
+
+model Justificante {
+  id          Int      @id @default(autoincrement())
+  razon       String
+  fecha       DateTime @default(now())
+  descripcion String
+  imageUrl    String?  // Este campo es opcional
+  student     Student  @relation(fields: [student_id], references: [id])
+  student_id  Int
+  group       Group    @relation(fields: [group_id], references: [id])
+  group_id    Int
+  attendance  Attendance @relation(fields: [attendance_id], references: [id])
+  attendance_id Int @unique  // Relación uno a uno con Attendance (debe ser único)
+  status      Int
 }
 
 model Student {
@@ -77,6 +95,8 @@ model Student {
   groups   Group[]  @relation("GroupStudents") // Relación muchos a muchos con grupos
   attendances Attendance[] // Relación uno a muchos con las asistencias
   events   Event[]  // Relación uno a muchos con eventos
+  justificantes Justificante[]  // Relación uno a muchos con justificantes
+
 }
 
 model Teacher {
@@ -87,4 +107,8 @@ model Teacher {
   groups   Group[]  @relation("GroupTeachers") // Relación muchos a muchos con grupos
   events   Event[]  // Relación uno a muchos con eventos
 }
+
+
+
+
 
