@@ -41,11 +41,11 @@ const JustificantesPage = () => {
   const justificantesRechazados = justificantes.filter((j) => j.status === 3);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Justificantes</h1>
+    <div className="container mx-auto p-4 mt-12 ">
+      <h1 className="text-2xl font-bold mt-4">Justificantes</h1>
 
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Pendientes</h2>
+        <h2 className="text-xl font-semibold mb-4 mt-12">Pendientes</h2>
         {justificantesPendientes.length > 0 ? (
           <table className="table-auto w-full mb-4">
             <thead>

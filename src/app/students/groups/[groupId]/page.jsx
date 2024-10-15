@@ -140,11 +140,11 @@ const GroupAttendancePage = () => {
                 </td>
                 <td
                   className={`border px-4 py-2 ${
-                    att.present ? "bg-green-200" : "bg-red-200"
+                    att.present===1 ? "bg-green-200" : "bg-red-200"
                   }`}
                 >
-                  {att.present ? "Asistió" : "Faltó"}
-                  {!att.present && (
+                  {att.present===1 ? "Asistió" : "Faltó"}
+                  {att.present===0 && (
                     <button
                       className="ml-4 bg-blue-500 text-white px-2 py-1 rounded"
                       onClick={() =>

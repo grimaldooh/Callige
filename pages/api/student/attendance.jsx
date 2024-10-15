@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       console.log('attendances:', attendances);
       // Calcular el porcentaje de inasistencias
       const totalClasses = attendances.length;
-      const absences = attendances.filter(att => att.present === 0).length;
+      const absences = attendances.filter(att => att.present === 0 || att.present === 3).length;
       const absencePercentage = (absences / 20) * 100;
 
       res.status(200).json({

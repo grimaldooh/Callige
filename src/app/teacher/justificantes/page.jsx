@@ -1,0 +1,159 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { format } from 'date-fns';
+
+const TeacherJustificantesPage = () => {
+  const teacherId = 9; // ID del profesor, este valor debe cambiarse por el real según tu lógica.
+  const [justificantes, setJustificantes] = useState([]);
+  const [selectedJustificante, setSelectedJustificante] = useState(null);
+  const [actionType, setActionType] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  useEffect(() => {
+    const fetchJustificantes = async () => {
+      try {
+        const response = await axios.get('/api/teacher/justificantes', {
+          params: {
+            teacherId,
+          },
+        });
+        const { data } = response;
+        setJustificantes(data.justificantes);
+      } catch (error) {
+        console.error('Error fetching justificantes:', error);
+      }
+    };
+
+    fetchJustificantes();
+  }, []);
+
+  const formattedDate = (fecha) => {
+    const date = new Date(fecha);
+    const adjustedDate = new Date(
+      date.getTime() + date.getTimezoneOffset() * 60000
+    );
+    return adjustedDate.toLocaleDateString();
+  };
+
+  const handleImageClick = (imageUrl) => {
+    window.open(imageUrl, '_blank');
+  };
+
+  const handleJustificanteAction = async (justificanteId, action) => {
+    try {
+      const response = await axios.post('/api/teacher/attendanceStatus', {
+        justificanteId,
+        action,
+      });
+      console.log('Response:', response.data);
+      setAlertMessage(`Justificante ${action === 'approved' ? 'aprobado' : 'rechazado'} exitosamente.`);
+      setShowModal(false);
+      // Aquí puedes volver a cargar los justificantes después de la acción
+    } catch (error) {
+      console.error('Error updating justificante status:', error);
+    }
+  };
+
+  const openConfirmationModal = (justificante, action) => {
+    setSelectedJustificante(justificante);
+    setActionType(action);
+    setShowModal(true);
+  };
+
+  const confirmAction = () => {
+    if (selectedJustificante && actionType) {
+      handleJustificanteAction(selectedJustificante.id, actionType);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mt-20 mb-4">Justificantes Pendientes</h1>
+      
+      {/* Alerta */}
+      {alertMessage && (
+        <div className="bg-green-200 text-green-700 p-4 mb-4 rounded">
+          {alertMessage}
+        </div>
+      )}
+
+      <div className="mt-8 space-y-4">
+        {justificantes.length === 0 ? (
+          <p>No hay justificantes pendientes.</p>
+        ) : (
+          justificantes.map(justificante => (
+            <div
+              key={justificante.id}
+              className="flex items-center bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
+            >
+              {/* Imagen del justificante */}
+              <img
+                src={justificante.imageUrl || '/placeholder-image.jpg'}
+                alt="Justificante"
+                className="h-32 w-32 object-cover cursor-pointer"
+                onClick={() => handleImageClick(justificante.imageUrl)}
+              />
+
+              {/* Detalles del justificante */}
+              <div className="ml-6">
+                <p className="text-lg font-semibold">
+                  {justificante.razon} - {formattedDate(justificante.fecha)}
+                </p>
+                <p className="text-gray-600 mt-2 break-words max-w-full">Descripción: {justificante.descripcion}</p>                
+                <p className="text-gray-600 mt-10">
+                  Grupo: {justificante.group.name}
+                </p>
+
+                {/* Botones para aprobar o rechazar */}
+                <div className="mt-4">
+                  <button 
+                    onClick={() => openConfirmationModal(justificante, 'approved')} 
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Aprobar
+                  </button>
+                  <button 
+                    onClick={() => openConfirmationModal(justificante, 'rejected')} 
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Modal de confirmación */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <p className="text-lg font-semibold mb-4">
+              ¿Estás seguro que deseas {actionType === 'approved' ? 'aprobar' : 'rechazar'} este justificante?
+            </p>
+            <div className="flex justify-end">
+              <button 
+                onClick={confirmAction}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+              >
+                Confirmar
+              </button>
+              <button 
+                onClick={() => setShowModal(false)}
+                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TeacherJustificantesPage;
