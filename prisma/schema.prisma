@@ -28,6 +28,7 @@ model Event {
   school      School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
   school_id   Int
   teachers    Teacher[] // Relación uno a muchos con profesores
+  students    Student[] // Relación uno a muchos con estudiantes
 }
 
 model Admin {
@@ -44,7 +45,6 @@ model Group {
   name      String
   school    School?       @relation(fields: [school_id], references: [id])
   school_id Int?
-  
   students  Student[]     @relation("GroupStudents") // Relación muchos a muchos con estudiantes
   teachers  Teacher[]     @relation("GroupTeachers") // Relación muchos a muchos con profesores
   attendanceLists AttendanceList[]  // Relación uno a muchos con listas de asistencia
@@ -76,7 +76,7 @@ model Student {
   imageUrl String?  // Campo para la URL de la imagen
   groups   Group[]  @relation("GroupStudents") // Relación muchos a muchos con grupos
   attendances Attendance[] // Relación uno a muchos con las asistencias
-
+  events   Event[]  // Relación uno a muchos con eventos
 }
 
 model Teacher {
