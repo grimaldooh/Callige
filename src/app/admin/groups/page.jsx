@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Modales/Groups/ModalLinkStudent';
 import LinkTeacherModal from '../../../components/Modales/Groups/ModalLinkTeacher';
-
+import EditGroupModal from '../../../components/Modales/Groups/ModalEditGroup';
 
 const GroupsPage = () => {
   const [groups, setGroups] = useState([]);
@@ -13,6 +13,7 @@ const GroupsPage = () => {
   const [showModalTeacher, setShowModalTeacher] = useState(false);
   const [showModalStudent, setShowModalStudent] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // Modal de edición del grupo
 
   const openModalTeacher = (groupId) => {
     setSelectedGroup(groupId);
@@ -22,11 +23,17 @@ const GroupsPage = () => {
   const openModalStudents = (groupId) => {
     setSelectedGroup(groupId);
     setShowModalStudent(true);
-    };
+  };
+
+  const openEditModal = (groupId) => {
+    setSelectedGroup(groupId);
+    setShowEditModal(true);
+  };
 
   const closeModal = () => {
     setShowModalStudent(false);
-    setShowModalTeacher(false); 
+    setShowModalTeacher(false);
+    setShowEditModal(false); // Cierra la modal de edición del grupo
     setSelectedGroup(null);
   };
 
@@ -59,6 +66,25 @@ const GroupsPage = () => {
     setFilteredGroups(filtered);
   };
 
+  const handleDelete = async (groupId) => {
+    try {
+      const response = await fetch('/api/admin/groups', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: groupId }),
+      });
+      if (response.ok) {
+        setGroups(groups.filter(group => group.id !== groupId)); // Eliminar el estudiante del estado
+        alert('Grupo eliminado correctamente');
+      }
+    } catch (error) {
+      console.error('Error eliminando grupo:', error);
+      alert('Hubo un error al eliminar al grupo');
+    }
+  };
+
   return (
     <div className="container mx-auto mt-28 ">
       <h1 className="text-4xl font-bold ">Listado de grupos</h1>
@@ -88,10 +114,10 @@ const GroupsPage = () => {
                 <span className="font-bold">ID:</span> {group.id} - {group.name}
               </div>
               <div className="flex space-x-4">
-                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <button onClick={() => handleDelete(group.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                   Borrar
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <button onClick={() => openEditModal(group.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                   Editar
                 </button>
                 <button
@@ -119,6 +145,9 @@ const GroupsPage = () => {
       )}
       {showModalTeacher && (
         <LinkTeacherModal groupId={selectedGroup} onClose={closeModal} />
+      )}
+      {showEditModal && (
+        <EditGroupModal groupId={selectedGroup} onClose={closeModal} />
       )}
     </div>
   );

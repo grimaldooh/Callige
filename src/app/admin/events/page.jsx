@@ -2,6 +2,7 @@
 //src/app/admin/events/page.jsx
 import { useEffect, useState } from 'react';
 import LinkTeacherModal from '../../../components/Modales/Events/ModalLinkTeacher';
+import EditEventModal from '../../../components/Modales/Events/EditEventModal';
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -9,6 +10,7 @@ const EventsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModalTeacher, setShowModalTeacher] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const openModalTeacher = (eventId) => {
     setSelectedEvent(eventId);
@@ -17,6 +19,16 @@ const EventsPage = () => {
 
   const closeModal = () => {
     setShowModalTeacher(false); 
+    setSelectedEvent(null);
+  };
+
+  const openEditModal = (event) => {
+    setSelectedEvent(event);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
     setSelectedEvent(null);
   };
 
@@ -49,6 +61,25 @@ const EventsPage = () => {
     setFilteredEvents(filtered);
   };
 
+  const handleDelete = async (eventId) => {
+    try {
+      const response = await fetch('/api/admin/events', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: eventId }),
+      });
+      if (response.ok) {
+        setEvents(events.filter(event => event.id !== eventId)); // Eliminar evento del estado
+        alert('Evento eliminado correctamente');
+      }
+    } catch (error) {
+      console.error('Error eliminando evento:', error);
+      alert('Hubo un error al eliminar al evento');
+    }
+  };
+
   return (
     <div className="container mx-auto mt-28 ">
       <h1 className="text-4xl font-bold ">Listado de eventos</h1>
@@ -78,10 +109,10 @@ const EventsPage = () => {
                 <span className="font-bold">ID:</span> {event.id} - {event.name}
               </div>
               <div className="flex space-x-4">
-                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <button onClick={() => handleDelete(event.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                   Borrar
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <button onClick={() => openEditModal(event.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                   Editar
                 </button>
                 <button
@@ -101,6 +132,10 @@ const EventsPage = () => {
 
       {showModalTeacher && (
         <LinkTeacherModal eventId={selectedEvent} onClose={closeModal} />
+      )}
+
+      {showEditModal && (
+        <EditEventModal eventId={selectedEvent} onClose={closeEditModal} />
       )}
     </div>
   );

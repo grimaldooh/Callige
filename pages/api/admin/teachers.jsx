@@ -9,7 +9,19 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: 'Error fetching students' });
     }
-  } else {
+  }  else if (req.method === 'DELETE') {
+    const { id } = req.body; // Obtener el ID del estudiante
+    console.log('id:', id);
+    try {
+      await prisma.teacher.delete({
+        where: { id: Number(id) },
+      });
+      res.status(200).json({ message: 'Profesor eliminado correctamente' });
+    } catch (error) {
+      res.status(500).json({ error: 'Error al eliminar profesor' });
+    }
+  } 
+  else {
     res.setHeader('Allow', ['GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }

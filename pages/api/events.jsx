@@ -21,6 +21,7 @@ export default async function handler(req, res) {
             where: { date: { gte: new Date() } }, // Solo eventos futuros
             orderBy: { date: 'asc' }, // Ordenar por fecha
           });
+          console.log('events:', events);
           res.status(200).json(events);
         } catch (error) {
           res.status(500).json({ error: 'Error fetching events' });

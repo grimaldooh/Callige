@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import LinkTeacherModal from '../../../components/Teachers/LinkTeacherModal';
 import LinkTeacherEventModal from '../../../components/Teachers/LinkTeacherEventModal';
+import EditTeacherModal from '../../../components/Modales/Teachers/EditTeacherModal';
 
 const TeachersPage = () => {
   const [teachers, setTeachers] = useState([]);
@@ -11,6 +12,8 @@ const TeachersPage = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showModalEvento, setShowModalEvento] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+
 
   const openModal = (teacherId) => {
     setSelectedTeacher(teacherId);
@@ -30,7 +33,17 @@ const TeachersPage = () => {
   const closeModalEvento = () => {
     setShowModalEvento(false);
     setSelectedTeacher(null);
-    };
+  };
+
+  const openEditModal = (teacherId) => {
+    setSelectedTeacher(teacherId);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedTeacher(null);
+  };
 
   useEffect(() => {
     // Lógica para obtener la lista de todos los profesors
@@ -58,6 +71,25 @@ const TeachersPage = () => {
     );
 
     setFilteredTeachers(filtered);
+  };
+
+  const handleDelete = async (teacherId) => {
+    try {
+      const response = await fetch('/api/admin/teachers', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: teacherId }),
+      });
+      if (response.ok) {
+        setTeachers(teachers.filter(teacher => teacher.id !== teacherId)); // Eliminar el profesor del estado
+        alert('Profesor eliminado correctamente');
+      }
+    } catch (error) {
+      console.error('Error eliminando profesor:', error);
+      alert('Hubo un error al eliminar al profesor');
+    }
   };
 
   return (
@@ -88,10 +120,10 @@ const TeachersPage = () => {
                 {teacher.name}
               </div>
               <div className="flex space-x-4">
-                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <button onClick={() => handleDelete(teacher.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                   Borrar
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <button onClick={() => openEditModal(teacher.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                   Editar
                 </button>
                 <button
@@ -121,6 +153,12 @@ const TeachersPage = () => {
         <LinkTeacherEventModal
           teacherId={selectedTeacher}
           onClose={closeModalEvento}
+        />
+      )}
+      {showEditModal && (
+        <EditTeacherModal
+          teacherId={selectedTeacher}
+          onClose={closeEditModal}
         />
       )}
     </div>
