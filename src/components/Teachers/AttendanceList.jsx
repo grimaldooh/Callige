@@ -33,13 +33,12 @@ const AttendanceList = ({ groupId }) => {
   }, [groupId]);
 
   // Función para formatear fechas
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${year}/${month}/${day}`;
-  }
+  const formattedDate = (fecha) => {
+    const date = new Date(fecha);
+    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    const formattedDate = adjustedDate.toLocaleDateString();
+    return formattedDate;
+  };
 
   // Función para calcular inasistencias
   function calculateAbsences(studentId) {
@@ -85,7 +84,7 @@ const AttendanceList = ({ groupId }) => {
           <th className="border border-gray-200 p-2 sticky left-0 bg-white z-10">Alumno</th> {/* Fijar la celda */}
           {attendanceLists.map(attendanceList => (
             <th key={attendanceList.id} className="border border-gray-200 p-2 min-w-[150px]"> {/* Ancho mínimo */}
-              {formatDate(attendanceList.fecha)}
+              {formattedDate(attendanceList.fecha)}
             </th>
           ))}
         </tr>

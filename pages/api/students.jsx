@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
 const { uploadImage } = require('../../azure/blob'); // Ruta del archivo donde tienes la lógica de Azure
 const prisma = new PrismaClient();
 const multer = require('multer');
@@ -25,12 +27,15 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     // Usa el middleware de multer para manejar la subida de archivos
+    const globalSchoolId = 1; 
     upload.single('image')(req, res, async function (err) {
       if (err) {
         return res.status(500).json({ error: 'Error uploading image' });
       }
 
       const { name, email, password} = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       console.log('req.body:', req.body);
 
       // Valida que los datos están completos
@@ -51,7 +56,8 @@ export default async function handler(req, res) {
           data: {
             name,
             email,
-            password,
+            password : hashedPassword,
+            school_id : globalSchoolId,
             imageUrl, // Guarda la URL de la imagen
           },
         });

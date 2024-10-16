@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
@@ -12,17 +14,21 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     // Añadir un nuevo profesor
+    const globalSchoolId = 1; // ID de la escuela global
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email, password and group_id are required' });
     }
     try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const newTeacher = await prisma.teacher.create({
         data: {
-          password: String(password), 
+          password : hashedPassword,
           name: String(name),
           email: String(email),
+          school_id: globalSchoolId,
         },
       });
       res.status(201).json(newTeacher);

@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
@@ -12,18 +14,21 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     // Añadir un nuevo admin
-    const { name, email, password, school_id } = req.body;
+    const { name, email, password, schoolId} = req.body;
+    console.log('req.body:', req.body);
 
-    if (!name || !email || !password || !school_id) {
+    if (!name || !email || !password || !schoolId) {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
     try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const newAdmin = await prisma.admin.create({
         data: {
           name: String(name),
           email: String(email),
-          password: String(password), 
-          school_id: school_id ? Number(school_id) : null,
+          password : hashedPassword,
+          school_id: parseInt(schoolId),
         },
       });
       res.status(201).json(newAdmin);

@@ -15,6 +15,8 @@ model School {
   location String
   groups   Group[]  // Relación uno a muchos con grupos
   admins   Admin[]  // Relación uno a muchos con admins
+  teachers Teacher[]  // Relación uno a muchos con profesores
+  students Student[]  // Relación uno a muchos con estudiantes
   events   Event[]  // Relación uno a muchos con eventos
 }
 
@@ -96,7 +98,8 @@ model Student {
   attendances Attendance[] // Relación uno a muchos con las asistencias
   events   Event[]  // Relación uno a muchos con eventos
   justificantes Justificante[]  // Relación uno a muchos con justificantes
-
+  school   School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
+  school_id Int
 }
 
 model Teacher {
@@ -106,8 +109,16 @@ model Teacher {
   password String
   groups   Group[]  @relation("GroupTeachers") // Relación muchos a muchos con grupos
   events   Event[]  // Relación uno a muchos con eventos
+  school   School   @relation(fields: [school_id], references: [id]) // Relación muchos a uno con school
+  school_id Int
 }
 
+model SuperAdmin {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+}
 
 
 

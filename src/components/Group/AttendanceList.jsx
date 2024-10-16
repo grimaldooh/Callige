@@ -38,17 +38,14 @@ const AttendanceList = ({ groupId }) => {
     }
   }, [groupId]);
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}/${month}/${day}`;
-  }
+  const formattedDate = (fecha) => {
+    const date = new Date(fecha);
+    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    const formattedDate = adjustedDate.toLocaleDateString();
+    return formattedDate;
+  };
   
-  // Ejemplo de uso
-  const formattedDate = formatDate('2024-10-07T00:00:00.000Z');
-  console.log(formattedDate); // Salida: 24/10/07
+  
 
   return (
     <div className="mt-6">
@@ -59,7 +56,7 @@ const AttendanceList = ({ groupId }) => {
             <tr>
               <th className="border border-gray-200 p-2">Alumno</th>
               {attendanceLists.map(attendanceList => (
-                <th key={attendanceList.id} className="border border-gray-200 p-2">{formatDate(attendanceList.fecha)}</th>
+                <th key={attendanceList.id} className="border border-gray-200 p-2">{formattedDate(attendanceList.fecha)}</th>
               ))}
             </tr>
           </thead>

@@ -12,6 +12,8 @@ import GroupList from '../../components/Group/GroupList'; // Importa el componen
 import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
 
 export default function AdminPage() {
+
+  const globalSchoolId = 1; // ID de la escuela
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalTeachers, setTotalTeachers] = useState(0);
   const [totalParents, setTotalParents] = useState(0);
@@ -150,7 +152,7 @@ export default function AdminPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password}),
+        body: JSON.stringify({ name, email, password, schoolId: globalSchoolId }),
       });
 
       if (response.ok) {
