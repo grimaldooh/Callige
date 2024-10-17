@@ -55,9 +55,13 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
-    // Devolver el rol del usuario
+    // Devolver el rol del usuario, el ID del usuario y el schoolId
     console.log('Login successful, role:', role);
-    res.status(200).json({ role });
+    res.status(200).json({ 
+      userId: user.id, // ID del usuario
+      schoolId: user.school_id, // schoolId asociado
+      role 
+    });
   } catch (error) {
     console.error('Server error:', error);
     res.status(500).json({ message: 'Server error', error });

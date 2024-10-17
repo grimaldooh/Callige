@@ -3,10 +3,18 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
+    const { schoolId } = req.query; // Obtener el schoolId de la query
+    console.log('schoolId:', schoolId);
     try {
-      const students = await prisma.student.findMany();
+      const students = await prisma.student.findMany({
+        where : {
+          school_id: parseInt(schoolId),
+        },
+      });
+      console.log('students:', students);
       res.status(200).json({ students });
     } catch (error) {
+      console.error('Error fetching students:', error);
       res.status(500).json({ error: 'Error fetching students' });
     }
   } else if (req.method === 'DELETE') {

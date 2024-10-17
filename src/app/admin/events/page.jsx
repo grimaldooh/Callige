@@ -3,8 +3,13 @@
 import { useEffect, useState } from 'react';
 import LinkTeacherModal from '../../../components/Modales/Events/ModalLinkTeacher';
 import EditEventModal from '../../../components/Modales/Events/EditEventModal';
+import { useAuth } from '../../context/AuthContext';
+import { gl } from 'date-fns/locale';
 
 const EventsPage = () => {
+  const {schoolId} = useAuth();
+  const globalSchoolId = schoolId;
+  
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,21 +38,27 @@ const EventsPage = () => {
   };
 
   useEffect(() => {
+    if (!globalSchoolId) return; // No hacer nada si no hay schoolId
+
     // Lógica para obtener la lista de todos los eventos
     const fetchEvents = async () => {
       try {
-        const response = await fetch("/api/events?schoolId=1");
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+        const response = await fetch(`/api/admin/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setEvents(data);
+        setEvents(data.events);
         console.log('data:', data);
-        setFilteredEvents(data); // Inicialmente mostrar todos
+        setFilteredEvents(data.events); // Inicialmente mostrar todos
       } catch (error) {
         console.error('Error fetching Events:', error);
       }
     };
 
     fetchEvents();
-  }, []);
+  }, [globalSchoolId]);
 
   // Función para manejar el cambio en la barra de búsqueda
   const handleSearch = (e) => {
@@ -96,9 +107,7 @@ const EventsPage = () => {
       </div>
 
       {/* Lista de eventos */}
-      {filteredEvents.length === 0 ? (
-        <p>No hay grupos disponibles.</p>
-      ) : (
+      {Array.isArray(filteredEvents) && filteredEvents.length > 0 ? (
         <ul className="list-disc list-inside">
           {filteredEvents.map((event) => (
             <li
@@ -128,6 +137,8 @@ const EventsPage = () => {
             </li>
           ))}
         </ul>
+      ) : (
+        <p>No hay eventos disponibles.</p>
       )}
 
       {showModalTeacher && (

@@ -3,8 +3,14 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
+    const { schoolId } = req.query; // Obtener el schoolId de la query
+
     try {
-      const teachers = await prisma.teacher.findMany();
+      const teachers = await prisma.teacher.findMany({
+        where : {
+          school_id: parseInt(schoolId),
+        },
+      });
       res.status(200).json({ teachers });
     } catch (error) {
       res.status(500).json({ error: 'Error fetching students' });

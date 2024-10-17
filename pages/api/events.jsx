@@ -16,18 +16,28 @@ export const config = {
 // Adaptar la función para manejar la subida de archivos
 export default async function handler(req, res) {
     if (req.method === 'GET') {
-        try {
-          const events = await prisma.event.findMany({
-            where: { date: { gte: new Date() } }, // Solo eventos futuros
-            orderBy: { date: 'asc' }, // Ordenar por fecha
-          });
-          console.log('events:', events);
-          res.status(200).json(events);
-        } catch (error) {
-          res.status(500).json({ error: 'Error fetching events' });
-          console.error('Error fetching events:', error);
+        const { schoolId } = req.query; // Obtener el school_id de los parámetros de la consulta
+
+        if (!schoolId) {
+            return res.status(400).json({ error: 'School ID is required' });
         }
-    } else if (req.method === 'POST') {
+
+        try {
+            const events = await prisma.event.findMany({
+                where: {
+                    school_id: Number(schoolId), // Filtrar por la escuela vinculada
+                    date: { gte: new Date() }, // Solo eventos futuros
+                },
+                orderBy: { date: 'asc' }, // Ordenar por fecha
+            });
+
+            console.log('events:', events);
+            res.status(200).json(events);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching events' });
+            console.error('Error fetching events:', error);
+        }
+    }  else if (req.method === 'POST') {
         // Utilizar multer para manejar el archivo de imagen
         upload.single('image')(req, res, async function (err) {
             if (err) {
@@ -35,10 +45,11 @@ export default async function handler(req, res) {
             }
 
             // Acceder a los datos del cuerpo
-            const { name, date, description, location, school_id } = req.body;
+            const { name, date, description, location, schoolId } = req.body;
+            console.log('schoolId:', schoolId);
 
             // Validación de entrada
-            if (!name || !date || !description || !location) {
+            if (!name || !date || !description || !location || !schoolId) {
                 return res.status(400).json({ error: 'Title, date, description, and location are required' });
             }
 
@@ -56,7 +67,7 @@ export default async function handler(req, res) {
                         date: new Date(date),
                         location: String(location),
                         description: String(description),
-                        school_id: school_id ? Number(school_id) : null,
+                        school_id: Number(schoolId) ,
                         imageUrl, // Guardar la URL de la imagen si está presente
                     },
                 });

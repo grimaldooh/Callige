@@ -4,10 +4,30 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
+    const { schoolId } = req.query; // Obtener el schoolId de la query
+    console.log('schoolId:', schoolId);
+
+    if (!schoolId) {
+      return res.status(400).json({ error: 'School ID is required' });
+    }
+
     try {
-      const totalStudents = await prisma.student.count();
-      const totalTeachers = await prisma.teacher.count();
-      const totalGroups = await prisma.group.count();
+      const totalStudents = await prisma.student.count({
+        where: { school_id: parseInt(schoolId) }, // Filtrar por schoolId
+      });
+      const totalTeachers = await prisma.teacher.count({
+        where: { school_id: parseInt(schoolId) }, // Filtrar por schoolId
+      });
+      const totalGroups = await prisma.group.count({
+        where: { school_id: parseInt(schoolId) }, // Filtrar por schoolId
+      });
+
+      const totalAdmins = await prisma.admin.count({
+        where: { school_id: parseInt(schoolId) }, // Filtrar por schoolId
+      });
+      console.log('totalAdmins:', totalAdmins);
+
+      console.log('totalStudents:', totalStudents);
 
       res.status(200).json({ totalStudents, totalTeachers, totalGroups });
     } catch (error) {

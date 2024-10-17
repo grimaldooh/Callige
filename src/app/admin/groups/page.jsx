@@ -4,16 +4,20 @@ import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Modales/Groups/ModalLinkStudent';
 import LinkTeacherModal from '../../../components/Modales/Groups/ModalLinkTeacher';
 import EditGroupModal from '../../../components/Modales/Groups/ModalEditGroup';
+import { useAuth } from '../../context/AuthContext';
 
 const GroupsPage = () => {
+  const { schoolId } = useAuth();
+  const globalSchoolId = schoolId;
+
   const [groups, setGroups] = useState([]);
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showModalTeacher, setShowModalTeacher] = useState(false);
   const [showModalStudent, setShowModalStudent] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); // Modal de edición del grupo
+  const [activeGroup, setActiveGroup] = useState(false);
 
   const openModalTeacher = (groupId) => {
     setSelectedGroup(groupId);
@@ -38,21 +42,38 @@ const GroupsPage = () => {
   };
 
   useEffect(() => {
-    // Lógica para obtener la lista de todos los estudiantes
+    if (!globalSchoolId) return;
+
+    // Lógica para obtener la lista de todos los grupos
     const fetchGroups = async () => {
       try {
-        const response = await fetch("/api/groups?schoolId=1");
+        const response = await fetch(`/api/admin/groups?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setGroups(data);
-        console.log('data:', data);
-        setFilteredGroups(data); // Inicialmente mostrar todos
+        console.log('Datos recibidos:', data);
+        
+        if (Array.isArray(data.groups)) {
+          setGroups(data.groups);
+          setFilteredGroups(data.groups);
+        } else {
+          console.error('La respuesta no es un array:', data);
+        }
       } catch (error) {
-        console.error('Error fetching Groups:', error);
+        console.error('Error al obtener los grupos:', error);
       }
     };
 
     fetchGroups();
-  }, []);
+  }, [globalSchoolId]);
+
+  // useEffect para depurar el estado de groups
+  useEffect(() => {
+    console.log('groups:', groups);
+  }, [groups]);
+
+  // useEffect para depurar el estado de filteredGroups
+  useEffect(() => {
+    console.log('filteredGroups:', filteredGroups);
+  }, [filteredGroups]);
 
   // Función para manejar el cambio en la barra de búsqueda
   const handleSearch = (e) => {
@@ -76,7 +97,8 @@ const GroupsPage = () => {
         body: JSON.stringify({ id: groupId }),
       });
       if (response.ok) {
-        setGroups(groups.filter(group => group.id !== groupId)); // Eliminar el estudiante del estado
+        setGroups(groups.filter(group => group.id !== groupId)); // Eliminar el grupo del estado
+        setFilteredGroups(filteredGroups.filter(group => group.id !== groupId)); // Eliminar el grupo del estado filtrado
         alert('Grupo eliminado correctamente');
       }
     } catch (error) {
@@ -100,10 +122,8 @@ const GroupsPage = () => {
         />
       </div>
 
-      {/* Lista de estudiantes */}
-      {filteredGroups.length === 0 ? (
-        <p>No hay grupos disponibles.</p>
-      ) : (
+      {/* Lista de grupos */}
+      {Array.isArray(filteredGroups) && filteredGroups.length > 0 ? (
         <ul className="list-disc list-inside">
           {filteredGroups.map((group) => (
             <li
@@ -114,10 +134,16 @@ const GroupsPage = () => {
                 <span className="font-bold">ID:</span> {group.id} - {group.name}
               </div>
               <div className="flex space-x-4">
-                <button onClick={() => handleDelete(group.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <button
+                  onClick={() => handleDelete(group.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
                   Borrar
                 </button>
-                <button onClick={() => openEditModal(group.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <button
+                  onClick={() => openEditModal(group.id)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
                   Editar
                 </button>
                 <button
@@ -139,6 +165,8 @@ const GroupsPage = () => {
             </li>
           ))}
         </ul>
+      ) : (
+        <p>No hay grupos disponibles.</p>
       )}
       {showModalStudent && (
         <LinkStudentModal groupId={selectedGroup} onClose={closeModal} />

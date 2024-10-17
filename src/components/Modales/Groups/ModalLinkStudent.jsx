@@ -1,26 +1,41 @@
 // components/Modales/Groups/ModalLinkStudent.jsx
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../../app/context/AuthContext';
+
 
 const LinkStudentModal = ({ groupId, onClose }) => {
+  const {schoolId} = useAuth();
+  const globalSchoolId = schoolId;
+
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  
 
   useEffect(() => {
-    // Fetch all students
+    if (!globalSchoolId) return; // No hacer nada si no hay schoolId
+
+    // Lógica para obtener la lista de todos los estudiantes
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/api/students'); // Cambia esta ruta según tu API de estudiantes
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+
+        console.log('globalSchoolId:', globalSchoolId);
+        const response = await fetch(`/api/admin/students?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setStudents(data);
-        setFilteredStudents(data); // Inicialmente muestra todos los estudiantes
+        console.log('Fetched students:', data.students);
+        setStudents(data.students);
+        setFilteredStudents(data.students); // Inicialmente mostrar todos
       } catch (error) {
-        console.error("Error fetching students:", error);
+        console.error('Error fetching students:', error);
       }
     };
 
     fetchStudents();
-  }, []);
+  }, [globalSchoolId]);
 
   // Filtrar estudiantes por el término de búsqueda
   useEffect(() => {

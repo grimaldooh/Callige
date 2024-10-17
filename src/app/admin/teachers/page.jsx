@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react';
 import LinkTeacherModal from '../../../components/Teachers/LinkTeacherModal';
 import LinkTeacherEventModal from '../../../components/Teachers/LinkTeacherEventModal';
 import EditTeacherModal from '../../../components/Modales/Teachers/EditTeacherModal';
+import { useAuth } from '../../context/AuthContext';
 
 const TeachersPage = () => {
+  const {schoolId} = useAuth();
+  const globalSchoolId = schoolId;
+
   const [teachers, setTeachers] = useState([]);
   const [filteredTeachers, setFilteredTeachers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,7 +53,12 @@ const TeachersPage = () => {
     // Lógica para obtener la lista de todos los profesors
     const fetchTeachers = async () => {
       try {
-        const response = await fetch('/api/admin/teachers');
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+
+        const response = await fetch(`/api/admin/teachers?schoolId=${globalSchoolId}`);
         const data = await response.json();
         setTeachers(data.teachers);
         setFilteredTeachers(data.teachers); // Inicialmente mostrar todos
@@ -59,7 +68,7 @@ const TeachersPage = () => {
     };
 
     fetchTeachers();
-  }, []);
+  }, [globalSchoolId]);
 
   // Función para manejar el cambio en la barra de búsqueda
   const handleSearch = (e) => {
@@ -93,7 +102,7 @@ const TeachersPage = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-24">
       <h1 className="text-4xl font-bold mb-6">Listado de Profesores</h1>
 
       {/* Barra de búsqueda */}
@@ -106,9 +115,7 @@ const TeachersPage = () => {
       />
 
       {/* Lista de profesores */}
-      {filteredTeachers.length === 0 ? (
-        <p>No hay profesores disponibles.</p>
-      ) : (
+      {Array.isArray(filteredTeachers) && filteredTeachers.length > 0 ? (
         <ul className="list-disc list-inside">
           {filteredTeachers.map((teacher) => (
             <li
@@ -145,6 +152,8 @@ const TeachersPage = () => {
             </li>
           ))}
         </ul>
+      ) : (
+        <p>No hay profesores disponibles.</p>
       )}
       {showModal && (
         <LinkTeacherModal teacherId={selectedTeacher} onClose={closeModal} />

@@ -31,6 +31,8 @@ export default async function handler(req, res) {
   }  else if (req.method === 'POST') {
     // Añadir un nuevo grupo
     const { name, school_id} = req.body;
+    console.log('name:', name);
+    console.log('school_id:', school_id);
 
     // Validación de entrada
     if (!name || !school_id) {
@@ -41,7 +43,7 @@ export default async function handler(req, res) {
       const newGroup = await prisma.group.create({
         data: {
           name,
-          school_id
+          school_id : parseInt(school_id),
         },
       });
       res.status(201).json(newGroup);

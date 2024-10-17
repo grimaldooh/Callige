@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "../components/Navbar";  // Asegúrate de que el path sea correcto
+import Navbar from "../components/Navbar";  
+import { AuthProvider } from './context/AuthContext';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,10 +31,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Agregamos el Navbar aquí para que esté disponible en todas las páginas */}
-        <Navbar />
-        <main>
-          {children}
-        </main>
+        <AuthProvider>
+          <Navbar />
+          <main>{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

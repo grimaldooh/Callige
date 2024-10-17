@@ -10,10 +10,17 @@ import ModalEventDetails from '../../components/Modales/Events/EventDetails'; //
 import SchoolGroups from '../../components/Group/SchoolGroups'; // Importa el componente para mostrar grupos
 import GroupList from '../../components/Group/GroupList'; // Importa el componente para mostrar grupos
 import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
+import { useAuth } from '../context/AuthContext';
+
 
 export default function AdminPage() {
 
-  const globalSchoolId = 1; // ID de la escuela
+  const { userId, schoolId, role, login, logout } = useAuth();
+  console.log('userId:', userId);
+
+
+  const globalSchoolId = schoolId;
+  console.log('globalSchoolId:', globalSchoolId);
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalTeachers, setTotalTeachers] = useState(0);
   const [totalParents, setTotalParents] = useState(0);
@@ -53,9 +60,14 @@ export default function AdminPage() {
   const handleCloseEventModal = () => setIsModalEventOpen(false);
 
   useEffect(() => {
+    if (!globalSchoolId) return; // No hacer nada si no hay schoolId
+
+    console.log('globalSchoolId:', globalSchoolId);
     async function fetchGroups() {
       try {
-        const response = await fetch("/api/groups?schoolId=1");
+        //const response = await fetch("/api/groups?schoolId=1");
+        console.log('globalSchoolId:', globalSchoolId);
+        const response = await fetch(`/api/groups?schoolId=${globalSchoolId}`);
         const data = await response.json();
         setGroups(data);
       } catch (error) {
@@ -65,7 +77,7 @@ export default function AdminPage() {
 
     async function fetchStats() {
       try {
-        const response = await fetch("/api/stats");
+        const response = await fetch(`/api/stats?schoolId=${globalSchoolId}`);        
         const data = await response.json();
         setTotalStudents(data.totalStudents);
         setTotalTeachers(data.totalTeachers);
@@ -77,8 +89,10 @@ export default function AdminPage() {
 
     async function fetchEvents() {
       try {
-        const response = await fetch("/api/events");
+        console.log('globalSchoolId:', globalSchoolId);
+        const response = await fetch(`/api/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
+        console.log('data:', data);
         setEvents(data);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -88,7 +102,7 @@ export default function AdminPage() {
     fetchEvents();
     fetchStats();
     fetchGroups();
-  }, []);
+  }, [globalSchoolId]);
 
   const handleViewEventDetails = (event) => {
     setSelectedEvent(event);
@@ -117,6 +131,7 @@ export default function AdminPage() {
   const handleAddEvent = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
+    formData.append('schoolId', globalSchoolId); // Agregar schoolId al formData
     
     try {      
       const response = await fetch('/api/events', {
@@ -223,7 +238,7 @@ export default function AdminPage() {
     event.preventDefault();
     const formData = new FormData(event.target);
     const name = formData.get("name");
-    const school_id = parseInt(formData.get("school_id"), 10);
+    const school_id = globalSchoolId;
     try {
       const response = await fetch("/api/groups", {
         method: "POST",
@@ -273,21 +288,26 @@ export default function AdminPage() {
 
         <div className="bg-white p-6 shadow-md rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Próximos Eventos</h2>
+
           <ul>
-            {events.map((event) => (
-              <li
-                key={event.id}
-                className="flex justify-between items-center mb-2"
-              >
-                <span>{event.name}</span>
-                <button
-                  onClick={() => handleViewEventDetails(event)}
-                  className="text-blue-500 underline"
+            {Array.isArray(events) && events.length > 0 ? (
+              events.map((event) => (
+                <li
+                  key={event.id}
+                  className="flex justify-between items-center mb-2"
                 >
-                  Ver Detalles
-                </button>
-              </li>
-            ))}
+                  <span>{event.name}</span>
+                  <button
+                    onClick={() => handleViewEventDetails(event)}
+                    className="text-blue-500 underline"
+                  >
+                    Ver Detalles
+                  </button>
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500">No hay eventos disponibles.</li>
+            )}
           </ul>
         </div>
       </div>

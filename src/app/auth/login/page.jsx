@@ -4,11 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import bcrypt from 'bcryptjs';
+import { useAuth } from '../../context/AuthContext';
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login } = useAuth(); // Usa el contexto
+
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -25,6 +29,8 @@ const LoginPage = () => {
     });
 
     const data = await response.json();
+
+    login(data.userId, data.schoolId, data.role);
 
     if (response.ok) {
       // Redireccionar según el rol del usuario

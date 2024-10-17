@@ -1,25 +1,35 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../../app/context/AuthContext';
+
 
 const LinkTeacherModal = ({ groupId, onClose }) => {
+  const {schoolId} = useAuth();
+  const globalSchoolId = schoolId;
+
   const [teachers, setTeachers] = useState([]);
   const [filteredTeachers, setFilteredTeachers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Fetch all teachers for the school
+    // Lógica para obtener la lista de todos los profesors
     const fetchTeachers = async () => {
       try {
-        const response = await fetch('/api/teacher/teachers?schoolId=1'); // Asumiendo que el ID de la escuela es 1
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+
+        const response = await fetch(`/api/admin/teachers?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setTeachers(data);
-        setFilteredTeachers(data); // Mostrar todos inicialmente
+        setTeachers(data.teachers);
+        setFilteredTeachers(data.teachers); // Inicialmente mostrar todos
       } catch (error) {
-        console.error("Error fetching teachers:", error);
+        console.error('Error fetching teachers:', error);
       }
     };
 
     fetchTeachers();
-  }, []);
+  }, [globalSchoolId]);
 
   // Filtrar profesores por el término de búsqueda
   useEffect(() => {

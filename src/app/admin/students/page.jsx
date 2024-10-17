@@ -4,9 +4,16 @@
 import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Students/LinkStudentModal';
 import EditStudentModal from '../../../components/Modales/Students/EditStudentModal';
+import { useAuth } from '../../context/AuthContext';
 
 
 const StudentsPage = () => {
+
+  const {schoolId} = useAuth();
+  const globalSchoolId = schoolId;
+  console.log('globalSchoolId:', globalSchoolId);
+  console.log('schoolId:', schoolId);
+
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,11 +64,20 @@ const StudentsPage = () => {
 
 
   useEffect(() => {
+    if (!globalSchoolId) return; // No hacer nada si no hay schoolId
+
     // Lógica para obtener la lista de todos los estudiantes
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/api/admin/students');
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+
+        console.log('globalSchoolId:', globalSchoolId);
+        const response = await fetch(`/api/admin/students?schoolId=${globalSchoolId}`);
         const data = await response.json();
+        console.log('Fetched students:', data.students);
         setStudents(data.students);
         setFilteredStudents(data.students); // Inicialmente mostrar todos
       } catch (error) {
@@ -70,7 +86,7 @@ const StudentsPage = () => {
     };
 
     fetchStudents();
-  }, []);
+  }, [globalSchoolId]);
 
   // Función para manejar el cambio en la barra de búsqueda
   const handleSearch = (e) => {
@@ -85,7 +101,7 @@ const StudentsPage = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-24">
       <h1 className="text-4xl font-bold mb-6">Listado de Alumnos</h1>
 
       {/* Barra de búsqueda */}
@@ -98,9 +114,7 @@ const StudentsPage = () => {
       />
 
       {/* Lista de estudiantes */}
-      {filteredStudents.length === 0 ? (
-        <p>No hay estudiantes disponibles.</p>
-      ) : (
+      {Array.isArray(filteredStudents) && filteredStudents.length > 0 ? (
         <ul className="list-disc list-inside">
           {filteredStudents.map((student) => (
             <li key={student.id} className="flex justify-between items-center p-4 bg-gray-100 mb-2 rounded shadow-md">
@@ -114,12 +128,12 @@ const StudentsPage = () => {
                 <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Estadísticas</button>
               </div>
             </li>
-            
           ))}
-          
         </ul>
-        
+      ) : (
+        <p>No hay estudiantes disponibles.</p>
       )}
+      
       {showModal && (
         <LinkStudentModal
           studentId={selectedStudent}
