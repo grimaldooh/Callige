@@ -62,17 +62,21 @@ const LinkTeacherModal = ({ teacherId, onClose }) => {
           className="border border-gray-300 p-2 rounded w-full mb-4"
         />
         <ul className="max-h-60 overflow-y-auto">
-          {filteredGroups.map(group => (
-            <li key={group.id} className="flex justify-between items-center mb-2">
-              <span>{group.name}</span>
-              <button 
-                onClick={() => handleLinkGroup(group.id)} 
-                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-              >
-                Vincular
-              </button>
-            </li>
-          ))}
+          {Array.isArray(filteredGroups) && filteredGroups.length > 0 ? (
+            filteredGroups.map(group => (
+              <li key={group.id} className="flex justify-between items-center mb-2">
+                <span>{group.name}</span>
+                <button 
+                  onClick={() => handleLinkGroup(group.id)} 
+                  className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                >
+                  Vincular
+                </button>
+              </li>
+            ))
+          ) : (
+            <p>No hay grupos disponibles.</p>
+          )}
         </ul>
         <button 
           onClick={onClose} 

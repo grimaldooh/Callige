@@ -3,9 +3,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
+import {useAuth} from '../../context/AuthContext';
 
 const TeacherJustificantesPage = () => {
-  const teacherId = 9; // ID del profesor, este valor debe cambiarse por el real según tu lógica.
+  const {userId} = useAuth();
+  const teacherId = userId; 
+  console.log('teacherId:', teacherId);
+
   const [justificantes, setJustificantes] = useState([]);
   const [selectedJustificante, setSelectedJustificante] = useState(null);
   const [actionType, setActionType] = useState(null);
@@ -13,8 +17,16 @@ const TeacherJustificantesPage = () => {
   const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
+    if (!teacherId) {
+        console.log('teacherId no está disponible');
+        return; // No hace la solicitud si teacherId es null o undefined
+      }
     const fetchJustificantes = async () => {
       try {
+        if (!teacherId) {
+            console.log('teacherId is not defined');
+            return;
+          }
         const response = await axios.get('/api/teacher/justificantes', {
           params: {
             teacherId,
@@ -28,7 +40,7 @@ const TeacherJustificantesPage = () => {
     };
 
     fetchJustificantes();
-  }, []);
+  }, [teacherId]);
 
   const formattedDate = (fecha) => {
     const date = new Date(fecha);
@@ -81,10 +93,10 @@ const TeacherJustificantesPage = () => {
       )}
 
       <div className="mt-8 space-y-4">
-        {justificantes.length === 0 ? (
+        {Array.isArray(justificantes) && justificantes.length === 0 ? (
           <p>No hay justificantes pendientes.</p>
         ) : (
-          justificantes.map(justificante => (
+          Array.isArray(justificantes) && justificantes.map(justificante => (
             <div
               key={justificante.id}
               className="flex items-center bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto"

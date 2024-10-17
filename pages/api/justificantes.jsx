@@ -47,6 +47,12 @@ export default async function handler(req, res) {
           },
         });
 
+        const updatedAttendance = await prisma.attendance.update({
+          where: { id: parseInt(attendanceId, 10) },
+          data: { present: 2 }, // 2 en proceso de justificación
+        });
+
+        console.log('updatedAttendance:', updatedAttendance);
         console.log('justificante:', justificante);
         res.status(201).json(justificante);
 

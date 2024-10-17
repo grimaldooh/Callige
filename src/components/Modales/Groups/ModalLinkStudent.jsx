@@ -78,17 +78,21 @@ const LinkStudentModal = ({ groupId, onClose }) => {
           className="border border-gray-300 p-2 rounded w-full mb-4"
         />
         <ul className="max-h-60 overflow-y-auto">
-          {filteredStudents.map(student => (
-            <li key={student.id} className="flex justify-between items-center mb-2">
-              <span>{student.name}</span>
-              <button 
-                onClick={() => handleLinkStudent(student.id)} 
-                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-              >
-                Vincular
-              </button>
-            </li>
-          ))}
+          {Array.isArray(filteredStudents) && filteredStudents.length > 0 ? (
+            filteredStudents.map(student => (
+              <li key={student.id} className="flex justify-between items-center mb-2">
+                <span>{student.name}</span>
+                <button 
+                  onClick={() => handleLinkStudent(student.id)} 
+                  className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                >
+                  Vincular
+                </button>
+              </li>
+            ))
+          ) : (
+            <p>No hay estudiantes disponibles.</p>
+          )}
         </ul>
         <button 
           onClick={onClose} 

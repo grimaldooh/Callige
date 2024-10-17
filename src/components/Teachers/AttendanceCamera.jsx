@@ -76,12 +76,20 @@ const AttendanceCamera = () => {
               </tr>
             </thead>
             <tbody>
-              {attendanceList.map(student => (
-                <tr key={student.id}>
-                  <td className="border border-gray-200 p-2">{student.name}</td>
-                  <td className="border border-gray-200 p-2">{student.present ? '✔️' : '❌'}</td>
+              {Array.isArray(attendanceList) && attendanceList.length > 0 ? (
+                attendanceList.map(student => (
+                  <tr key={student.id}>
+                    <td className="border border-gray-200 p-2">{student.name}</td>
+                    <td className="border border-gray-200 p-2">{student.present ? '✔️' : '❌'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="2" className="text-center text-gray-600">
+                    No hay registros de asistencia disponibles.
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

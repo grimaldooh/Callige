@@ -5,18 +5,21 @@ const prisma = new PrismaClient();
 
 // API route to fetch the groups linked to the teacher
 export default async function handler(req, res) {
+  const { teacherId } = req.query; // Obtener el schoolId de la query
+  console.log('teacherId:', teacherId);
   if (req.method === 'GET') {
     try {
-      const teacherId = parseInt(req.query.teacherId, 10); // Assume teacherId is passed through the query
+      console.log('teacherId:', teacherId);
       const groups = await prisma.group.findMany({
         where: {
           teachers: {
             some: {
-              id: teacherId,
+              id: parseInt(teacherId),
             },
           },
         },
       });
+      console.log('groups:', groups);
 
       res.status(200).json({ groups });
     } catch (error) {

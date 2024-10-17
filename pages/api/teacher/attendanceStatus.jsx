@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         // Buscar el justificante con el ID proporcionado
         const justificante = await prisma.justificante.findUnique({
             where: { id: justificanteId },
-            include: { attendance: true },
+            include: { attendance: true},
         });
 
         console.log('Justificante found:', justificante);

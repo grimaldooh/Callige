@@ -14,7 +14,7 @@ const MAX_ABSENCES = 20;
 const GroupAttendancePage = () => {
   const { groupId } = useParams(); // Obtener el ID del grupo
   const [currentAttendanceId, setCurrentAttendanceId] = useState();
-  const studentId = 14; // Usar el ID del estudiante
+  const studentId = 15; // Usar el ID del estudiante
 
   const [attendances, setAttendances] = useState([]);
   const [absencePercentage, setAbsencePercentage] = useState(0);
@@ -133,30 +133,46 @@ const GroupAttendancePage = () => {
             </tr>
           </thead>
           <tbody>
-            {attendances.map((att) => (
-              <tr key={att.id}>
-                <td className="border px-4 py-2">
-                  {formattedDate(att.attendanceList.fecha)}
-                </td>
-                <td
-                  className={`border px-4 py-2 ${
-                    att.present===1 ? "bg-green-200" : "bg-red-200"
-                  }`}
-                >
-                  {att.present===1 ? "Asistió" : "Faltó"}
-                  {att.present===0 && (
-                    <button
-                      className="ml-4 bg-blue-500 text-white px-2 py-1 rounded"
-                      onClick={() =>
-                        openJustificationModal(att.attendanceList.fecha, att.id)
-                      }
-                    >
-                      Solicitar Justificante
-                    </button>
-                  )}
+            {Array.isArray(attendances) && attendances.length > 0 ? (
+              attendances.map((att) => (
+                <tr key={att.id}>
+                  <td className="border px-4 py-2">
+                    {formattedDate(att.attendanceList.fecha)}
+                  </td>
+                  <td
+                    className={`border px-4 py-2 ${
+                      att.present === 1
+                        ? "bg-green-200"
+                        : att.present === 0
+                        ? "bg-red-200"
+                        : "bg-blue-200"
+                    }`}
+                  >
+                    {att.present === 1
+                      ? "Asistió"
+                      : att.present === 0
+                      ? "Faltó"
+                      : "Justificación en proceso"}
+                    {att.present === 0 && (
+                      <button
+                        className="ml-4 bg-blue-500 text-white px-2 py-1 rounded"
+                        onClick={() =>
+                          openJustificationModal(att.attendanceList.fecha, att.id)
+                        }
+                      >
+                        Solicitar Justificante
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="2" className="text-center text-gray-600">
+                  No hay registros de asistencia disponibles.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
         {/* Modal */}

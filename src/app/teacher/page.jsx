@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '../context/AuthContext';
+import { te } from 'date-fns/locale';
 
 const TeachersPage = () => {
+  const { schoolId, userId } = useAuth();
+  const globalSchoolId = schoolId;
+  const teacherId = userId;
+
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -11,10 +17,18 @@ const TeachersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!teacherId) {
+      console.log('teacherId no está disponible');
+      return; // No hace la solicitud si teacherId es null o undefined
+    }
     // Lógica para obtener los grupos vinculados al profesor
     const fetchGroups = async () => {
       try {
-        const response = await fetch('/api/teacher/groups?teacherId=9');
+        if (!teacherId) {
+          console.log('teacherId is not defined');
+          return;
+        }
+        const response = await fetch(`/api/teacher/groups?teacherId=${teacherId}`);
         const data = await response.json();
         console.log('data:', data);
         setGroups(data.groups);
@@ -26,7 +40,7 @@ const TeachersPage = () => {
     // Obtener los eventos vinculados al profesor
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/teacher/events?teacherId=10');
+        const response = await fetch(`/api/teacher/events?teacherId=${teacherId}`);
         const data = await response.json();
         setEvents(data.events);
       } catch (error) {
@@ -36,20 +50,8 @@ const TeachersPage = () => {
 
     fetchEvents();
     fetchGroups();
-  }, []);
+  }, [teacherId]);
 
-  const handleOpenGroupModal = async (groupId) => {
-    try {
-      const response = await fetch(`/api/groups?groupId=${groupId}`);
-      const data = await response.json();
-      setStudents(data);
-      console.log('studentes:', data);
-      setSelectedGroup(groupId);
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
-  };
 
   return (
     <div className="container mx-auto ">
@@ -62,13 +64,13 @@ const TeachersPage = () => {
         <h2 className="text-4xl font-bold mb-8 text-center">
           Eventos del Docente
         </h2>
-        {events.length === 0 ? (
+        {Array.isArray(events) && events.length === 0 ? (
           <p className="text-center text-xl text-gray-600">
             No hay eventos disponibles.
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
-            {events.map((event) => (
+            {Array.isArray(events) && events.map((event) => (
               <div
                 key={event.id}
                 className="event-card bg-white shadow-lg rounded-lg overflow-hidden"
@@ -103,7 +105,7 @@ const TeachersPage = () => {
         <h2 className="text-4xl font-bold mb-8 text-center">
           Grupos Vinculados
         </h2>
-        {groups.length > 0 ? (
+        {Array.isArray(groups) && groups.length > 0 ? (
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {groups.map((group) => (
               <li

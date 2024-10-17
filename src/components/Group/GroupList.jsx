@@ -15,7 +15,7 @@ const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
           Estudiantes del Grupo {selectedGroup}
         </h2>
         <ul className="space-y-4">
-          {students.length > 0 ? (
+          {Array.isArray(students) && students.length > 0 ? (
             students.map((student) => (
               <li key={student.id} className="flex justify-between items-center p-4 bg-gray-100 rounded-lg shadow">
                 <div>

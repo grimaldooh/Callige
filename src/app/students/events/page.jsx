@@ -2,24 +2,33 @@
 
 import React, { useState, useEffect } from 'react';
 import EventList from '../../../components/EventList';
+import { useAuth } from '@/app/context/AuthContext';
 
 const EventsPage = () => {
+  const { schoolId } = useAuth();
+  const globalSchoolId = schoolId;
+
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
+    if (!globalSchoolId) return; // No hacer nada si no hay schoolId
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/events');
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+        const response = await fetch(`/api/admin/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setEvents(data);
+        setEvents(data.events);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
     fetchEvents();
-  }, []);
+  }, [globalSchoolId]);
 
   const handleAttendClick = (event) => {
     setSelectedEvent(event);

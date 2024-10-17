@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'next/navigation'; // Si el ID del estudiante está en la URL, si no puedes usar el ID directamente.
 
-const studentId = 14; // Reemplazar con el ID del estudiante
+const studentId = 15; // Reemplazar con el ID del estudiante
 
 const formattedDate = (fecha) => {
   const date = new Date(fecha);
