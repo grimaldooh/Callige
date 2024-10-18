@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
   const { groupId } = req.query;
   console.log('groupId:', groupId);
-
+  res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'GET') {
     console.log('GET');
     try {

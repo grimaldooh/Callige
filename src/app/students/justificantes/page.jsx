@@ -4,8 +4,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'next/navigation'; // Si el ID del estudiante está en la URL, si no puedes usar el ID directamente.
+import { useAuth } from '@/app/context/AuthContext';
 
-const studentId = 15; // Reemplazar con el ID del estudiante
+
 
 const formattedDate = (fecha) => {
   const date = new Date(fecha);
@@ -14,10 +15,15 @@ const formattedDate = (fecha) => {
 };
 
 const JustificantesPage = () => {
+  const { userId } = useAuth();
+  const studentId = userId;
+  console.log('studentId:', studentId);
   const [justificantes, setJustificantes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!studentId) return; // No hacer nada si no hay studentId
+    
     const fetchJustificantes = async () => {
       try {
         const response = await axios.get(`/api/student/justificante`, {
@@ -32,7 +38,7 @@ const JustificantesPage = () => {
     };
 
     fetchJustificantes();
-  }, []);
+  }, [studentId]);
 
   if (loading) return <p>Cargando justificantes...</p>;
 

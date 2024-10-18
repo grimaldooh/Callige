@@ -49,15 +49,21 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid action' });
         }
 
-        console.log('Updating attendance status for ID:', justificante.attendance_id);
+        try {
+            console.log("Actualizando asistencia...");
+            console.log("justificante.attendance_id:", justificante.attendance_id);
+            console.log("newStatus:", newStatus);
 
-        // Actualizar el estado de la asistencia asociada
-        await prisma.attendance.update({
-            where: { id: justificante.attendance_id },
-            data: { present: newStatus },
-        });
+            // Actualizar el estado de la asistencia asociada
+            const updatedAttendance = await prisma.attendance.update({
+                where: { id: justificante.attendance_id },
+                data: { present: newStatus },
+            });
 
-        console.log('Attendance status updated successfully');
+            console.log("Asistencia actualizada:", updatedAttendance);
+        } catch (error) {
+            console.error("Error al actualizar la asistencia:", error);
+        }
 
         console.log('Updating justificante status for ID:', justificanteId);
 

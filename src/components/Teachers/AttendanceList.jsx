@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+
 
 const AttendanceList = ({ groupId }) => {
   const [attendanceLists, setAttendanceLists] = useState([]);
@@ -31,6 +34,11 @@ const AttendanceList = ({ groupId }) => {
       fetchStudents();
     }
   }, [groupId]);
+
+  useEffect(() => { 
+    console.log('attendanceLists:', attendanceLists);
+    console.log('students:', students);
+  }, [attendanceLists, students]);
 
   // Función para formatear fechas
   const formattedDate = (fecha) => {
@@ -106,8 +114,37 @@ const AttendanceList = ({ groupId }) => {
               {attendanceLists.map(attendanceList => {
                 const attendance = attendanceList.attendances.find(a => a.student_id === student.id);
                 return (
-                  <td key={attendanceList.id} className="border border-gray-200 p-2">
-                    {attendance ? (attendance.present ? '✔️' : '❌') : 'N/A'}
+                  <td
+                    key={attendanceList.id}
+                    className="border border-gray-200 p-2"
+                  >
+                    {attendance ? (
+                      attendance.present === 1 ? (
+                        <FontAwesomeIcon
+                          icon={faCheck}
+                          className="text-green-500"
+                        />
+                      ) : attendance.present === 2 ? (
+                        <FontAwesomeIcon
+                          icon={faFileAlt}
+                          className="text-blue-500"
+                        />
+                      ) : attendance.present === 0 ? (
+                        <FontAwesomeIcon
+                          icon={faTimes}
+                          className="text-red-500"
+                        />
+                      ) : attendance.present === 3 ? (
+                        <FontAwesomeIcon
+                          icon={faTimes}
+                          className="text-red-500"
+                        />
+                      ) : (
+                        "N/A"
+                      )
+                    ) : (
+                      "N/A"
+                    )}
                   </td>
                 );
               })}

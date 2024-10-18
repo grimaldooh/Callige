@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { parse } from 'path';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
 
     try {
       const justificantes = await prisma.justificante.findMany({
-        where: { student_id: Number(studentId) },
+        where: { student_id: parseInt(studentId) },
         include: { group: true }, // Incluir datos del grupo
       });
 

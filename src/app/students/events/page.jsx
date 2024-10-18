@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import EventList from '../../../components/EventList';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const EventsPage = () => {
   const { schoolId } = useAuth();

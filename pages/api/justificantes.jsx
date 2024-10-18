@@ -42,7 +42,7 @@ export default async function handler(req, res) {
             student: { connect: { id: parseInt(studentId, 10) } },
             group: { connect: { id: parseInt(groupId, 10) } },
             attendance: { connect: { id: parseInt(attendanceId, 10) } },
-            status: 1, //1 = pendiente, 2 = aprobado, 3 = rechazado
+            status: 2, //1 = aprobado, 2 = pendiente, 3 = rechazado
             imageUrl,
           },
         });

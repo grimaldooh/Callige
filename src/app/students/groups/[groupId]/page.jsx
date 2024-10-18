@@ -7,6 +7,7 @@ import axios from "axios";
 import { Bar } from "react-chartjs-2";
 import { format } from 'date-fns';
 import JustificationModal from "../../../../components/ModalAddJustificante";
+import { useAuth } from "@/app/context/AuthContext";
 
 
 const MAX_ABSENCES = 20;
@@ -14,8 +15,7 @@ const MAX_ABSENCES = 20;
 const GroupAttendancePage = () => {
   const { groupId } = useParams(); // Obtener el ID del grupo
   const [currentAttendanceId, setCurrentAttendanceId] = useState();
-  const studentId = 15; // Usar el ID del estudiante
-
+  const { userId: studentId } = useAuth();
   const [attendances, setAttendances] = useState([]);
   const [absencePercentage, setAbsencePercentage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -143,16 +143,24 @@ const GroupAttendancePage = () => {
                     className={`border px-4 py-2 ${
                       att.present === 1
                         ? "bg-green-200"
+                        : att.present === 2
+                        ? "bg-blue-200"
+                        : att.present === 3
+                        ? "bg-red-200"
                         : att.present === 0
                         ? "bg-red-200"
-                        : "bg-blue-200"
+                        : ""
                     }`}
                   >
                     {att.present === 1
                       ? "Asistió"
+                      : att.present === 2
+                      ? "Justificación en proceso"
+                      : att.present === 3
+                      ? "Faltó"
                       : att.present === 0
                       ? "Faltó"
-                      : "Justificación en proceso"}
+                      : "N/A"}
                     {att.present === 0 && (
                       <button
                         className="ml-4 bg-blue-500 text-white px-2 py-1 rounded"
