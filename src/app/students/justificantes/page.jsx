@@ -42,8 +42,8 @@ const JustificantesPage = () => {
 
   if (loading) return <p>Cargando justificantes...</p>;
 
-  const justificantesPendientes = justificantes.filter((j) => j.status === 1);
-  const justificantesAprobados = justificantes.filter((j) => j.status === 2);
+  const justificantesPendientes = justificantes.filter((j) => j.status === 2);
+  const justificantesAprobados = justificantes.filter((j) => j.status === 1);
   const justificantesRechazados = justificantes.filter((j) => j.status === 3);
 
   return (
