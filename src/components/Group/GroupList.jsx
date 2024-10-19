@@ -1,12 +1,34 @@
-// components/GroupStudentsModal.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AttendanceList from './AttendanceList';
 
 const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
-  if (!isOpen) return null;
+  const [students, setStudents] = useState([]);
 
-  console.log('students:', data);
-  const students = data.students;
+  useEffect(() => {
+    if (data && data.students) {
+      // Carga los estudiantes al abrir el modal
+      setStudents(data.students);
+    }
+  }, [data]);
+
+  const handleRemoveStudent = async (studentId) => {
+    const response = await fetch('/api/group/removeAssistant', {
+      method: 'POST',
+      body: JSON.stringify({ groupId: selectedGroup, studentId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      // Filtra el estudiante eliminado de la lista
+      setStudents((prevStudents) => prevStudents.filter((student) => student.id !== studentId));
+    } else {
+      console.error('Error al desvincular el estudiante');
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
@@ -22,6 +44,12 @@ const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
                   <p className="text-lg font-semibold text-gray-700">{student.name}</p>
                   <p className="text-gray-500">{student.email}</p>
                 </div>
+                <button
+                  onClick={() => handleRemoveStudent(student.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Desvincular
+                </button>
               </li>
             ))
           ) : (

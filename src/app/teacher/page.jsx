@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { te } from 'date-fns/locale';
+import ListaAsistentes from '../../components/Modales/Events/ListaAsistentes';
+
 
 const TeachersPage = () => {
   const { schoolId, userId } = useAuth();
@@ -12,9 +14,23 @@ const TeachersPage = () => {
 
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [students, setStudents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
+
+
+  const openListaAsistentesModal = (eventId) => {
+    console.log('openListaAsistentesModal:', eventId);
+    setSelectedEvent(eventId);
+    setShowListaAsistentesModal(true);
+  };
+
+  const closeListaAsistentesModal = () => {
+    setShowListaAsistentesModal(false);
+    setSelectedEvent(null);
+  };
 
   useEffect(() => {
     if (!teacherId) {
@@ -70,32 +86,38 @@ const TeachersPage = () => {
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
-            {Array.isArray(events) && events.map((event) => (
-              <div
-                key={event.id}
-                className="event-card bg-white shadow-lg rounded-lg overflow-hidden"
-              >
-                {/* Imagen del evento */}
-                {event.imageUrl && (
-                  <img
-                    src={event.imageUrl}
-                    alt={event.name}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-6">
-                  <h3 className="text-2xl font-semibold mb-2">{event.name}</h3>
-                  <p className="text-gray-600 mb-4">
-                    {new Date(event.date).toLocaleDateString()} -{" "}
-                    {event.location}
-                  </p>
-                  <p className="text-gray-800 mb-6">{event.description}</p>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    Ver detalles
-                  </button>
+            {Array.isArray(events) &&
+              events.map((event) => (
+                <div
+                  key={event.id}
+                  className="event-card bg-white shadow-lg rounded-lg overflow-hidden"
+                >
+                  {/* Imagen del evento */}
+                  {event.imageUrl && (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.name}
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-2xl font-semibold mb-2">
+                      {event.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {new Date(event.date).toLocaleDateString()} -{" "}
+                      {event.location}
+                    </p>
+                    <p className="text-gray-800 mb-6">{event.description}</p>
+                    <button
+                      onClick={() => openListaAsistentesModal(event.id)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    >
+                      Ver detalles
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>
@@ -128,6 +150,10 @@ const TeachersPage = () => {
           </p>
         )}
       </div>
+
+      {showListaAsistentesModal && (
+        <ListaAsistentes eventId={selectedEvent} onClose={closeListaAsistentesModal} />
+      )}
     </div>
   );
 };

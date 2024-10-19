@@ -1,4 +1,3 @@
-// src/components/Modales/Group/ListaAsistentes.jsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -8,8 +7,6 @@ const ListaAsistentes = ({ groupId, onClose }) => {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-
-    console.log('groupId:', groupId);
     const fetchAssistants = async () => {
       try {
         const response = await fetch(`/api/group/assistants?groupId=${groupId}`);
@@ -31,6 +28,52 @@ const ListaAsistentes = ({ groupId, onClose }) => {
     }
   }, [groupId]);
 
+  // Función para desvincular a un profesor
+  const handleUnlinkTeacher = async (teacherId) => {
+    try {
+      const response = await fetch('/api/group/unlinkTeacher', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ groupId, teacherId }),
+      });
+
+      if (response.ok) {
+        setProfessors((prev) => prev.filter((teacher) => teacher.id !== teacherId));
+        alert('Profesor desvinculado correctamente');
+      } else {
+        const data = await response.json();
+        console.error('Error desvinculando profesor:', data.message);
+      }
+    } catch (error) {
+      console.error('Error desvinculando profesor:', error);
+    }
+  };
+
+  // Función para desvincular a un estudiante
+  const handleUnlinkStudent = async (studentId) => {
+    try {
+      const response = await fetch('/api/group/unlinkStudent', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ groupId, studentId }),
+      });
+
+      if (response.ok) {
+        setStudents((prev) => prev.filter((student) => student.id !== studentId));
+        alert('Estudiante desvinculado correctamente');
+      } else {
+        const data = await response.json();
+        console.error('Error desvinculando estudiante:', data.message);
+      }
+    } catch (error) {
+      console.error('Error desvinculando estudiante:', error);
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
@@ -46,8 +89,14 @@ const ListaAsistentes = ({ groupId, onClose }) => {
           {professors.length > 0 ? (
             <ul className="list-disc list-inside">
               {professors.map((professor) => (
-                <li key={professor.id} className="mb-1">
-                  {professor.name} - {professor.email}
+                <li key={professor.id} className="mb-1 flex justify-between items-center">
+                  <span>{professor.name} - {professor.email}</span>
+                  <button
+                    onClick={() => handleUnlinkTeacher(professor.id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                  >
+                    Desvincular
+                  </button>
                 </li>
               ))}
             </ul>
@@ -61,8 +110,14 @@ const ListaAsistentes = ({ groupId, onClose }) => {
           {students.length > 0 ? (
             <ul className="list-disc list-inside">
               {students.map((student) => (
-                <li key={student.id} className="mb-1">
-                  {student.name} - {student.email}
+                <li key={student.id} className="mb-1 flex justify-between items-center">
+                  <span>{student.name} - {student.email}</span>
+                  <button
+                    onClick={() => handleUnlinkStudent(student.id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                  >
+                    Desvincular
+                  </button>
                 </li>
               ))}
             </ul>
