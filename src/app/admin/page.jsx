@@ -15,6 +15,8 @@ import { useAuth } from '../context/AuthContext';
 
 export default function AdminPage() {
 
+  const token = localStorage.getItem('token');
+  console.log('token:', token);
   const { userId, schoolId, role, login, logout } = useAuth();
   console.log('userId:', userId);
 
@@ -77,7 +79,11 @@ export default function AdminPage() {
 
     async function fetchStats() {
       try {
-        const response = await fetch(`/api/stats?schoolId=${globalSchoolId}`);        
+        const response = await fetch(`/api/stats?schoolId=${globalSchoolId}`,{
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });        
         const data = await response.json();
         setTotalStudents(data.totalStudents);
         setTotalTeachers(data.totalTeachers);

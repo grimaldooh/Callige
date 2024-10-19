@@ -28,11 +28,24 @@ const LoginPage = () => {
       body: JSON.stringify({ email, password }),
     });
 
+    //console.log('Response:', response);
+
     const data = await response.json();
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error:', errorText); // Log para ver qué está devolviendo el servidor
+      throw new Error(data.message || 'Something went wrong');
+
+    }
+
+    // Guardar el token en localStorage
+    localStorage.setItem('token', data.token);
 
     login(data.userId, data.schoolId, data.role);
 
     if (response.ok) {
+      console.log('data:', data);
       // Redireccionar según el rol del usuario
       switch (data.role) {
         case 'admin':

@@ -7,10 +7,10 @@ export default function AccessDenied() {
       <h1 className="text-4xl font-bold mb-4 text-red-600">Acceso Denegado</h1>
       <p className="mb-8 text-lg text-gray-600">No tienes permiso para acceder a esta página.</p>
 
-      <Link href="/auth/login">
-        <a className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      <Link href="/auth/login" passHref>
+        <span className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
           Volver al inicio
-        </a>
+        </span>
       </Link>
     </div>
   );
