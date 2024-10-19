@@ -101,39 +101,56 @@ const TeacherJustificantesPage = () => {
               key={justificante.id}
               className="flex items-center bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
             >
-              {/* Imagen del justificante */}
+              {/* Imagen del estudiante */}
               <img
-                src={justificante.imageUrl || '/placeholder-image.jpg'}
-                alt="Justificante"
-                className="h-32 w-32 object-cover cursor-pointer"
-                onClick={() => handleImageClick(justificante.imageUrl)}
+                src={justificante.student.imageUrl || '/placeholder-image.jpg'}
+                alt="Estudiante"
+                className="h-32 w-32 object-cover rounded-full"
               />
 
               {/* Detalles del justificante */}
-              <div className="ml-6">
+              <div className="ml-6 flex-1">
                 <p className="text-lg font-semibold">
                   {justificante.razon} - {formattedDate(justificante.fecha)}
                 </p>
-                <p className="text-gray-600 mt-2 break-words max-w-full">Descripción: {justificante.descripcion}</p>                
-                <p className="text-gray-600 mt-10">
-                  Grupo: {justificante.group.name}
+                <p className="text-gray-600 mt-2 break-words max-w-full">
+                  <span className="font-bold">Descripción:</span> {justificante.descripcion}
+                </p>
+                <p className="text-gray-600 mt-2">
+                  <span className="font-bold">Estudiante:</span> {justificante.student.name}
+                </p>
+                <p className="text-gray-600 mt-2">
+                  <span className="font-bold">Grupo:</span> {justificante.group.name}
                 </p>
 
                 {/* Botones para aprobar o rechazar */}
                 <div className="mt-4">
-                  <button 
-                    onClick={() => openConfirmationModal(justificante, 'approved')} 
+                  <button
+                    onClick={() => openConfirmationModal(justificante, 'approved')}
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                   >
                     Aprobar
                   </button>
-                  <button 
-                    onClick={() => openConfirmationModal(justificante, 'rejected')} 
+                  <button
+                    onClick={() => openConfirmationModal(justificante, 'rejected')}
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
                   >
                     Rechazar
                   </button>
                 </div>
+              </div>
+
+              {/* Imagen del justificante */}
+              <div className="ml-6 text-center">
+                <img
+                  src={justificante.imageUrl || '/placeholder-image.jpg'}
+                  alt="Justificante"
+                  className="h-32 w-32 object-cover cursor-pointer border-2 border-gray-300"
+                  onClick={() => handleImageClick(justificante.imageUrl)}
+                />
+                <p className="text-blue-500 mt-2 cursor-pointer" onClick={() => handleImageClick(justificante.imageUrl)}>
+                  Descargar Justificante
+                </p>
               </div>
             </div>
           ))

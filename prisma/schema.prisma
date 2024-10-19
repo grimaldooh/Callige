@@ -45,6 +45,7 @@ model Admin {
 model Group {
   id        Int          @id @default(autoincrement())
   name      String
+  max_absences Int?
   school    School?       @relation(fields: [school_id], references: [id])
   school_id Int?
   students  Student[]     @relation("GroupStudents") // Relación muchos a muchos con estudiantes

@@ -2,6 +2,8 @@
 //src/app/admin/events/page.jsx
 import { useEffect, useState } from 'react';
 import LinkTeacherModal from '../../../components/Modales/Events/ModalLinkTeacher';
+import ListaAsistentes from '../../../components/Modales/Events/ListaAsistentes';
+
 import EditEventModal from '../../../components/Modales/Events/EditEventModal';
 import { useAuth } from '../../context/AuthContext';
 import { gl } from 'date-fns/locale';
@@ -16,6 +18,8 @@ const EventsPage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModalTeacher, setShowModalTeacher] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
+
 
   const openModalTeacher = (eventId) => {
     setSelectedEvent(eventId);
@@ -36,6 +40,17 @@ const EventsPage = () => {
     setShowEditModal(false);
     setSelectedEvent(null);
   };
+
+  const openListaAsistentesModal = (eventId) => {
+    setSelectedEvent(eventId);
+    setShowListaAsistentesModal(true);
+  };
+
+  const closeListaAsistentesModal = () => {
+    setShowListaAsistentesModal(false);
+    setSelectedEvent(null);
+  };
+
 
   useEffect(() => {
     if (!globalSchoolId) return; // No hacer nada si no hay schoolId
@@ -130,8 +145,11 @@ const EventsPage = () => {
                 >
                   Vincular profesor
                 </button>
-                <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
-                  Estadísticas
+                <button
+                  onClick={() => openListaAsistentesModal(event.id)}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                >
+                  Ver lista de alumnos y profesores
                 </button>
               </div>
             </li>
@@ -147,6 +165,9 @@ const EventsPage = () => {
 
       {showEditModal && (
         <EditEventModal eventId={selectedEvent} onClose={closeEditModal} />
+      )}
+      {showListaAsistentesModal && (
+        <ListaAsistentes eventId={selectedEvent} onClose={closeListaAsistentesModal} />
       )}
     </div>
   );

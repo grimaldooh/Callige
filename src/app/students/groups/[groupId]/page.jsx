@@ -4,22 +4,21 @@
 import { useEffect, useState } from "react";
 import { useParams } from 'next/navigation'; // Usamos useParams
 import axios from "axios";
-import { Bar } from "react-chartjs-2";
-import { format } from 'date-fns';
 import JustificationModal from "../../../../components/ModalAddJustificante";
 import { useAuth } from "@/app/context/AuthContext";
 
-
-const MAX_ABSENCES = 20;
-
 const GroupAttendancePage = () => {
   const { groupId } = useParams(); // Obtener el ID del grupo
-  const [currentAttendanceId, setCurrentAttendanceId] = useState();
   const { userId: studentId } = useAuth();
+  const [currentAttendanceId, setCurrentAttendanceId] = useState();
   const [attendances, setAttendances] = useState([]);
   const [absencePercentage, setAbsencePercentage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [group, setGroup] = useState(null);
+  const [absences, setAbsences] = useState(0);
+  const [absenceColor, setAbsenceColor] = useState("bg-green-500");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAttendances = async () => {
@@ -33,26 +32,48 @@ const GroupAttendancePage = () => {
         const { data } = response;
 
         setAttendances(data.attendances);
+        setAbsences(data.absences);
         console.log("attendances:", data.attendances);
-        setAbsencePercentage(data.absencePercentage*5);
       } catch (error) {
         console.error("Error fetching attendances:", error);
       }
     };
 
-    fetchAttendances();
-  }, [groupId]);
+    const fetchGroup = async () => {
+      try {
+        const response = await axios.get(`/api/admin/findGroup?id=${groupId}`);
+        const data = response.data;
+        setGroup(data);
+        console.log('Group data:', data);
+      } catch (error) {
+        console.error('Error fetching group:', error);
+      }
+    };
 
-  const absenceColor = getAbsenceColor(absencePercentage);
+    if (groupId && studentId) {
+      fetchGroup();
+      fetchAttendances();
+      setIsLoading(false);
+    }
+  }, [groupId, studentId]);
 
-  
+  useEffect(() => {
+    if (!group) return;
+    const percentage = (absences / (group.max_absences )) * 100;
+    setAbsencePercentage(percentage);
+  }, [absences, group]);
+
+  useEffect(() => {
+    setAbsenceColor(getAbsenceColor(absencePercentage));
+  }, [absencePercentage]);
+
   const formattedDate = (fecha) => {
     const date = new Date(fecha);
     const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
     const formattedDate = adjustedDate.toLocaleDateString();
     return formattedDate;
   };
-  
+
   const openJustificationModal = (fecha, attendanceId) => {
     setCurrentAttendanceId(attendanceId);
     setSelectedDate(fecha);
@@ -74,26 +95,25 @@ const GroupAttendancePage = () => {
       formData.append('groupId', groupId);
       formData.append('attendanceId', currentAttendanceId);
       formData.append('fecha', selectedDate);
-      
 
-      console.log('fecha:', selectedDate);  
+      console.log('fecha:', selectedDate);
       console.log('groupId:', groupId);
       console.log('studentId:', studentId);
       console.log('attendanceId:', currentAttendanceId);
       if (image) {
         formData.append('image', image); // Agregar la imagen al formData si está disponible
       }
-  
+
       // Realizar la petición POST al API
       const response = await fetch('/api/justificantes', {
         method: 'POST',
         body: formData, // Enviar el FormData como cuerpo de la petición
       });
-  
+
       if (!response.ok) {
         throw new Error('Error al enviar el justificante');
       }
-  
+
       // Mostrar una respuesta de éxito o manejar el estado
       const data = await response.json();
       console.log('Justificante enviado exitosamente:', data);
@@ -104,10 +124,16 @@ const GroupAttendancePage = () => {
     }
   };
 
+  if (isLoading) {
+    return <div className="container mx-auto p-4">Cargando...</div>;
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mt-20 mb-4">
-        Asistencias del Grupo {groupId}
+        {group
+          ? `Asistencias del Grupo de ${group.name}`
+          : "Cargando datos del grupo..."}
       </h1>
 
       <div className="mt-10">
@@ -121,6 +147,16 @@ const GroupAttendancePage = () => {
             {absencePercentage}%
           </span>
         </div>
+        <p className="mt-4 text-gray-700">
+          {group
+            ? `Faltas en el semestre : ${absences} / ${group.max_absences}`
+            : "Cargando datos del grupo..."}
+        </p>
+        <p className="mt-4 text-gray-700">
+          {group
+            ? `Número máximo de faltas: ${group.max_absences}`
+            : "Cargando datos del grupo..."}
+        </p>
       </div>
 
       <div className="mt-8">
@@ -165,7 +201,10 @@ const GroupAttendancePage = () => {
                       <button
                         className="ml-4 bg-blue-500 text-white px-2 py-1 rounded"
                         onClick={() =>
-                          openJustificationModal(att.attendanceList.fecha, att.id)
+                          openJustificationModal(
+                            att.attendanceList.fecha,
+                            att.id
+                          )
                         }
                       >
                         Solicitar Justificante
@@ -184,11 +223,11 @@ const GroupAttendancePage = () => {
           </tbody>
         </table>
         {/* Modal */}
-      <JustificationModal
-        isOpen={isModalOpen}
-        onClose={closeJustificationModal}
-        onSubmit={handleJustificationSubmit}
-      />
+        <JustificationModal
+          isOpen={isModalOpen}
+          onClose={closeJustificationModal}
+          onSubmit={handleJustificationSubmit}
+        />
       </div>
     </div>
   );

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Modales/Groups/ModalLinkStudent';
 import LinkTeacherModal from '../../../components/Modales/Groups/ModalLinkTeacher';
+import ListaAsistentes from '../../../components/Modales/Groups/ListaAsistentes';
+
 import EditGroupModal from '../../../components/Modales/Groups/ModalEditGroup';
 import { useAuth } from '../../context/AuthContext';
 
@@ -18,6 +20,7 @@ const GroupsPage = () => {
   const [showModalStudent, setShowModalStudent] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); // Modal de edición del grupo
   const [activeGroup, setActiveGroup] = useState(false);
+  const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
 
   const openModalTeacher = (groupId) => {
     setSelectedGroup(groupId);
@@ -38,6 +41,16 @@ const GroupsPage = () => {
     setShowModalStudent(false);
     setShowModalTeacher(false);
     setShowEditModal(false); // Cierra la modal de edición del grupo
+    setSelectedGroup(null);
+  };
+
+  const openListaAsistentesModal = (groupId) => {
+    setSelectedGroup(groupId);
+    setShowListaAsistentesModal(true);
+  };
+
+  const closeListaAsistentesModal = () => {
+    setShowListaAsistentesModal(false);
     setSelectedGroup(null);
   };
 
@@ -158,8 +171,11 @@ const GroupsPage = () => {
                 >
                   Vincular alumno
                 </button>
-                <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
-                  Estadísticas
+                <button
+                  onClick={() => openListaAsistentesModal(group.id)}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                >
+                  Ver lista de alumnos y profesores
                 </button>
               </div>
             </li>
@@ -176,6 +192,9 @@ const GroupsPage = () => {
       )}
       {showEditModal && (
         <EditGroupModal groupId={selectedGroup} onClose={closeModal} />
+      )}
+      {showListaAsistentesModal && (
+        <ListaAsistentes groupId={selectedGroup} onClose={closeListaAsistentesModal} />
       )}
     </div>
   );

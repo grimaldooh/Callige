@@ -10,7 +10,7 @@ export async function middleware(req) {
 
   // Si no está autenticado, redirigir al login
 
-  console.log("Token:", tokenCookie);
+  //console.log("Token:", tokenCookie);
   if (!tokenCookie) {
     if (
       pathname !== "/auth/login" &&
@@ -28,7 +28,7 @@ export async function middleware(req) {
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
     const userRole = payload.role;
-    console.log("Role:", userRole);
+    //console.log("Role:", userRole);
 
     // Proteger rutas según el rol
     if (pathname.startsWith("/admin") && userRole !== "admin") {
