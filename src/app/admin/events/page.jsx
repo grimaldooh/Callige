@@ -98,6 +98,7 @@ const EventsPage = () => {
       });
       if (response.ok) {
         setEvents(events.filter(event => event.id !== eventId)); // Eliminar evento del estado
+        setFilteredEvents(filteredEvents.filter(event => event.id !== eventId)); // Eliminar evento del
         alert('Evento eliminado correctamente');
       }
     } catch (error) {
@@ -164,10 +165,10 @@ const EventsPage = () => {
       )}
 
       {showEditModal && (
-        <EditEventModal eventId={selectedEvent} onClose={closeEditModal} />
+        <EditEventModal eventId={selectedEvent} setEvents={setFilteredEvents} onClose={closeEditModal} />
       )}
       {showListaAsistentesModal && (
-        <ListaAsistentes eventId={selectedEvent} onClose={closeListaAsistentesModal} />
+        <ListaAsistentes eventId={selectedEvent} setEvents={setFilteredEvents} onClose={closeListaAsistentesModal} />
       )}
     </div>
   );

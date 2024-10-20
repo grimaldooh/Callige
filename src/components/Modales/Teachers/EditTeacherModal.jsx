@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const EditTeacherModal = ({ teacherId, onClose }) => {
+const EditTeacherModal = ({ teacherId, onClose , setTeachers}) => {
   const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(false); // Para manejar el estado de carga
 
@@ -45,7 +45,11 @@ const EditTeacherModal = ({ teacherId, onClose }) => {
       });
 
       if (response.ok) {
+        const updatedTeacher = await response.json();
         alert('Profesor actualizado correctamente');
+        setTeachers((prevTeachers) =>
+          prevTeachers.map((t) => (t.id === teacherId ? updatedTeacher : t))
+        );
         onClose(); // Cierra la modal tras guardar los cambios
       } else {
         alert('Hubo un error al actualizar el profesor');

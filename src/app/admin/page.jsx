@@ -147,8 +147,12 @@ export default function AdminPage() {
       });
   
       if (response.ok) {
+        const newEvent = await response.json();
+
         console.log('Event added successfully');
         // Handle UI updates
+        setEvents((prevEvents) => [...prevEvents, newEvent]);
+
         handleCloseEventModal(); // Close modal after submission
       } else {
         
@@ -255,8 +259,12 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
+        const newGroup = await response.json(); 
+        setGroups((prevGroups) => [...prevGroups, newGroup]);
+
         setTotalGroups(totalGroups + 1); // Incrementa el total de grupos
         handleCloseGroupModal(); // Cierra el modal
+
       } else {
         console.error("Failed to add group");
       }

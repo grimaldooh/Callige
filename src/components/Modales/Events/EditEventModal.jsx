@@ -1,8 +1,9 @@
 'use client';
 
+import { set } from 'date-fns';
 import { useState, useEffect } from 'react';
 
-const EditEventModal = ({ eventId, onClose }) => {
+const EditEventModal = ({ eventId, onClose, setEvents }) => {
   const [event, setEvent] = useState(null);
   const [image, setImage] = useState(null); // Para manejar la imagen seleccionada
   const [loading, setLoading] = useState(false); // Para manejar el estado de carga
@@ -73,7 +74,11 @@ const EditEventModal = ({ eventId, onClose }) => {
       });
 
       if (response.ok) {
+        const updatedEvent = await response.json();
         alert('Evento actualizado correctamente');
+        setEvents((prevEvents) =>
+          prevEvents.map((e) => (e.id === event.id ? updatedEvent : e))
+        );
         onClose(); // Cierra la modal tras guardar los cambios
       } else {
         alert('Hubo un error al actualizar el evento');

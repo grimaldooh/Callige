@@ -5,21 +5,20 @@ import EventList from '../../../components/EventList';
 import { useAuth } from '../../context/AuthContext';
 
 const EventsPage = () => {
-  const { schoolId } = useAuth();
+  const { schoolId, userId } = useAuth();
+  const studentId = userId;
   const globalSchoolId = schoolId;
 
   const [events, setEvents] = useState([]);
+  const [linkedEvents, setLinkedEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
-    if (!globalSchoolId) return; // No hacer nada si no hay schoolId
+    if (!globalSchoolId) return;
+
     const fetchEvents = async () => {
       try {
-        if (!globalSchoolId) {
-          console.log('globalSchoolId is not defined');
-          return;
-        }
         const response = await fetch(`/api/admin/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
         setEvents(data.events);
@@ -27,7 +26,19 @@ const EventsPage = () => {
         console.error('Error fetching events:', error);
       }
     };
+
+    const fetchLinkedEvents = async () => {
+      try {
+        const response = await fetch(`/api/student/linkedEvents?studentId=${studentId}`);
+        const data = await response.json();
+        setLinkedEvents(data.events);
+      } catch (error) {
+        console.error('Error fetching linked events:', error);
+      }
+    };
+
     fetchEvents();
+    fetchLinkedEvents();
   }, [globalSchoolId]);
 
   const handleAttendClick = (event) => {
@@ -35,7 +46,31 @@ const EventsPage = () => {
     setShowModal(true);
   };
 
-  const confirmAttendance = async (eventId) => {
+  const handleCancelClick = async (eventId) => {
+    try {
+      const response = await fetch('/api/student/unlinkEvent', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          studentId: studentId,  // ID del estudiante
+          eventId: eventId,
+        }),
+      });
+
+      if (response.ok) {
+        alert('Asistencia cancelada');
+        setLinkedEvents(linkedEvents.filter(event => event.id !== eventId));
+      } else {
+        alert('Error al cancelar la asistencia');
+      }
+    } catch (error) {
+      console.error('Error canceling attendance:', error);
+    }
+  };
+
+  const handleConfirm = async () => {
     try {
       const response = await fetch('/api/student/linkEvent', {
         method: 'POST',
@@ -43,29 +78,21 @@ const EventsPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          studentId: 14,  // El ID del estudiante actualmente está fijo en 14
-          eventId: eventId,
+          studentId: studentId,  // El ID del estudiante
+          eventId: selectedEvent.id,
         }),
       });
-  
+
       if (response.ok) {
-        alert('Asistencia confirmada con éxito');
+        alert('Asistencia confirmada');
+        setLinkedEvents([...linkedEvents, selectedEvent]);
       } else {
-        const errorData = await response.json();
-        console.error('Error:', errorData.error);
-        alert('Hubo un error al confirmar la asistencia');
+        alert('Error al confirmar la asistencia');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Hubo un error al conectar con el servidor');
+      console.error('Error confirming attendance:', error);
     }
-  };
-
-  const handleConfirm = () => {
-    // Lógica de confirmación por implementar
-    confirmAttendance(selectedEvent.id);
     setShowModal(false);
-    //alert('Asistencia confirmada');
   };
 
   const handleCloseModal = () => {
@@ -75,11 +102,15 @@ const EventsPage = () => {
   return (
     <div className="p-8 mt-20">
       <h1 className="text-3xl font-bold mb-6">Próximos Eventos</h1>
-      
-      {/* Invocar el componente EventList y pasarle los eventos */}
-      <EventList events={events} onAttendClick={handleAttendClick} />
 
-      {/* Modal personalizada */}
+      <EventList
+        events={events}
+        linkedEvents={linkedEvents}
+        onAttendClick={handleAttendClick}
+        onCancelClick={handleCancelClick}
+      />
+
+      {/* Modal para confirmar asistencia */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">

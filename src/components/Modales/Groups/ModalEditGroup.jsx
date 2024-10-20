@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const EditGroupModal = ({ groupId, onClose }) => {
+const EditGroupModal = ({ groupId, onClose , setGroups, setCurrentGroup}) => {
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +44,17 @@ const EditGroupModal = ({ groupId, onClose }) => {
       });
 
       if (response.ok) {
+        const updatedGroup = await response.json();
         alert('Grupo actualizado correctamente');
+
+        // Actualizar el estado de los grupos
+        setGroups((prevGroups) =>
+          prevGroups.map((g) => (g.id === groupId ? updatedGroup : g))
+        );
+
+        // Actualizar el estado del grupo actual
+        setCurrentGroup(updatedGroup);
+
         onClose(); // Cierra la modal tras guardar los cambios
       } else {
         alert('Hubo un error al actualizar el grupo');

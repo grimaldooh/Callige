@@ -3,9 +3,10 @@
 import { useContext, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
+
 export default function Navbar() {
 
-  const { role } = useAuth();
+  const { role , logout} = useAuth();
   const [isBurgerOpen, setIsBurgerOpen] = useState(false); // Para controlar el menú en móviles
 
   const toggleBurgerMenu = () => {
@@ -55,10 +56,18 @@ export default function Navbar() {
   return (
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-
+        
         {/* Botón para menú móvil */}
         <div className="flex md:order-2">
-          
+          {role && (
+            <button
+              onClick={logout} // Llamar a logout cuando el usuario haga clic
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Logout
+            </button>
+          )}
+
           {role === 'student' && (
             <button
               onClick={toggleBurgerMenu}

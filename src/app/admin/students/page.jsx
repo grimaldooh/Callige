@@ -4,7 +4,9 @@
 import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Students/LinkStudentModal';
 import EditStudentModal from '../../../components/Modales/Students/EditStudentModal';
+import StudentEventsClassesModal from '../../../components/Modales/Students/StudentEventsClassesModal';
 import { useAuth } from '../../context/AuthContext';
+import { set } from 'date-fns';
 
 
 const StudentsPage = () => {
@@ -21,6 +23,7 @@ const StudentsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showEventsClassesModal, setShowEventsClassesModal] = useState(false); // Estado para controlar la nueva modal
 
   const openModal = (studentId) => {
     setSelectedStudent(studentId);
@@ -42,6 +45,16 @@ const StudentsPage = () => {
     setSelectedStudent(null);
   };
 
+  const openEventsClassesModal = (studentId) => {
+    setSelectedStudent(studentId);
+    setShowEventsClassesModal(true);
+  };
+
+  const closeEventsClassesModal = () => {
+    setShowEventsClassesModal(false);
+    setSelectedStudent(null);
+  };
+
   const handleDelete = async (studentId) => {
     try {
       const response = await fetch('/api/admin/students', {
@@ -53,6 +66,7 @@ const StudentsPage = () => {
       });
       if (response.ok) {
         setStudents(students.filter(student => student.id !== studentId)); // Eliminar el estudiante del estado
+        setFilteredStudents(filteredStudents.filter(student => student.id !== studentId)); // Eliminar el estudiante del estado
         alert('Estudiante eliminado correctamente');
       }
     } catch (error) {
@@ -125,7 +139,7 @@ const StudentsPage = () => {
                 <button onClick={() => handleDelete(student.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Borrar</button>
                 <button onClick={() => openEditModal(student.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Editar</button>
                 <button onClick={() => openModal(student.id)} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Vincular</button>
-                <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Estadísticas</button>
+                <button onClick={() => openEventsClassesModal(student.id)} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Grupos y Eventos</button>
               </div>
             </li>
           ))}
@@ -141,7 +155,10 @@ const StudentsPage = () => {
         />
       )}
       {showEditModal && (
-        <EditStudentModal studentId={selectedStudent} onClose={closeEditModal}  />
+        <EditStudentModal studentId={selectedStudent} setStudents={setFilteredStudents} onClose={closeEditModal}  />
+      )}
+      {showEventsClassesModal && (
+        <StudentEventsClassesModal studentId={selectedStudent} onClose={closeEventsClassesModal} />
       )}
     </div>
   );

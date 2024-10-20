@@ -21,6 +21,7 @@ const GroupsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false); // Modal de edición del grupo
   const [activeGroup, setActiveGroup] = useState(false);
   const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
+  const [currentGroup, setCurrentGroup] = useState(null); 
 
   const openModalTeacher = (groupId) => {
     setSelectedGroup(groupId);
@@ -32,7 +33,8 @@ const GroupsPage = () => {
     setShowModalStudent(true);
   };
 
-  const openEditModal = (groupId) => {
+  const openEditModal = (groupId, group) => {
+    setCurrentGroup(group);
     setSelectedGroup(groupId);
     setShowEditModal(true);
   };
@@ -154,7 +156,7 @@ const GroupsPage = () => {
                   Borrar
                 </button>
                 <button
-                  onClick={() => openEditModal(group.id)}
+                  onClick={() => openEditModal(group.id, group, filteredGroups)}
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                   Editar
@@ -191,7 +193,7 @@ const GroupsPage = () => {
         <LinkTeacherModal groupId={selectedGroup} onClose={closeModal} />
       )}
       {showEditModal && (
-        <EditGroupModal groupId={selectedGroup} onClose={closeModal} />
+        <EditGroupModal groupId={selectedGroup} setCurrentGroup={setCurrentGroup} setGroups={setFilteredGroups} onClose={closeModal} />
       )}
       {showListaAsistentesModal && (
         <ListaAsistentes groupId={selectedGroup} onClose={closeListaAsistentesModal} />

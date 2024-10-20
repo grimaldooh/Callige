@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import Cookies from 'js-cookie'; // Importamos js-cookie para manejar las cookies
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
@@ -8,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [schoolId, setSchoolId] = useState(null);
   const [role, setRole] = useState('');
+  const router = useRouter();
 
   // Cargar los datos desde localStorage al iniciar
   useEffect(() => {
@@ -44,6 +47,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     localStorage.removeItem('schoolId');
     localStorage.removeItem('role');
+
+    Cookies.remove('token'); // Eliminar la cookie
+    router.push('/auth/login'); // Redirigir al usuario a la página de login
   };
 
   return (

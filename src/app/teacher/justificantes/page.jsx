@@ -63,7 +63,10 @@ const TeacherJustificantesPage = () => {
       console.log('Response:', response.data);
       setAlertMessage(`Justificante ${action === 'approved' ? 'aprobado' : 'rechazado'} exitosamente.`);
       setShowModal(false);
-      // Aquí puedes volver a cargar los justificantes después de la acción
+      // Actualizar el estado de los justificantes para quitar el justificante procesado
+      setJustificantes((prevJustificantes) =>
+      prevJustificantes.filter((justificante) => justificante.id !== justificanteId)
+    );
     } catch (error) {
       console.error('Error updating justificante status:', error);
     }

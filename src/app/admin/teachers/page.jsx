@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import LinkTeacherModal from '../../../components/Teachers/LinkTeacherModal';
 import LinkTeacherEventModal from '../../../components/Teachers/LinkTeacherEventModal';
 import EditTeacherModal from '../../../components/Modales/Teachers/EditTeacherModal';
+import TeacherEventsClassesModal from '../../../components/Modales/Teachers/TeacherEventsClassesModal'; // Nueva importación
 import { useAuth } from '../../context/AuthContext';
 
 const TeachersPage = () => {
-  const {schoolId} = useAuth();
+  const { schoolId } = useAuth();
   const globalSchoolId = schoolId;
 
   const [teachers, setTeachers] = useState([]);
@@ -17,7 +18,7 @@ const TeachersPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModalEvento, setShowModalEvento] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-
+  const [showEventsClassesModal, setShowEventsClassesModal] = useState(false); // Nuevo estado
 
   const openModal = (teacherId) => {
     setSelectedTeacher(teacherId);
@@ -49,8 +50,17 @@ const TeachersPage = () => {
     setSelectedTeacher(null);
   };
 
+  const openEventsClassesModal = (teacherId) => {
+    setSelectedTeacher(teacherId);
+    setShowEventsClassesModal(true); // Abrir la nueva modal
+  };
+
+  const closeEventsClassesModal = () => {
+    setShowEventsClassesModal(false); // Cerrar la nueva modal
+    setSelectedTeacher(null);
+  };
+
   useEffect(() => {
-    // Lógica para obtener la lista de todos los profesors
     const fetchTeachers = async () => {
       try {
         if (!globalSchoolId) {
@@ -61,7 +71,7 @@ const TeachersPage = () => {
         const response = await fetch(`/api/admin/teachers?schoolId=${globalSchoolId}`);
         const data = await response.json();
         setTeachers(data.teachers);
-        setFilteredTeachers(data.teachers); // Inicialmente mostrar todos
+        setFilteredTeachers(data.teachers);
       } catch (error) {
         console.error('Error fetching teachers:', error);
       }
@@ -70,7 +80,6 @@ const TeachersPage = () => {
     fetchTeachers();
   }, [globalSchoolId]);
 
-  // Función para manejar el cambio en la barra de búsqueda
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
@@ -92,7 +101,8 @@ const TeachersPage = () => {
         body: JSON.stringify({ id: teacherId }),
       });
       if (response.ok) {
-        setTeachers(teachers.filter(teacher => teacher.id !== teacherId)); // Eliminar el profesor del estado
+        setTeachers(teachers.filter(teacher => teacher.id !== teacherId));
+        setFilteredTeachers(filteredTeachers.filter(teacher => teacher.id !== teacherId));
         alert('Profesor eliminado correctamente');
       }
     } catch (error) {
@@ -105,7 +115,6 @@ const TeachersPage = () => {
     <div className="container mx-auto mt-24">
       <h1 className="text-4xl font-bold mb-6">Listado de Profesores</h1>
 
-      {/* Barra de búsqueda */}
       <input
         type="text"
         placeholder="Buscar por nombre"
@@ -114,7 +123,6 @@ const TeachersPage = () => {
         onChange={handleSearch}
       />
 
-      {/* Lista de profesores */}
       {Array.isArray(filteredTeachers) && filteredTeachers.length > 0 ? (
         <ul className="list-disc list-inside">
           {filteredTeachers.map((teacher) => (
@@ -127,10 +135,16 @@ const TeachersPage = () => {
                 {teacher.name}
               </div>
               <div className="flex space-x-4">
-                <button onClick={() => handleDelete(teacher.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <button
+                  onClick={() => handleDelete(teacher.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
                   Borrar
                 </button>
-                <button onClick={() => openEditModal(teacher.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <button
+                  onClick={() => openEditModal(teacher.id)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
                   Editar
                 </button>
                 <button
@@ -145,30 +159,34 @@ const TeachersPage = () => {
                 >
                   Vincular a evento
                 </button>
-                <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
-                  Estadísticas
+                <button
+                  onClick={() => openEventsClassesModal(teacher.id)}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                >
+                  Eventos y clases vinculadas
                 </button>
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No hay profesores disponibles.</p>
+        <p>No se encontraron profesores.</p>
       )}
+
       {showModal && (
         <LinkTeacherModal teacherId={selectedTeacher} onClose={closeModal} />
       )}
+
       {showModalEvento && (
-        <LinkTeacherEventModal
-          teacherId={selectedTeacher}
-          onClose={closeModalEvento}
-        />
+        <LinkTeacherEventModal teacherId={selectedTeacher} onClose={closeModalEvento} />
       )}
+
       {showEditModal && (
-        <EditTeacherModal
-          teacherId={selectedTeacher}
-          onClose={closeEditModal}
-        />
+        <EditTeacherModal teacherId={selectedTeacher} setTeachers={setFilteredTeachers} onClose={closeEditModal} />
+      )}
+
+      {showEventsClassesModal && (
+        <TeacherEventsClassesModal teacherId={selectedTeacher}  onClose={closeEventsClassesModal} />
       )}
     </div>
   );

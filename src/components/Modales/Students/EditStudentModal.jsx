@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const EditStudentModal = ({ studentId, onClose }) => {
+const EditStudentModal = ({ studentId, onClose , setStudents}) => {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(false); // Para manejar el estado de carga
 
@@ -45,7 +45,11 @@ const EditStudentModal = ({ studentId, onClose }) => {
       });
 
       if (response.ok) {
+        const updatedStudent = await response.json();
         alert('Estudiante actualizado correctamente');
+        setStudents((prevStudents) =>
+          prevStudents.map((s) => (s.id === studentId ? updatedStudent : s))
+        );
         onClose(); // Cierra la modal tras guardar los cambios
       } else {
         alert('Hubo un error al actualizar el estudiante');
