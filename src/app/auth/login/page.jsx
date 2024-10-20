@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import bcrypt from 'bcryptjs';
 import { useAuth } from '../../context/AuthContext';
-
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -19,33 +17,30 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
 
-    // Enviar datos de inicio de sesión al servidor para autenticación
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      // Enviar datos de inicio de sesión al servidor para autenticación
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    //console.log('Response:', response);
+      const data = await response.json();
 
-    const data = await response.json();
+      // Si la respuesta no es exitosa, actualizamos el error en el estado para mostrarlo al usuario
+      if (!response.ok) {
+        setError(data.message || 'Error al iniciar sesión. Por favor, intenta de nuevo.');
+        return; // Detener la ejecución si hay un error
+      }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error:', errorText); // Log para ver qué está devolviendo el servidor
-      throw new Error(data.message || 'Something went wrong');
+      // Guardar el token en localStorage
+      localStorage.setItem('token', data.token);
 
-    }
+      // Actualizar el contexto con los datos del usuario
+      login(data.userId, data.schoolId, data.role);
 
-    // Guardar el token en localStorage
-    localStorage.setItem('token', data.token);
-
-    login(data.userId, data.schoolId, data.role);
-
-    if (response.ok) {
-      console.log('data:', data);
       // Redireccionar según el rol del usuario
       switch (data.role) {
         case 'admin':
@@ -61,49 +56,54 @@ const LoginPage = () => {
           router.push('/superadmin');
           break;
         default:
-          setError('Unknown role.');
+          setError('Rol desconocido.');
           break;
       }
-    } else {
-      setError(data.message);
+    } catch (err) {
+      // Mostrar el error al usuario si ocurre algún problema en la solicitud
+      setError('Hubo un problema al conectarse con el servidor. Inténtalo más tarde.');
+      console.error('Error en el login:', err);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-lg w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Email:</label>
-            <input
-              type="email"
-              className="w-full p-2 border rounded"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700">Password:</label>
-            <input
-              type="password"
-              className="w-full p-2 border rounded"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-          >
-            Login
-          </button>
-        </form>
+    <div
+  className="flex items-center justify-center h-screen bg-cover bg-center"
+  style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1708549566274-638eb2d2108b?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTZ8fHxlbnwwfHx8fHw%3D)' }}
+>
+  <div className="bg-black bg-opacity-60 p-10 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-md">
+    <h2 className="text-3xl font-bold text-center text-white mb-8 tracking-wider">Iniciar sesión</h2>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Email:</label>
+        <input
+          type="email"
+          className="w-full p-3 border border-gray-700 rounded-lg bg-black text-gray-100 focus:ring-2 focus:ring-teal-400 focus:outline-none transition-all duration-300"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </div>
-    </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Password:</label>
+        <input
+          type="password"
+          className="w-full p-3 border border-gray-700 rounded-lg bg-black text-gray-100 focus:ring-2 focus:ring-teal-400 focus:outline-none transition-all duration-300"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      <button
+        type="submit"
+        className="w-full bg-teal-500 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-teal-400 transition-all duration-300 focus:outline-none"
+      >
+        Login
+      </button>
+    </form>
+  </div>
+</div>
   );
 };
 

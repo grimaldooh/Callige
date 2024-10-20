@@ -1,16 +1,48 @@
-'use client'
+'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
 
 export default function Navbar() {
+  const { role, logout } = useAuth();
+  const [isBurgerOpen, setIsBurgerOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState('');
 
-  const { role , logout} = useAuth();
-  const [isBurgerOpen, setIsBurgerOpen] = useState(false); // Para controlar el menú en móviles
+  useEffect(() => {
+    // Inicializa el path actual
+    setCurrentPath(window.location.pathname);
+
+    // Función para actualizar el path al navegar
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    // Escucha el evento popstate
+    window.addEventListener('popstate', handlePopState);
+
+    // Cleanup al desmontar el componente
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   const toggleBurgerMenu = () => {
     setIsBurgerOpen(!isBurgerOpen);
+  };
+
+  const openLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const closeLogoutModal = () => {
+    setIsLogoutModalOpen(false);
+  };
+
+  const confirmLogout = () => {
+    logout();
+    closeLogoutModal();
   };
 
   const renderLinks = () => {
@@ -18,34 +50,35 @@ export default function Navbar() {
       case 'admin':
         return (
           <>
-            <li><Link href="/admin">Home</Link></li>
-            <li><Link href="/admin/students">Alumnos</Link></li>
-            <li><Link href="/admin/teachers">Profesores</Link></li>
-            <li><Link href="/admin/groups">Grupos</Link></li>
-            <li><Link href="/admin/events">Eventos</Link></li>
+            <li><Link href="/admin" className={currentPath === '/admin' ? 'text-blue-500' : ''}>Home</Link></li>
+            <li><Link href="/admin/students" className={currentPath === '/admin/students' ? 'text-blue-500' : ''}>Alumnos</Link></li>
+            <li><Link href="/admin/teachers" className={currentPath === '/admin/teachers' ? 'text-blue-500' : ''}>Profesores</Link></li>
+            <li><Link href="/admin/groups" className={currentPath === '/admin/groups' ? 'text-blue-500' : ''}>Grupos</Link></li>
+            <li><Link href="/admin/events" className={currentPath === '/admin/events' ? 'text-blue-500' : ''}>Eventos</Link></li>
           </>
         );
       case 'teacher':
         return (
           <>
-            <li><Link href="/teacher">Home</Link></li>
-            <li><Link href="/teacher/justificantes">Justificantes</Link></li>
-            <li><Link href="/teacher/attendance">Capturar Asistencia</Link></li>
+            <li><Link href="/teacher" className={currentPath === '/teacher' ? 'text-blue-500' : ''}>Home</Link></li>
+            <li><Link href="/teacher/justificantes" className={currentPath === '/teacher/justificantes' ? 'text-blue-500' : ''}>Justificantes</Link></li>
+            <li><Link href="/teacher/attendance" className={currentPath === '/teacher/attendance' ? 'text-blue-500' : ''}>Capturar Asistencia</Link></li>
           </>
         );
       case 'student':
         return (
           <>
-            <li><Link href="/students">Home</Link></li>
-            <li><Link href="/students/events">Eventos</Link></li>
-            <li><Link href="/students/groups">Grupos</Link></li>
-            <li><Link href="/students/justificantes">Justificantes</Link></li>
+            <li><Link href="/students" className={currentPath === '/students' ? 'text-blue-500' : ''}>Home</Link></li>
+            <li><Link href="/students/events" className={currentPath === '/students/events' ? 'text-blue-500' : ''}>Eventos</Link></li>
+            <li><Link href="/students/groups" className={currentPath === '/students/groups' ? 'text-blue-500' : ''}>Grupos</Link></li>
+            <li><Link href="/students/justificantes" className={currentPath === '/students/justificantes' ? 'text-blue-500' : ''}>Justificantes</Link></li>
+            <li><button onClick={openLogoutModal} className=" text-red-500  rounded hover:bg-red-600  align-baseline " >Logout</button></li>
           </>
         );
       case 'superadmin':
         return (
           <>
-            <li><Link href="/superadmin">SuperAdmin</Link></li>
+            <li><Link href="/superadmin" className={currentPath === '/superadmin' ? 'text-blue-500' : ''}>SuperAdmin</Link></li>
           </>
         );
       default:
@@ -56,12 +89,11 @@ export default function Navbar() {
   return (
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        
         {/* Botón para menú móvil */}
         <div className="flex md:order-2">
-          {role && (
+          {role && role !== 'student' && (
             <button
-              onClick={logout} // Llamar a logout cuando el usuario haga clic
+              onClick={openLogoutModal} // Abrir la modal de confirmación
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
             >
               Logout
@@ -90,6 +122,29 @@ export default function Navbar() {
           </ul>
         </div>
       </div>
+
+      {/* Modal de confirmación */}
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-30 bg-black bg-opacity-50 p-10">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold mb-4">¿Estás seguro de que quieres cerrar sesión?</h3>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={confirmLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Confirmar
+              </button>
+              <button
+                onClick={closeLogoutModal}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

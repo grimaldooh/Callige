@@ -1,6 +1,7 @@
 "use client";
 
 import { useState , useEffect} from 'react';
+import Link from 'next/link';
 import ModalAddStudent from '../../components/Modales/ModalAddStudent';
 import ModalAddTeacher from '../../components/Modales/ModalAddTeacher'; // Modal para profesores
 import ModalAddGroup from '../../components/Modales/ModalAddClass'; // Importa el modal para añadir grupos
@@ -295,9 +296,55 @@ export default function AdminPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 shadow-md rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Bienestar Estudiantil</h2>
-          <p>Estadísticas de bienestar físico, mental, académico...</p>
+        <div className="bg-white p-6 shadow-md rounded-lg grid grid-cols-2 gap-4">
+          <Link href="/admin/students">
+            <div className="relative flex flex-col items-center justify-end bg-blue-100 rounded-lg hover:bg-blue-200 cursor-pointer overflow-hidden h-48 w-full">
+              <img
+                src="https://www.coldelvalle.edu.mx/wp-content/uploads/2021/07/como-aprenden-los-alumnos-de-secundaria.jpg"
+                alt="Alumnos"
+                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
+                Alumnos
+              </span>
+            </div>
+          </Link>
+          <Link href="/admin/teachers">
+            <div className="relative flex flex-col items-center justify-end bg-green-100 rounded-lg hover:bg-green-200 cursor-pointer overflow-hidden h-48 w-full">
+              <img
+                src="https://images.ecestaticos.com/Xg4lK7IufEiYj5ZH3zivHw78erk=/0x62:1251x769/1338x752/filters:fill(white):format(jpg)/f.elconfidencial.com%2Foriginal%2F47a%2Fc1d%2Ff66%2F47ac1df669dd66d669d59e33a479f6bd.jpg"
+                alt="Profesores"
+                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
+                Profesores
+              </span>
+            </div>
+          </Link>
+          <Link href="/admin/groups">
+            <div className="relative flex flex-col items-center justify-end bg-yellow-100 rounded-lg hover:bg-yellow-200 cursor-pointer overflow-hidden h-48 w-full">
+              <img
+                src="https://static.studyusa.com/article/aws_Fy4QcSQJTJun7wzrZr2dQl8YB47orbzO_sm_2x.jpg?format=webp"
+                alt="Grupos"
+                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
+                Grupos
+              </span>
+            </div>
+          </Link>
+          <Link href="/admin/events">
+            <div className="relative flex flex-col items-center justify-end bg-red-100 rounded-lg hover:bg-red-200 cursor-pointer overflow-hidden h-48 w-full">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5x6UXNCRyiNWA5u9sdC1Xq5X5HDADElqTqGXdOKXG18eueMBcusXKV4h0GfkdVJ8LUKg&usqp=CAU"
+                alt="Eventos"
+                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
+                Eventos
+              </span>
+            </div>
+          </Link>
         </div>
 
         <div className="bg-white p-6 shadow-md rounded-lg">
