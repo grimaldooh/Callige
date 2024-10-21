@@ -12,6 +12,7 @@ const LoginPage = () => {
   const { login } = useAuth(); // Usa el contexto
 
   const router = useRouter();
+  console.log(process.env.DATABASE_URL);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
