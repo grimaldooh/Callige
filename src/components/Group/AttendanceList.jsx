@@ -24,10 +24,11 @@ const AttendanceList = ({ groupId }) => {
 
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`/api/students?groupId=${groupId}`);
+        const response = await fetch(`/api/groups?groupId=${groupId}`);
         const data = await response.json();
         console.log('data:', data);
-        setStudents(data);
+        setStudents(data.students);
+        
       } catch (error) {
         console.error("Error fetching students:", error);
       }

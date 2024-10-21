@@ -88,7 +88,7 @@ model Justificante {
   group_id    Int
   attendance  Attendance @relation(fields: [attendance_id], references: [id])
   attendance_id Int @unique  // Relación uno a uno con Attendance (debe ser único)
-  status      Int
+  status      Int?
 }
 
 model Student {
@@ -96,6 +96,7 @@ model Student {
   name     String
   email    String   @unique
   password String
+  status   Int?
   imageUrl String?  // Campo para la URL de la imagen
   groups   Group[]  @relation("GroupStudents") // Relación muchos a muchos con grupos
   attendances Attendance[] // Relación uno a muchos con las asistencias

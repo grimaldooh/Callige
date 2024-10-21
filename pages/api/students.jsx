@@ -56,6 +56,7 @@ export default async function handler(req, res) {
           data: {
             name,
             email,
+            status: 1,
             password : hashedPassword,
             school_id : globalSchoolId,
             imageUrl, // Guarda la URL de la imagen
