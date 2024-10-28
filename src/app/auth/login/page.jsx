@@ -69,7 +69,7 @@ const LoginPage = () => {
 
   return (
     <div
-  className="flex items-center justify-center h-screen bg-cover bg-center"
+  className="flex items-center justify-center h-screen bg-cover bg-center p-8"
   style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1708549566274-638eb2d2108b?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTZ8fHxlbnwwfHx8fHw%3D)' }}
 >
   <div className="bg-black bg-opacity-60 p-10 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-md">

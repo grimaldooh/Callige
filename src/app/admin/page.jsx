@@ -2,6 +2,7 @@
 
 import { useState , useEffect} from 'react';
 import Link from 'next/link';
+import ModalAddSuperAdmin from '../../components/Modales/ModaAddSuperAdmin';
 import ModalAddStudent from '../../components/Modales/ModalAddStudent';
 import ModalAddTeacher from '../../components/Modales/ModalAddTeacher'; // Modal para profesores
 import ModalAddGroup from '../../components/Modales/ModalAddClass'; // Importa el modal para añadir grupos
@@ -31,6 +32,7 @@ export default function AdminPage() {
   const [events, setEvents] = useState([]);
 
   // Estados para manejar los modales
+  const [isModalSuperAdminOpen, setIsModalSuperAdminOpen] = useState(false);
   const [isModalAdminOpen, setIsModalAdminOpen] = useState(false); // Estado para el modal de admin
   const [isModalStudentOpen, setIsModalStudentOpen] = useState(false);
   const [isModalTeacherOpen, setIsModalTeacherOpen] = useState(false);
@@ -49,6 +51,9 @@ export default function AdminPage() {
 
   const handleOpenAdminModal = () => setIsModalAdminOpen(true);
   const handleCloseAdminModal = () => setIsModalAdminOpen(false);
+
+  const handleOpenSuperAdminModal = () => setIsModalSuperAdminOpen(true);
+  const handleCloseSuperAdminModal = () => setIsModalSuperAdminOpen(false);
 
   const handleOpenStudentModal = () => setIsModalStudentOpen(true);
   const handleCloseStudentModal = () => setIsModalStudentOpen(false);
@@ -161,6 +166,35 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error adding event:', error);
+    }
+  };
+
+  // Función para añadir superadmins
+  const handleAddSuperAdmin = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const response = await fetch("/api/superadmins", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (response.ok) {
+        // Actualiza el estado si es necesario, por ejemplo:
+        // setTotalAdmins(totalAdmins + 1);
+        handleCloseSuperAdminModal(); // Cierra el modal
+      } else {
+        console.error("Failed to add superadmin");
+      }
+    } catch (error) {
+      console.error("Error adding superadmin:", error);
     }
   };
 
@@ -400,6 +434,12 @@ export default function AdminPage() {
           >
             Añadir Admin
           </button>
+          <button
+            onClick={handleOpenSuperAdminModal}
+            className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 text-white px-4 py-2 rounded"
+          >
+            Añadir Superadmin
+          </button>
           <div className="flex-grow"></div> {/* Espaciador flexible */}
           <button
             onClick={handleOpenEventModal}
@@ -449,6 +489,13 @@ export default function AdminPage() {
         isOpen={isModalAdminOpen}
         onClose={handleCloseAdminModal}
         onSubmit={handleAddAdmin}
+      />
+
+      {/* Modal para añadir superadmin */}
+      <ModalAddSuperAdmin
+        isOpen={isModalSuperAdminOpen}
+        onClose={handleCloseSuperAdminModal}
+        onSubmit={handleAddSuperAdmin}
       />
 
       {/* Modal para añadir estudiantes */}

@@ -117,7 +117,7 @@ model Teacher {
   school_id Int
 }
 
-model SuperAdmin {
+model Superadmin {
   id       Int      @id @default(autoincrement())
   name     String
   email    String   @unique

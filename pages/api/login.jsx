@@ -20,7 +20,7 @@ const login = async (req, res) => {
     const admin = await prisma.admin.findUnique({ where: { email } });
     const student = await prisma.student.findUnique({ where: { email } });
     const teacher = await prisma.teacher.findUnique({ where: { email } });
-    const superAdmin = await prisma.superAdmin.findUnique({ where: { email } });
+    const superAdmin = await prisma.superadmin.findUnique({ where: { email } });
 
     console.log('Admin:', admin);
     console.log('Student:', student);

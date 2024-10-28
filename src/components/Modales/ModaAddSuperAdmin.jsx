@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 
-export default function ModalAddAdmin({ isOpen, onClose, onSubmit }) {
+export default function ModalAddSuperAdmin({ isOpen, onClose, onSubmit }) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <h2 className="text-2xl font-bold mb-4">Añadir Admin</h2>
+        <h2 className="text-2xl font-bold mb-4">Añadir SuperAdmin</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Nombre del Admin</label>
+            <label className="block text-sm font-medium text-gray-700">Nombre del Super Admin</label>
             <input
               type="text"
               name="name"
