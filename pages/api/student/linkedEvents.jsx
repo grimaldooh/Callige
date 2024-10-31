@@ -25,6 +25,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error al obtener eventos:', error);
       return res.status(500).json({ error: 'Error interno del servidor' });
+    } finally {
+      await prisma.$disconnect();
     }
   }
 }

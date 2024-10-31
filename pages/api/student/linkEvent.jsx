@@ -29,6 +29,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error linking student to event:', error);
       res.status(500).json({ error: 'Error linking student to event' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['POST']);

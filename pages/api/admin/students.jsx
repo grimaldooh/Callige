@@ -16,6 +16,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error fetching students:', error);
       res.status(500).json({ error: 'Error fetching students' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'DELETE') {
     const { id } = req.body; // Obtener el ID del estudiante
@@ -26,6 +28,8 @@ export default async function handler(req, res) {
       res.status(200).json({ message: 'Estudiante eliminado correctamente' });
     } catch (error) {
       res.status(500).json({ error: 'Error al eliminar estudiante' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'PUT') {
     const { updatedStudent } = req.body; // Obtener los datos del estudiante a editar
@@ -44,6 +48,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error updating student:', error);
       res.status(500).json({ error: 'Error al actualizar estudiante' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET', 'DELETE', 'PUT']);

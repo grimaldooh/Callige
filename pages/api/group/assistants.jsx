@@ -28,6 +28,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error fetching assistants:', error);
       res.status(500).json({ message: 'Error al obtener la lista de asistentes' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET']);

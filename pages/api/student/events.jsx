@@ -24,6 +24,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error fetching events:', error);
       res.status(500).json({ error: 'Error fetching events' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });

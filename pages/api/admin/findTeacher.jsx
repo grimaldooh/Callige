@@ -20,6 +20,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error fetching teacher:', error);
       res.status(500).json({ error: 'Error fetching teacher' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'PUT') {
     const { name, email } = req.body;
@@ -32,6 +34,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error updating teacher:', error);
       res.status(500).json({ error: 'Error updating teacher' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET', 'PUT']);

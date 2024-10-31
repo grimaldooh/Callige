@@ -59,6 +59,8 @@ export default async function handler(req, res) {
       } catch (error) {
         console.error('Error creating justificante:', error); 
         res.status(500).json({ error: 'Error creating justificante' });
+      } finally {
+        await prisma.$disconnect();
       }
     });
   } else {

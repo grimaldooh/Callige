@@ -11,6 +11,8 @@ export default async function handler(req, res) {
       res.status(200).json(admins);
     } catch (error) {
       res.status(500).json({ error: 'Error fetching admins' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'POST') {
     // Añadir un nuevo admin
@@ -35,6 +37,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error adding admin:', error);
       res.status(500).json({ error: 'Error adding admin' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);

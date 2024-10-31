@@ -14,6 +14,8 @@ export default async function handler(req, res) {
       res.status(200).json({ teachers });
     } catch (error) {
       res.status(500).json({ error: 'Error fetching students' });
+    } finally {
+      await prisma.$disconnect();
     }
   }  else if (req.method === 'DELETE') {
     const { id } = req.body; // Obtener el ID del estudiante
@@ -25,6 +27,8 @@ export default async function handler(req, res) {
       res.status(200).json({ message: 'Profesor eliminado correctamente' });
     } catch (error) {
       res.status(500).json({ error: 'Error al eliminar profesor' });
+    } finally {
+      await prisma.$disconnect();
     }
   } 
   else {

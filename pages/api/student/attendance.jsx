@@ -41,6 +41,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error fetching attendances:', error);
       res.status(500).json({ error: 'Error fetching attendances' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET']);

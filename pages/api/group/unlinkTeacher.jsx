@@ -22,6 +22,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error desvinculando profesor:', error);
       return res.status(500).json({ message: 'Error al desvincular profesor' });
+    } finally {
+      await prisma.$disconnect();
     }
   }
 

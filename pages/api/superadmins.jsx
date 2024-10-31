@@ -25,7 +25,9 @@ export default async function handler(req, res) {
         } catch (error) {
         console.error('Error adding superadmin:', error);
         res.status(500).json({ error: 'Error adding superadmin' });
-        }
+        } finally {
+            await prisma.$disconnect();
+          }
     } else {
         res.setHeader('Allow', ['GET', 'POST']);
         res.status(405).end(`Method ${req.method} Not Allowed`);

@@ -38,6 +38,8 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: 'Error fetching statistics' });
       console.error('Error fetching statistics:', error);
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET']);

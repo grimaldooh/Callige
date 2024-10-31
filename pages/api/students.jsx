@@ -24,6 +24,8 @@ export default async function handler(req, res) {
       res.status(200).json(students);
     } catch (error) {
       res.status(500).json({ error: 'Error fetching students' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'POST') {
     // Usa el middleware de multer para manejar la subida de archivos
@@ -67,6 +69,8 @@ export default async function handler(req, res) {
       } catch (error) {
         console.error('Error creando el estudiante:', error);
         res.status(500).json({ error: 'Error creando el estudiante' });
+      } finally {
+        await prisma.$disconnect();
       }
     });
   } else {

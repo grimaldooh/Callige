@@ -93,6 +93,8 @@ const login = async (req, res) => {
   } catch (error) {
     console.error('Server error:', error);
     res.status(500).json({ message: 'Server error', error });
+  } finally {
+    await prisma.$disconnect();
   }
 };
 

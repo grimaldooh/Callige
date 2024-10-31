@@ -29,6 +29,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error fetching student groups:', error);
       res.status(500).json({ error: 'Error fetching student groups' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['GET']);

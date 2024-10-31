@@ -27,6 +27,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error linking teacher to group:', error);
       res.status(500).json({ error: 'Error linking teacher to group' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['POST']);

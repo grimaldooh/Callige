@@ -36,7 +36,9 @@ export default async function handler(req, res) {
         } catch (error) {
             res.status(500).json({ error: 'Error fetching events' });
             console.error('Error fetching events:', error);
-        }
+        } finally {
+            await prisma.$disconnect();
+          }
     }  else if (req.method === 'POST') {
         // Utilizar multer para manejar el archivo de imagen
         upload.single('image')(req, res, async function (err) {
@@ -76,7 +78,9 @@ export default async function handler(req, res) {
             } catch (error) {
                 console.error('Error adding event:', error);
                 res.status(500).json({ error: 'Error adding event' });
-            }
+            } finally {
+                await prisma.$disconnect();
+              }
         });
     } else {
         res.setHeader('Allow', ['GET', 'POST']);
