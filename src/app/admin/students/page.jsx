@@ -115,7 +115,7 @@ const StudentsPage = () => {
   };
 
   return (
-    <div className="container mx-auto mt-24">
+    <div className="container mx-auto mt-4">
       <h1 className="text-4xl font-bold mb-6">Listado de Alumnos</h1>
 
       {/* Barra de búsqueda */}

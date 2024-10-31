@@ -26,7 +26,7 @@ export default async function handler(req, res) {
             const events = await prisma.event.findMany({
                 where: {
                     school_id: Number(schoolId), // Filtrar por la escuela vinculada
-                    date: { gte: new Date() }, // Solo eventos futuros
+                    //date: { gte: new Date() }, // Solo eventos futuros
                 },
                 orderBy: { date: 'asc' }, // Ordenar por fecha
             });

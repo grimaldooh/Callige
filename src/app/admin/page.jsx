@@ -10,9 +10,14 @@ import ModalAddAdmin from '../../components/Modales/ModalAddAdmin'; // Importa e
 import ModalAddEvent from '../../components/Modales/Events/ModalAddEvent'; // Importa el modal para añadir eventos
 import ModalEventDetails from '../../components/Modales/Events/EventDetails'; // Importa el modal para ver detalles de eventos
 import SchoolGroups from '../../components/Group/SchoolGroups'; // Importa el componente para mostrar grupos
+import SchoolTeachers from '../../components/SchoolTeachers'; // Importa el componente para mostrar profesores
+import SchoolStudents from '../../components/SchoolStudents'; // Importa el componente para mostrar estudiantes
 import GroupList from '../../components/Group/GroupList'; // Importa el componente para mostrar grupos
 import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
+import ListaAsistentes from '../../components/Modales/Events/ListaAsistentes'; // Importa el componente para mostrar la lista de asistentes
 import { useAuth } from '../context/AuthContext';
+import { PlusIcon } from '@heroicons/react/solid'; // Asegúrate de tener instalada la biblioteca heroicons
+
 
 
 export default function AdminPage() {
@@ -30,6 +35,8 @@ export default function AdminPage() {
   const [totalParents, setTotalParents] = useState(0);
   const [totalGroups, setTotalGroups] = useState(0); // Nuevo estado para contar grupos
   const [events, setEvents] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+
 
   // Estados para manejar los modales
   const [isModalSuperAdminOpen, setIsModalSuperAdminOpen] = useState(false);
@@ -40,12 +47,18 @@ export default function AdminPage() {
   const [isModalEventOpen, setIsModalEventOpen] = useState(false);
   const [isModalEventDetailsOpen, setIsModalEventDetailsOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
+
 
   // Estados para obtencion de grupos y alumnos
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [students, setStudents] = useState([]);
+  const [filteredTeachers, setFilteredTeachers] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [teachers, setTeachers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
 
   // Funciones para abrir y cerrar modales
 
@@ -66,6 +79,7 @@ export default function AdminPage() {
 
   const handleOpenEventModal = () => setIsModalEventOpen(true);
   const handleCloseEventModal = () => setIsModalEventOpen(false);
+
 
   useEffect(() => {
     if (!globalSchoolId) return; // No hacer nada si no hay schoolId
@@ -111,6 +125,40 @@ export default function AdminPage() {
       }
     }
 
+    const fetchStudents = async () => {
+      try {
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+
+        console.log('globalSchoolId:', globalSchoolId);
+        const response = await fetch(`/api/admin/students?schoolId=${globalSchoolId}`);
+        const data = await response.json();
+        console.log('Fetched students:', data.students);
+        setFilteredStudents(data.students); // Inicialmente mostrar todos
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }
+    };
+
+    const fetchTeachers = async () => {
+      try {
+        if (!globalSchoolId) {
+          console.log('globalSchoolId is not defined');
+          return;
+        }
+
+        const response = await fetch(`/api/admin/teachers?schoolId=${globalSchoolId}`);
+        const data = await response.json();
+        setFilteredTeachers(data.teachers);
+      } catch (error) {
+        console.error('Error fetching teachers:', error);
+      }
+    };
+
+    fetchTeachers();
+    fetchStudents();
     fetchEvents();
     fetchStats();
     fetchGroups();
@@ -132,6 +180,16 @@ export default function AdminPage() {
     } catch (error) {
       console.error("Error fetching students:", error);
     }
+  };
+
+  const openListaAsistentesModal = (eventId) => {
+    setSelectedEvent(eventId);
+    setShowListaAsistentesModal(true);
+  };
+
+  const closeListaAsistentesModal = () => {
+    setShowListaAsistentesModal(false);
+    setSelectedEvent(null);
   };
 
   const handleCloseModal = () => {
@@ -308,11 +366,107 @@ export default function AdminPage() {
     }
   };
 
+  const handleSelect = (eventKey) => {
+    switch (eventKey) {
+      case 'student':
+        handleOpenStudentModal();
+        break;
+      case 'teacher':
+        handleOpenTeacherModal();
+        break;
+      case 'group':
+        handleOpenGroupAddModal();
+        break;
+      case 'admin':
+        handleOpenAdminModal();
+        break;
+      case 'superadmin':
+        handleOpenSuperAdminModal();
+        break;
+      case 'event':
+        handleOpenEventModal();
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mt-20 mb-6">Panel de Administración</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <h1 className="text-3xl font-bold mt-4 mb-6">Panel de Administración</h1>
+      <div className="absolute top-8 right-6">
+        <button
+          id="dropdownHoverButton"
+          onClick={() => setIsOpen(true)}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-3 inline-flex items-center justify-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button"
+        >
+          <PlusIcon className="w-5 h-5" aria-hidden="true" />
+        </button>
+        {isOpen && (
+          <div
+            id="dropdownHover"
+            className="z-10 absolute right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg w-56 dark:bg-gray-700 dark:border-gray-600"
+            onMouseEnter={() => setIsOpen(true)}
+            onMouseLeave={() => setIsOpen(false)}
+          >
+            <ul
+              className="py-2 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownHoverButton"
+            >
+              <li>
+                <button
+                  onClick={() => handleSelect("student")}
+                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Añadir Estudiante
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSelect("teacher")}
+                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Añadir Profesor
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSelect("group")}
+                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Añadir Grupo
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSelect("admin")}
+                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Añadir Admin
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSelect("superadmin")}
+                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Añadir Superadmin
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSelect("event")}
+                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Añadir Evento
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
         <div className="bg-white p-4 shadow-md rounded-lg">
           <h2 className="text-xl font-semibold">Estudiantes Totales</h2>
           <p className="text-3xl font-bold">{totalStudents}</p>
@@ -329,136 +483,84 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 shadow-md rounded-lg grid grid-cols-2 gap-4">
-          <Link href="/admin/students">
-            <div className="relative flex flex-col items-center justify-end bg-blue-100 rounded-lg hover:bg-blue-200 cursor-pointer overflow-hidden h-48 w-full">
-              <img
-                src="https://www.coldelvalle.edu.mx/wp-content/uploads/2021/07/como-aprenden-los-alumnos-de-secundaria.jpg"
-                alt="Alumnos"
-                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
-              />
-              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
-                Alumnos
-              </span>
-            </div>
-          </Link>
-          <Link href="/admin/teachers">
-            <div className="relative flex flex-col items-center justify-end bg-green-100 rounded-lg hover:bg-green-200 cursor-pointer overflow-hidden h-48 w-full">
-              <img
-                src="https://images.ecestaticos.com/Xg4lK7IufEiYj5ZH3zivHw78erk=/0x62:1251x769/1338x752/filters:fill(white):format(jpg)/f.elconfidencial.com%2Foriginal%2F47a%2Fc1d%2Ff66%2F47ac1df669dd66d669d59e33a479f6bd.jpg"
-                alt="Profesores"
-                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
-              />
-              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
-                Profesores
-              </span>
-            </div>
-          </Link>
-          <Link href="/admin/groups">
-            <div className="relative flex flex-col items-center justify-end bg-yellow-100 rounded-lg hover:bg-yellow-200 cursor-pointer overflow-hidden h-48 w-full">
-              <img
-                src="https://static.studyusa.com/article/aws_Fy4QcSQJTJun7wzrZr2dQl8YB47orbzO_sm_2x.jpg?format=webp"
-                alt="Grupos"
-                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
-              />
-              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
-                Grupos
-              </span>
-            </div>
-          </Link>
-          <Link href="/admin/events">
-            <div className="relative flex flex-col items-center justify-end bg-red-100 rounded-lg hover:bg-red-200 cursor-pointer overflow-hidden h-48 w-full">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5x6UXNCRyiNWA5u9sdC1Xq5X5HDADElqTqGXdOKXG18eueMBcusXKV4h0GfkdVJ8LUKg&usqp=CAU"
-                alt="Eventos"
-                className="absolute inset-0 w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-300"
-              />
-              <span className="absolute bottom-0 text-lg font-semibold text-white z-10 bg-black bg-opacity-50 w-full text-center py-2">
-                Eventos
-              </span>
-            </div>
-          </Link>
+      <div className="flex space-x-4 mb-8">
+        <div className="flex-1">
+          <SchoolStudents students={filteredStudents} />
         </div>
+        <div className="flex-1">
+          <SchoolTeachers teachers={filteredTeachers} />
+        </div>
+        <div className="flex-1">
+          <SchoolGroups
+            groups={groups}
+            handleOpenGroupModal={handleOpenGroupModal}
+          />
+        </div>
+      </div>
 
-        <div className="bg-white p-6 shadow-md rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Próximos Eventos</h2>
+      <div className="p-2 rounded-lg grid grid-cols-2 gap-12 mb-4">
+        <h1 className="text-2xl font-semibold">Eventos</h1>
+      </div>
 
-          <ul>
-            {Array.isArray(events) && events.length > 0 ? (
+      <div className="events-section mb-16 w-full gap-12">
+        {Array.isArray(events) && events.length === 0 ? (
+          <p className="text-center text-xl text-gray-600">
+            No hay eventos disponibles.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.isArray(events) &&
               events.map((event) => (
-                <li
+                <div
                   key={event.id}
-                  className="flex justify-between items-center mb-2"
+                  className="event-card bg-white shadow-xl rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl flex flex-col"
                 >
-                  <span>{event.name}</span>
-                  <button
-                    onClick={() => handleViewEventDetails(event)}
-                    className="text-blue-500 underline"
-                  >
-                    Ver Detalles
-                  </button>
-                </li>
-              ))
-            ) : (
-              <li className="text-gray-500">No hay eventos disponibles.</li>
-            )}
-          </ul>
-        </div>
+                  {event.imageUrl && (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.name}
+                      className="w-full h-56 object-cover"
+                    />
+                  )}
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="text-2xl font-semibold mb-2">
+                      {event.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {new Date(event.date).toLocaleDateString()} -{" "}
+                      {event.location}
+                    </p>
+                    <p className="text-gray-800 mb-6 flex-1">
+                      {event.description}
+                    </p>
+                    <button
+                      onClick={() => openListaAsistentesModal(event.id)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full mt-auto"
+                    >
+                      Lista de asistencia
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
       </div>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Acciones Rápidas</h2>
         <div className="flex space-x-4">
-          <button
-            onClick={handleOpenStudentModal}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Añadir Estudiante
-          </button>
-          <button
-            onClick={handleOpenTeacherModal}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Añadir Profesor
-          </button>
-          <button
-            onClick={handleOpenGroupAddModal} // Botón para abrir modal grupo
-            className="bg-purple-500 text-white px-4 py-2 rounded"
-          >
-            Añadir Grupo
-          </button>
-          <button
-            onClick={handleOpenAdminModal}
-            className="bg-yellow-500 text-white px-4 py-2 rounded"
-          >
-            Añadir Admin
-          </button>
-          <button
-            onClick={handleOpenSuperAdminModal}
-            className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 text-white px-4 py-2 rounded"
-          >
-            Añadir Superadmin
-          </button>
-          <div className="flex-grow"></div> {/* Espaciador flexible */}
-          <button
-            onClick={handleOpenEventModal}
-            className="bg-red-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-red-700 shadow-md transition-all"
-          >
-            + Añadir Nuevo Evento
-          </button>
+          <div className="relative inline-block text-left"></div>
         </div>
       </div>
 
-      <SchoolGroups
-        groups={groups}
-        handleOpenGroupModal={handleOpenGroupModal}
-      />
-
       {/* Componente para mostrar la lista de asistencia si hay un grupo seleccionado */}
-    {selectedGroup && (
-      <AttendanceList groupId={selectedGroup} />
-    )}
+      {selectedGroup && <AttendanceList groupId={selectedGroup} />}
+
+      {showListaAsistentesModal && (
+        <ListaAsistentes
+          eventId={selectedEvent}
+          onClose={closeListaAsistentesModal}
+        />
+      )}
 
       {/* Modal para mostrar estudiantes del grupo seleccionado */}
       {isModalOpen && (

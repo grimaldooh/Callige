@@ -28,6 +28,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error("Error fetching event:", error);
       res.status(500).json({ error: "Error fetching event" });
+    }finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'PUT') {
     // Utilizar multer para procesar el formData
@@ -72,6 +74,8 @@ export default async function handler(req, res) {
       } catch (error) {
         res.status(500).json({ error: 'Error al actualizar el evento' });
         console.error('Error al actualizar el evento:', error);
+      } finally {
+        await prisma.$disconnect();
       }
     });
   } else {

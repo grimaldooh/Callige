@@ -15,6 +15,8 @@ export default async function handler(req, res) {
       res.status(200).json({ events });
     } catch (error) {
       res.status(500).json({ error: "Error fetching events" });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === "DELETE") {
     const { id } = req.body; // Obtener el ID del estudiante
@@ -26,6 +28,9 @@ export default async function handler(req, res) {
       res.status(200).json({ message: "Evento eliminado correctamente" });
     } catch (error) {
       res.status(500).json({ error: "Error al eliminar evento" });
+    }
+    finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader("Allow", ["GET"]);

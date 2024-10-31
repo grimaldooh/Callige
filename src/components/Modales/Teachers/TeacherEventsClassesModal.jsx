@@ -39,8 +39,8 @@ const TeacherEventsClassesModal = ({ teacherId, onClose}) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-lg w-2/3">
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-xl font-bold mb-4">Eventos y Clases Vinculadas</h2>
 
         {loading ? (
@@ -53,7 +53,8 @@ const TeacherEventsClassesModal = ({ teacherId, onClose}) => {
               <ul className="list-disc list-inside mb-4">
                 {groups.map((group) => (
                   <li key={group.id}>
-                    <span className="font-bold">Grupo:</span> {group.name} - <span className='font-semibold'>{group.id}</span> 
+                    <span className="font-bold">Grupo:</span> {group.name} -{" "}
+                    <span className="font-semibold">{group.id}</span>
                   </li>
                 ))}
               </ul>
@@ -67,7 +68,8 @@ const TeacherEventsClassesModal = ({ teacherId, onClose}) => {
               <ul className="list-disc list-inside">
                 {events.map((event) => (
                   <li key={event.id}>
-                    <span className="font-bold">Evento:</span> {event.name} ({formattedDate(event.date)})
+                    <span className="font-bold">Evento:</span> {event.name} (
+                    {formattedDate(event.date)})
                   </li>
                 ))}
               </ul>

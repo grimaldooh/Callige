@@ -123,7 +123,7 @@ const GroupsPage = () => {
   };
 
   return (
-    <div className="container mx-auto mt-28 ">
+    <div className="container mx-auto mt-4 ">
       <h1 className="text-4xl font-bold ">Listado de grupos</h1>
 
       {/* Barra de búsqueda */}
