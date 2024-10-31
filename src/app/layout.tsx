@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "../components/Navbar";  
 import SideNavbar from "../components/SideNavbar";
+import NavbarHandler from "../components/NavbarHandler";
 import { AuthProvider } from './context/AuthContext';
 import React from 'react';
 
@@ -27,6 +28,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="en">
       <body
@@ -34,11 +37,11 @@ export default function RootLayout({
       >
         {/* Agregamos el Navbar aquí para que esté disponible en todas las páginas */}
         <AuthProvider>
-      <div className="flex">
-        <SideNavbar className="w-64" />
-        <main className="flex-1 p-4">{children}</main>
-      </div>
-    </AuthProvider>
+          <div className="flex">
+            <NavbarHandler />
+            <main className="flex-1 p-4">{children}</main>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );

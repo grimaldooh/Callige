@@ -7,9 +7,11 @@ const GroupPage = () => {
 
   return (
     <div>
-      <h1>Asistencia para el Grupo {groupId}</h1>
+      <h1 className="ml-52 text-2xl font-extrabold text-gray-800 dark:text-gray-200 mt-8 mb-6">
+        Asistencia para el Grupo {groupId}
+      </h1>
       <div className="mt-12 p-8">
-      <AttendanceList groupId={groupId} />
+        <AttendanceList groupId={groupId} />
       </div>
     </div>
   );

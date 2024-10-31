@@ -3,13 +3,53 @@
 import { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
-import { MenuIcon, XIcon, LogoutIcon, UserGroupIcon, UserIcon, HomeIcon, NewspaperIcon, UsersIcon } from '@heroicons/react/solid';
+import { MenuIcon, XIcon, LogoutIcon, UserGroupIcon, UserIcon, HomeIcon, NewspaperIcon, UsersIcon, DocumentReportIcon } from '@heroicons/react/solid';
+import axios from 'axios';
 
 export default function Navbar({ className }) {
-  const { role, logout } = useAuth();
+  const { role, logout, userId} = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('/admin'); // Default to '/admin'
+  const [teacherId, setTeacherId] = useState(null);
+  const [justificantesCount, setJustificantesCount] = useState(0);
+
+  useEffect(() => {
+    
+    console.log('teacherId:', teacherId);
+    if (!teacherId) {
+        console.log('teacherId no está disponible');
+        return; // No hace la solicitud si teacherId es null o undefined
+      }
+    const fetchJustificantes = async () => {
+      try {
+        if (!teacherId) {
+            console.log('teacherId is not defined');
+            return;
+          }
+          console.log('teacherId:', teacherId);
+        const response = await axios.get('/api/teacher/justificantes', {
+          params: {
+            teacherId,
+          },
+        });
+        const { data } = response;
+        console.log('data:', data.justificantes.length);
+        setJustificantesCount(data.justificantes.length);
+      } catch (error) {
+        console.error('Error fetching justificantes:', error);
+      }
+    };
+
+    fetchJustificantes();
+  }, [teacherId]);
+
+  useEffect(() => {
+    console.log('role:', role);
+    if (role === 'teacher') {
+      setTeacherId(userId);
+    }
+  }, [role]);
 
   useEffect(() => {
     setCurrentPath(window.location.pathname);
@@ -113,8 +153,12 @@ export default function Navbar({ className }) {
             <li>
               <Link href="/teacher">
                 <li
-                  onClick={() => handleLinkClick('/teacher')}
-                  className={`flex items-center p-2 ${currentPath === '/teacher' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  onClick={() => handleLinkClick("/teacher")}
+                  className={`flex items-center p-2 ${
+                    currentPath === "/teacher"
+                      ? "text-blue-500"
+                      : "text-gray-700"
+                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <MenuIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Dashboard</span>
@@ -122,13 +166,20 @@ export default function Navbar({ className }) {
               </Link>
             </li>
             <li>
-              <Link href="/teacher/groups">
+              <Link href="/teacher/justificantes">
                 <li
-                  onClick={() => handleLinkClick('/teacher/groups')}
-                  className={`flex items-center p-2 ${currentPath === '/teacher/groups' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  onClick={() => handleLinkClick("/teacher/justificantes")}
+                  className={`flex items-center p-2 ${
+                    currentPath === "/teacher/justificantes"
+                      ? "text-blue-500"
+                      : "text-gray-700"
+                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
                 >
-                  <UserGroupIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Grupos</span>
+                  <DocumentReportIcon className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">Justificantes</span>
+                  <span className="absolute top-0 right-4 mr-5 mt-1 ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                    {justificantesCount}
+                  </span>
                 </li>
               </Link>
             </li>
@@ -140,7 +191,9 @@ export default function Navbar({ className }) {
   };
 
   return (
-    <div className={`h-screen p-4 bg-gray-100 dark:bg-gray-800 ${className}`}>
+    <>
+    {userId && (
+    <div className={` w-64 h-screen p-4 bg-gray-100 dark:bg-gray-800 ${className}`}>
       <button onClick={toggleDrawer} className="text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-3 inline-flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-green-800">
         <MenuIcon className="w-5 h-5" aria-hidden="true" />
       </button>
@@ -149,10 +202,7 @@ export default function Navbar({ className }) {
       {isDrawerOpen && (
         <div id="drawer-navigation" className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform transform bg-gray-100 dark:bg-gray-800" tabIndex="-1">
           <h5 className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Dashboard</h5>
-          <button onClick={toggleDrawer} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
-            <XIcon className="w-5 h-5" aria-hidden="true" />
-            <span className="sr-only">Close menu</span>
-          </button>
+          
           <ul className="space-y-2 font-medium mt-4">
             {renderLinks()}
           </ul>
@@ -174,5 +224,7 @@ export default function Navbar({ className }) {
         </div>
       )}
     </div>
+    )}
+    </>
   );
 }

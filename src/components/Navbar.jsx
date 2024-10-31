@@ -1,16 +1,60 @@
 'use client';
 
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
+import { set } from 'date-fns';
+import axios from 'axios';
 
 export default function Navbar() {
-  const { role, logout } = useAuth();
+  const { role, logout, userId } = useAuth();
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
+  const [teacherId, setTeacherId] = useState(null);
+  const [justificantesCount, setJustificantesCount] = useState(0);
+
+  
 
   useEffect(() => {
+    
+    console.log('teacherId:', teacherId);
+    if (!teacherId) {
+        console.log('teacherId no está disponible');
+        return; // No hace la solicitud si teacherId es null o undefined
+      }
+    const fetchJustificantes = async () => {
+      try {
+        if (!teacherId) {
+            console.log('teacherId is not defined');
+            return;
+          }
+        const response = await axios.get('/api/teacher/justificantes', {
+          params: {
+            teacherId,
+          },
+        });
+        const { data } = response;
+        console.log('data:', data.justificantes.length);
+        setJustificantesCount(data.justificantes.length);
+      } catch (error) {
+        console.error('Error fetching justificantes:', error);
+      }
+    };
+
+    fetchJustificantes();
+  }, [teacherId]);
+
+  useEffect(() => {
+    console.log('role:', role);
+    if (role === 'teacher') {
+      setTeacherId(userId);
+    }
+  }, [role]);
+    
+
+  useEffect(() => {
+    
     // Inicializa el path actual
     setCurrentPath(window.location.pathname);
 
@@ -60,9 +104,29 @@ export default function Navbar() {
       case 'teacher':
         return (
           <>
-            <li><Link href="/teacher" className={currentPath === '/teacher' ? 'text-blue-500' : ''}>Home</Link></li>
-            <li><Link href="/teacher/justificantes" className={currentPath === '/teacher/justificantes' ? 'text-blue-500' : ''}>Justificantes</Link></li>
-            <li><Link href="/teacher/attendance" className={currentPath === '/teacher/attendance' ? 'text-blue-500' : ''}>Capturar Asistencia</Link></li>
+            <li>
+              <Link
+                href="/teacher"
+                className={currentPath === "/teacher" ? "text-blue-500" : ""}
+              >
+                Home
+              </Link>
+            </li>
+            <li className="relative">
+              <Link
+                href="/teacher/justificantes"
+                className={
+                  currentPath === "/teacher/justificantes"
+                    ? "text-blue-500"
+                    : ""
+                }
+              >
+                Justificantes
+              </Link>
+              <span className="absolute top-0 mr-4 inline-flex px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/4">
+                {justificantesCount}
+              </span>
+            </li>{" "}
           </>
         );
       case 'student':

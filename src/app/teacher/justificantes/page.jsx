@@ -86,8 +86,10 @@ const TeacherJustificantesPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mt-20 mb-4">Justificantes Pendientes</h1>
-      
+      <h1 className="text-2xl font-bold mt-20 mb-4">
+        Justificantes Pendientes
+      </h1>
+
       {/* Alerta */}
       {alertMessage && (
         <div className="bg-green-200 text-green-700 p-4 mb-4 rounded">
@@ -99,14 +101,15 @@ const TeacherJustificantesPage = () => {
         {Array.isArray(justificantes) && justificantes.length === 0 ? (
           <p>No hay justificantes pendientes.</p>
         ) : (
-          Array.isArray(justificantes) && justificantes.map(justificante => (
+          Array.isArray(justificantes) &&
+          justificantes.map((justificante) => (
             <div
               key={justificante.id}
               className="flex items-center bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
             >
               {/* Imagen del estudiante */}
               <img
-                src={justificante.student.imageUrl || '/placeholder-image.jpg'}
+                src={justificante.student.imageUrl || "/placeholder-image.jpg"}
                 alt="Estudiante"
                 className="h-32 w-32 object-cover rounded-full"
               />
@@ -117,25 +120,32 @@ const TeacherJustificantesPage = () => {
                   {justificante.razon} - {formattedDate(justificante.fecha)}
                 </p>
                 <p className="text-gray-600 mt-2 break-words max-w-full">
-                  <span className="font-bold">Descripción:</span> {justificante.descripcion}
+                  <span className="font-bold">Descripción:</span>{" "}
+                  {justificante.descripcion}
                 </p>
                 <p className="text-gray-600 mt-2">
-                  <span className="font-bold">Estudiante:</span> {justificante.student.name}
+                  <span className="font-bold">Estudiante:</span>{" "}
+                  {justificante.student.name}
                 </p>
                 <p className="text-gray-600 mt-2">
-                  <span className="font-bold">Grupo:</span> {justificante.group.name}
+                  <span className="font-bold">Grupo:</span>{" "}
+                  {justificante.group.name}
                 </p>
 
                 {/* Botones para aprobar o rechazar */}
                 <div className="mt-4">
                   <button
-                    onClick={() => openConfirmationModal(justificante, 'approved')}
+                    onClick={() =>
+                      openConfirmationModal(justificante, "approved")
+                    }
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                   >
                     Aprobar
                   </button>
                   <button
-                    onClick={() => openConfirmationModal(justificante, 'rejected')}
+                    onClick={() =>
+                      openConfirmationModal(justificante, "rejected")
+                    }
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
                   >
                     Rechazar
@@ -145,15 +155,31 @@ const TeacherJustificantesPage = () => {
 
               {/* Imagen del justificante */}
               <div className="ml-6 text-center">
-                <img
-                  src={justificante.imageUrl || '/placeholder-image.jpg'}
-                  alt="Justificante"
-                  className="h-32 w-32 object-cover cursor-pointer border-2 border-gray-300"
-                  onClick={() => handleImageClick(justificante.imageUrl)}
-                />
-                <p className="text-blue-500 mt-2 cursor-pointer" onClick={() => handleImageClick(justificante.imageUrl)}>
-                  Descargar Justificante
-                </p>
+                {justificante.imageUrl ? (
+                  <>
+                    <img
+                      src={justificante.imageUrl}
+                      alt="Justificante"
+                      className="h-32 w-32 object-cover cursor-pointer border-2 border-gray-300"
+                      onClick={() => handleImageClick(justificante.imageUrl)}
+                    />
+                    <p
+                      className="text-blue-500 mt-2 cursor-pointer"
+                      onClick={() => handleImageClick(justificante.imageUrl)}
+                    >
+                      Descargar Justificante
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/5087/5087113.png"
+                      alt="Imagen no disponible"
+                      className="h-32 w-32 object-cover border-2 border-gray-300"
+                    />
+                    <p className="text-gray-500 mt-2">No se envió justificante</p>
+                  </>
+                )}
               </div>
             </div>
           ))
@@ -165,16 +191,18 @@ const TeacherJustificantesPage = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <p className="text-lg font-semibold mb-4">
-              ¿Estás seguro que deseas {actionType === 'approved' ? 'aprobar' : 'rechazar'} este justificante?
+              ¿Estás seguro que deseas{" "}
+              {actionType === "approved" ? "aprobar" : "rechazar"} este
+              justificante?
             </p>
             <div className="flex justify-end">
-              <button 
+              <button
                 onClick={confirmAction}
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
               >
                 Confirmar
               </button>
-              <button 
+              <button
                 onClick={() => setShowModal(false)}
                 className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
               >
