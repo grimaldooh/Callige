@@ -33,8 +33,19 @@ model Event {
   school_id   Int
   teachers    Teacher[] // Relación uno a muchos con profesores
   students    Student[] // Relación uno a muchos con estudiantes
+  attendanceList  AttendanceList?  @relation("EventToAttendanceList")
 }
 
+model AttendanceList {
+  id        Int      @id @default(autoincrement())
+  fecha     DateTime
+  materia   String
+  grupo     Group?    @relation(fields: [group_id], references: [id]) // Relación muchos a uno con grupo
+  group_id  Int?
+  attendances Attendance[] // Relación uno a muchos con las asistencias de los estudiantes
+  event       Event?     @relation(fields: [eventId], references: [id], name: "EventToAttendanceList")
+  eventId     Int?       @unique
+}
 model Admin {
   id       Int      @id @default(autoincrement())
   name     String
@@ -54,15 +65,6 @@ model Group {
   teachers  Teacher[]     @relation("GroupTeachers") // Relación muchos a muchos con profesores
   attendanceLists AttendanceList[]  // Relación uno a muchos con listas de asistencia
   justificantes Justificante[]  // Relación uno a muchos con justificantes
-}
-
-model AttendanceList {
-  id        Int      @id @default(autoincrement())
-  fecha     DateTime
-  materia   String
-  grupo     Group    @relation(fields: [group_id], references: [id]) // Relación muchos a uno con grupo
-  group_id  Int
-  attendances Attendance[] // Relación uno a muchos con las asistencias de los estudiantes
 }
 
 model Attendance {

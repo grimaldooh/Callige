@@ -160,7 +160,7 @@ const TeacherJustificantesPage = () => {
                     <img
                       src={justificante.imageUrl}
                       alt="Justificante"
-                      className="h-32 w-32 object-cover cursor-pointer border-2 border-gray-300"
+                      className="h-32 w-32 object-cover cursor-pointer border-2 border-gray-300 rounded-lg"
                       onClick={() => handleImageClick(justificante.imageUrl)}
                     />
                     <p

@@ -124,7 +124,7 @@ const AttendanceList = ({ groupId }) => {
 
   return (
     <div
-      className=" ml-52 mt-6 overflow-x-auto scrollbar-hide"
+      className=" ml-52 mt-2 overflow-x-auto scrollbar-hide"
       style={{
         msOverflowStyle: "none", // Para IE y Edge
         scrollbarWidth: "none",  // Para Firefox

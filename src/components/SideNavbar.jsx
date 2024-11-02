@@ -3,7 +3,7 @@
 import { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
-import { MenuIcon, XIcon, LogoutIcon, UserGroupIcon, UserIcon, HomeIcon, NewspaperIcon, UsersIcon, DocumentReportIcon } from '@heroicons/react/solid';
+import { MenuIcon, XIcon, LogoutIcon, UserGroupIcon, UserIcon, HomeIcon, NewspaperIcon, UsersIcon, DocumentReportIcon} from '@heroicons/react/solid';
 import axios from 'axios';
 
 export default function Navbar({ className }) {
@@ -162,6 +162,21 @@ export default function Navbar({ className }) {
                 >
                   <MenuIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Dashboard</span>
+                </li>
+              </Link>
+            </li>
+            <li>
+              <Link href="/teacher/events">
+                <li
+                  onClick={() => handleLinkClick("/teacher/events")}
+                  className={`flex items-center p-2 ${
+                    currentPath === "/teacher/events"
+                      ? "text-blue-500"
+                      : "text-gray-700"
+                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                >
+                  <NewspaperIcon className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">Eventos</span>
                 </li>
               </Link>
             </li>
