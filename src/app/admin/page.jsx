@@ -483,8 +483,8 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="flex space-x-4 mb-8">
-        <div className="flex-1">
+      <div className="flex space-x-4 mb-8 z-20">
+        <div className="flex-1 z-50">
           <SchoolStudents students={filteredStudents} />
         </div>
         <div className="flex-1">
@@ -502,13 +502,13 @@ export default function AdminPage() {
         <h1 className="text-2xl font-semibold">Eventos</h1>
       </div>
 
-      <div className="events-section mb-16 w-full gap-12">
+      <div className="events-section mb-16 w-full gap-12 0">
         {Array.isArray(events) && events.length === 0 ? (
           <p className="text-center text-xl text-gray-600">
             No hay eventos disponibles.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 z-0">
             {Array.isArray(events) &&
               events.map((event) => (
                 <div

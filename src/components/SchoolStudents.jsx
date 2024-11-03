@@ -26,7 +26,7 @@ const SchoolStudents = ({ students}) => {
     };
 
   return (
-    <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+    <div className="mt-8 bg-white p-6 rounded-lg shadow-md z-50">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Estudiantes</h2>
       <input
         type="text"
@@ -35,7 +35,7 @@ const SchoolStudents = ({ students}) => {
         onChange={handleSearchChange}
         className="mb-4 p-2 border border-gray-300 rounded-lg w-full"
       />
-      <ul className="space-y-2">
+      <ul className="space-y-2 z-50">
         {Array.isArray(filteredStudents) && filteredStudents.length > 0 ? (
           filteredStudents.slice(0,6).map((student) => (
             <li key={student.id}>

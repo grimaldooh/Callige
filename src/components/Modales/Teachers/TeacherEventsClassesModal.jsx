@@ -39,7 +39,7 @@ const TeacherEventsClassesModal = ({ teacherId, onClose}) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-xl font-bold mb-4">Eventos y Clases Vinculadas</h2>
 
