@@ -6,6 +6,7 @@ import LinkStudentModal from '../../../components/Students/LinkStudentModal';
 import EditStudentModal from '../../../components/Modales/Students/EditStudentModal';
 import StudentEventsClassesModal from '../../../components/Modales/Students/StudentEventsClassesModal';
 import { useAuth } from '../../context/AuthContext';
+import { TrashIcon, PencilIcon, UserAddIcon, ClipboardListIcon } from '@heroicons/react/solid';
 import { set } from 'date-fns';
 
 
@@ -108,7 +109,7 @@ const StudentsPage = () => {
     setSearchTerm(term);
 
     const filtered = students.filter((student) =>
-      student.name.toLowerCase().includes(term)
+      student.name.toLowerCase().includes(term) || student.id.toString().includes(term)
     );
 
     setFilteredStudents(filtered);
@@ -121,7 +122,7 @@ const StudentsPage = () => {
       {/* Barra de búsqueda */}
       <input
         type="text"
-        placeholder="Buscar por nombre"
+        placeholder="Buscar por nombre o Id..."
         className="mb-4 p-2 border border-gray-300 rounded w-full"
         value={searchTerm}
         onChange={handleSearch}
@@ -131,15 +132,40 @@ const StudentsPage = () => {
       {Array.isArray(filteredStudents) && filteredStudents.length > 0 ? (
         <ul className="list-disc list-inside">
           {filteredStudents.map((student) => (
-            <li key={student.id} className="flex justify-between items-center p-4 bg-gray-100 mb-2 rounded shadow-md">
+            <li key={student.id} className="flex justify-between items-center p-4 bg-gray-100 mb-4 rounded shadow-md">
               <div>
-                <span className="font-bold">ID:</span> {student.id} - {student.name}
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{student.name}</h3>
+              <p className="text-gray-600 text-sm ">ID: {student.id}</p>
               </div>
               <div className="flex space-x-4">
-                <button onClick={() => handleDelete(student.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Borrar</button>
-                <button onClick={() => openEditModal(student.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Editar</button>
-                <button onClick={() => openModal(student.id)} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Vincular</button>
-                <button onClick={() => openEventsClassesModal(student.id)} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Grupos y Eventos</button>
+                <button
+                  onClick={() => handleDelete(student.id)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                  title="Borrar"
+                >
+                  <TrashIcon className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => openEditModal(student.id)}
+                  className="text-blue-500 hover:text-blue-700 transition-colors"
+                  title="Editar"
+                >
+                  <PencilIcon className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => openModal(student.id)}
+                  className="text-green-500 hover:text-green-700 transition-colors"
+                  title="Vincular"
+                >
+                  <UserAddIcon className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => openEventsClassesModal(student.id)}
+                  className="text-yellow-500 hover:text-yellow-700 transition-colors"
+                  title="Grupos y Eventos"
+                >
+                  <ClipboardListIcon className="w-6 h-6" />
+                </button>
               </div>
             </li>
           ))}

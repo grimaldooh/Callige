@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { PencilIcon, ClipboardListIcon, UsersIcon } from '@heroicons/react/solid';
+import EditEventModal from '../../../components/Modales/Events/EditEventModal';
 import AttendanceList from '../../../components/Modales/Events/AttendanceList';
 import ListaAsistentes from '../../../components/Modales/Events/ListaAsistentes';
 
@@ -16,6 +18,8 @@ export default function events() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
   const [showAsistentesModal, setShowAsistentesModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+
   const upcomingEvents = events.filter((event) => new Date(event.date) > today);
   const pastEvents = events.filter((event) => new Date(event.date) <= today);
 
@@ -53,6 +57,16 @@ export default function events() {
     setSelectedEvent(null);
   };
 
+  const openEditModal = (event) => {
+    setSelectedEvent(event);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedEvent(null);
+  };
+
   return (
     <div className="events-section mb-16 mt-8 ml-4">
       <h2 className="text-4xl font-bold mb-8 text-center">
@@ -87,18 +101,18 @@ export default function events() {
                 <div className="flex space-x-4">
                   <button
                     onClick={() => handleShowListaAsistentesModal(event.id)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    className=" text-blue-600 px-4 py-2 rounded hover:bg-blue-50"
+                    title='Lista de asistentes'
                   >
-                    Lista de asistencia
+                    <ClipboardListIcon className="w-6 h-6" />
                   </button>
-                  {new Date(event.date) <= today && (
-                    <button
-                      onClick={() => handleShowAsistentes(event.id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    >
-                      Ver Asistentes
-                    </button>
-                  )}
+                  <button
+                    onClick={() => openEditModal(event.id)}
+                    className="text-yellow-500 hover:text-blue-700 transition-colors"
+                    title="Editar Evento"
+                  >
+                    <PencilIcon className="w-6 h-6" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -132,19 +146,15 @@ export default function events() {
                 </p>
                 <p className="text-gray-500 mb-2">ID del Evento: {event.id}</p>
                 <div className="flex space-x-4">
-                  <button
-                    onClick={() => handleShowListaAsistentesModal(event.id)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                  >
-                    Lista de asistencia
-                  </button>
+                 
                   {new Date(event.date) <= today && (
                     <button
                       onClick={() => handleShowAsistentes(event.id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    >
-                      Ver Asistentes
-                    </button>
+                      className=" text-blue-600 px-4 py-2 rounded hover:bg-blue-50"
+                      title='Lista de asistentes'
+                  >
+                    <UsersIcon className="w-6 h-6" />
+                  </button>
                   )}
                 </div>
               </div>
@@ -166,6 +176,14 @@ export default function events() {
         <ListaAsistentes
           eventId={selectedEvent}
           onClose={closeListaAsistentesModal}
+        />
+      )}
+
+      {showEditModal && (
+        <EditEventModal
+          eventId={selectedEvent}
+          setEvents={setEvents}
+          onClose={closeEditModal}
         />
       )}
     </div>

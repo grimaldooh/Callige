@@ -39,7 +39,7 @@ export default function RootLayout({
         <AuthProvider>
           <div className="flex">
             <NavbarHandler />
-            <main className="flex-1 p-4">{children}</main>
+            <main className="flex-1">{children}</main>
           </div>
         </AuthProvider>
       </body>

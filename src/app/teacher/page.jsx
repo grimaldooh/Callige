@@ -10,6 +10,8 @@ const TeachersPage = () => {
   const globalSchoolId = schoolId;
   const teacherId = userId;
 
+  const today = new Date();
+
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -43,7 +45,11 @@ const TeachersPage = () => {
       try {
         const response = await fetch(`/api/teacher/events?teacherId=${teacherId}`);
         const data = await response.json();
-        setEvents(data.events);
+        const upcomingEvents = data.events
+          .filter((event) => new Date(event.date) >= today)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .slice(0, 3); // Mostrar solo los primeros 3 eventos
+        setEvents(upcomingEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
@@ -59,7 +65,7 @@ const TeachersPage = () => {
 
       {/* Sección de Eventos */}
       <div className="events-section mb-16">
-        <h2 className="text-4xl font-bold mb-8 text-center">Eventos del Docente</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center">Eventos del Docente</h2>
         {Array.isArray(events) && events.length === 0 ? (
           <p className="text-center text-xl text-gray-600">No hay eventos disponibles.</p>
         ) : (

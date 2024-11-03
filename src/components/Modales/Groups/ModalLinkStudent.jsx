@@ -26,9 +26,12 @@ const LinkStudentModal = ({ groupId, onClose }) => {
         console.log('globalSchoolId:', globalSchoolId);
         const response = await fetch(`/api/admin/students?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        console.log('Fetched students:', data.students);
-        setStudents(data.students);
-        setFilteredStudents(data.students); // Inicialmente mostrar todos
+        console.log("Fetched students:", data.students);
+        const filteredStudents = data.students.filter(
+          (student) => !student.groups.some((group) => group.id === groupId)
+        );
+        setStudents(filteredStudents);
+        setFilteredStudents(filteredStudents); // Inicialmente mostrar todos
       } catch (error) {
         console.error('Error fetching students:', error);
       }
@@ -69,7 +72,9 @@ const LinkStudentModal = ({ groupId, onClose }) => {
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/2 max-h-[80vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-4">Vincular estudiante al grupo</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Vincular estudiante al grupo
+        </h2>
         <input
           type="text"
           placeholder="Buscar estudiantes..."
@@ -79,11 +84,17 @@ const LinkStudentModal = ({ groupId, onClose }) => {
         />
         <ul className="max-h-60 overflow-y-auto">
           {Array.isArray(filteredStudents) && filteredStudents.length > 0 ? (
-            filteredStudents.map(student => (
-              <li key={student.id} className="flex justify-between items-center mb-2">
-                <span>{student.name}</span>
-                <button 
-                  onClick={() => handleLinkStudent(student.id)} 
+            filteredStudents.map((student) => (
+              <li
+                key={student.id}
+                className="flex justify-between items-center mb-2"
+              >
+                <div>
+                  <span className='font-bold'>ID: {student.id} - </span>
+                  <span>{student.name}</span>
+                </div>
+                <button
+                  onClick={() => handleLinkStudent(student.id)}
                   className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                 >
                   Vincular
@@ -94,8 +105,8 @@ const LinkStudentModal = ({ groupId, onClose }) => {
             <p>No hay estudiantes disponibles.</p>
           )}
         </ul>
-        <button 
-          onClick={onClose} 
+        <button
+          onClick={onClose}
           className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
         >
           Cerrar

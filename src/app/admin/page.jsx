@@ -16,7 +16,7 @@ import GroupList from '../../components/Group/GroupList'; // Importa el componen
 import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
 import ListaAsistentes from '../../components/Modales/Events/ListaAsistentes'; // Importa el componente para mostrar la lista de asistentes
 import { useAuth } from '../context/AuthContext';
-import { PlusIcon } from '@heroicons/react/solid'; // Asegúrate de tener instalada la biblioteca heroicons
+import { PlusIcon, UserAddIcon, UserGroupIcon, UserIcon, AcademicCapIcon, CalendarIcon, UserCircleIcon } from '@heroicons/react/solid'; // Asegúrate de tener instalada la biblioteca heroicons
 
 
 
@@ -58,6 +58,9 @@ export default function AdminPage() {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const today = new Date();
+
   
 
   // Funciones para abrir y cerrar modales
@@ -115,11 +118,15 @@ export default function AdminPage() {
 
     async function fetchEvents() {
       try {
-        console.log('globalSchoolId:', globalSchoolId);
+        console.log("globalSchoolId:", globalSchoolId);
         const response = await fetch(`/api/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        console.log('data:', data);
-        setEvents(data);
+        console.log("data:", data);
+        const upcomingEvents = data
+          .filter((event) => new Date(event.date) >= today)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .slice(0, 3); // Mostrar solo los primeros 3 eventos
+        setEvents(upcomingEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -399,6 +406,7 @@ export default function AdminPage() {
           id="dropdownHoverButton"
           onClick={() => setIsOpen(true)}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-3 inline-flex items-center justify-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          title="Añadir"
           type="button"
         >
           <PlusIcon className="w-5 h-5" aria-hidden="true" />
@@ -417,49 +425,55 @@ export default function AdminPage() {
               <li>
                 <button
                   onClick={() => handleSelect("student")}
-                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
+                  <UserIcon className="w-5 h-5 mr-2" />
                   Añadir Estudiante
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleSelect("teacher")}
-                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
+                  <AcademicCapIcon className="w-5 h-5 mr-2" />
                   Añadir Profesor
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleSelect("group")}
-                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
+                  <UserGroupIcon className="w-5 h-5 mr-2" />
                   Añadir Grupo
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => handleSelect("admin")}
-                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                  onClick={() => handleSelect("event")}
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
+                  <CalendarIcon className="w-5 h-5 mr-2" />
+                  Añadir Evento
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSelect("admin")}
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <UserAddIcon className="w-5 h-5 mr-2" />
                   Añadir Admin
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleSelect("superadmin")}
-                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
-                  Añadir Superadmin
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleSelect("event")}
-                  className="block w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Añadir Evento
+                  <UserCircleIcon className="w-5 h-5 mr-2" />
+                  Añadir SuperAdmin
                 </button>
               </li>
             </ul>
@@ -484,13 +498,13 @@ export default function AdminPage() {
       </div>
 
       <div className="flex space-x-4 mb-8 z-20">
-        <div className="flex-1 z-50">
+        <div className="flex-1 h-full">
           <SchoolStudents students={filteredStudents} />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 h-full">
           <SchoolTeachers teachers={filteredTeachers} />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 h-full">
           <SchoolGroups
             groups={groups}
             handleOpenGroupModal={handleOpenGroupModal}

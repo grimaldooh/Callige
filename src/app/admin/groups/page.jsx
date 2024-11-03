@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import LinkStudentModal from '../../../components/Modales/Groups/ModalLinkStudent';
 import LinkTeacherModal from '../../../components/Modales/Groups/ModalLinkTeacher';
 import ListaAsistentes from '../../../components/Modales/Groups/ListaAsistentes';
+import { TrashIcon, PencilIcon, UserAddIcon, ClipboardListIcon, UserGroupIcon } from '@heroicons/react/solid';
+
 
 import EditGroupModal from '../../../components/Modales/Groups/ModalEditGroup';
 import { useAuth } from '../../context/AuthContext';
@@ -96,7 +98,7 @@ const GroupsPage = () => {
     setSearchTerm(term);
 
     const filtered = groups.filter((group) =>
-      group.name.toLowerCase().includes(term)
+      group.name.toLowerCase().includes(term) || group.id.toString().includes(term)
     );
 
     setFilteredGroups(filtered);
@@ -130,62 +132,68 @@ const GroupsPage = () => {
       <div className="mt-14 mb-8">
         <input
           type="text"
-          placeholder="Buscar por nombre"
+          placeholder="Buscar por nombre o Id..."
           className="mb-4 p-2 border border-gray-300 rounded w-full"
           value={searchTerm}
           onChange={handleSearch}
         />
       </div>
 
-      {/* Lista de grupos */}
-      {Array.isArray(filteredGroups) && filteredGroups.length > 0 ? (
-        <ul className="list-disc list-inside">
-          {filteredGroups.map((group) => (
-            <li
-              key={group.id}
-              className="flex justify-between items-center p-4 bg-gray-100 mb-2 rounded shadow-md"
-            >
-              <div>
-                <span className="font-bold">ID:</span> {group.id} - {group.name}
-              </div>
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => handleDelete(group.id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                >
-                  Borrar
-                </button>
-                <button
-                  onClick={() => openEditModal(group.id, group, filteredGroups)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => openModalTeacher(group.id)}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-900"
-                >
-                  Vincular profesor
-                </button>
-                <button
-                  onClick={() => openModalStudents(group.id)}
-                  className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-900"
-                >
-                  Vincular alumno
-                </button>
-                <button
-                  onClick={() => openListaAsistentesModal(group.id)}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                >
-                  Ver lista de alumnos y profesores
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No hay grupos disponibles.</p>
-      )}
+     {/* Lista de grupos */}
+{Array.isArray(filteredGroups) && filteredGroups.length > 0 ? (
+  <ul className="list-none">
+    {filteredGroups.map((group) => (
+      <li
+        key={group.id}
+        className="flex justify-between items-center p-4 bg-gray-100 mb-4 rounded shadow-md mr-4 "
+      >
+        <div className="flex flex-col">
+          <span className="font-bold">ID: {group.id}</span>
+          <span>{group.name}</span>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => handleDelete(group.id)}
+            className="bg-red-500 text-white p-3 rounded hover:bg-red-700 transition-colors"
+            title="Borrar"
+          >
+            <TrashIcon className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => openEditModal(group.id, group, filteredGroups)}
+            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+            title="Editar"
+          >
+            <PencilIcon className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => openModalTeacher(group.id)}
+            className="bg-green-500 text-white p-3 rounded hover:bg-green-700 transition-colors"
+            title="Vincular profesor"
+          >
+            <UserAddIcon className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => openModalStudents(group.id)}
+            className="bg-orange-500 text-white p-3 rounded hover:bg-orange-700 transition-colors"
+            title="Vincular alumno"
+          >
+            <UserGroupIcon className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => openListaAsistentesModal(group.id)}
+            className="bg-yellow-500 text-white p-3 rounded hover:bg-yellow-700 transition-colors "
+            title="Ver lista de alumnos y profesores"
+          >
+            <ClipboardListIcon className="w-5 h-5" />
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+) : (
+  <p>No hay grupos disponibles.</p>
+)}
       {showModalStudent && (
         <LinkStudentModal groupId={selectedGroup} onClose={closeModal} />
       )}

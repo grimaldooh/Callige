@@ -1,12 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { EyeIcon } from '@heroicons/react/solid';
+
 
 const StudentEventsClassesModal = ({ studentId, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!studentId) return;
@@ -45,6 +50,14 @@ const StudentEventsClassesModal = ({ studentId, onClose }) => {
     return formattedDate;
   };
 
+  const handleViewGroup = (groupId) => {
+    router.push(`/admin/group/${groupId}`);
+  };
+
+  const handleDeleteGroup = (groupId) => {
+    // Implement delete group functionality here
+  };
+
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
@@ -60,8 +73,22 @@ const StudentEventsClassesModal = ({ studentId, onClose }) => {
             <ul className="mb-4">
               {groups.length > 0 ? (
                 groups.map((group) => (
-                  <li key={group.id} className="border p-2 rounded mb-2">
-                    {group.name}
+                  <li
+                    key={group.id}
+                    className="border p-4 rounded mb-2 flex justify-between items-center"
+                  >
+                    <div>
+                      ID : {group.id} - {group.name}
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleViewGroup(group.id)}
+                        className=" text-white p-2 rounded hover:bg-blue-50 transition-colors"
+                        title="Ver grupo"
+                      >
+                        <EyeIcon className="w-6 h-6 text-blue-400" />
+                      </button>
+                    </div>
                   </li>
                 ))
               ) : (

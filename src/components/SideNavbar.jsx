@@ -94,7 +94,7 @@ export default function Navbar({ className }) {
               <Link href="/admin">
                 <li
                   onClick={() => handleLinkClick('/admin')}
-                  className={`flex items-center p-2 ${currentPath === '/admin' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  className={`flex items-center p-2 ${currentPath === '/admin' ? 'text-blue-500' : 'text-gray-700'} hover:bg-blue-50 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <HomeIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Home</span>
@@ -105,7 +105,7 @@ export default function Navbar({ className }) {
               <Link href="/admin/students">
                 <li
                   onClick={() => handleLinkClick('/admin/students')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/students' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  className={`flex items-center p-2 ${currentPath === '/admin/students' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <UserIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Alumnos</span>
@@ -116,7 +116,7 @@ export default function Navbar({ className }) {
               <Link href="/admin/teachers">
                 <li
                   onClick={() => handleLinkClick('/admin/teachers')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/teachers' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  className={`flex items-center p-2 ${currentPath === '/admin/teachers' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <UsersIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Profesores</span>
@@ -127,7 +127,7 @@ export default function Navbar({ className }) {
               <Link href="/admin/groups">
                 <li
                   onClick={() => handleLinkClick('/admin/groups')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/groups' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  className={`flex items-center p-2 ${currentPath === '/admin/groups' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <UserGroupIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Grupos</span>
@@ -138,7 +138,7 @@ export default function Navbar({ className }) {
               <Link href="/admin/events">
                 <li
                   onClick={() => handleLinkClick('/admin/events')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/events' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  className={`flex items-center p-2 ${currentPath === '/admin/events' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <NewspaperIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Eventos</span>
@@ -158,7 +158,7 @@ export default function Navbar({ className }) {
                     currentPath === "/teacher"
                       ? "text-blue-500"
                       : "text-gray-700"
-                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <MenuIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Dashboard</span>
@@ -173,7 +173,7 @@ export default function Navbar({ className }) {
                     currentPath === "/teacher/events"
                       ? "text-blue-500"
                       : "text-gray-700"
-                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
                   <NewspaperIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Eventos</span>
@@ -188,7 +188,7 @@ export default function Navbar({ className }) {
                     currentPath === "/teacher/groups"
                       ? "text-blue-500"
                       : "text-gray-700"
-                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
+                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
                 >
                   <UserGroupIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Grupos</span>
@@ -203,7 +203,7 @@ export default function Navbar({ className }) {
                     currentPath === "/teacher/justificantes"
                       ? "text-blue-500"
                       : "text-gray-700"
-                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
+                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
                 >
                   <DocumentReportIcon className="w-5 h-5 mr-2" />
                   <span className="font-semibold">Justificantes</span>
@@ -222,39 +222,68 @@ export default function Navbar({ className }) {
 
   return (
     <>
-    {userId && (
-    <div className={` w-64 h-screen p-4 bg-gray-100 dark:bg-gray-800 ${className}`}>
-      <button onClick={toggleDrawer} className="text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-3 inline-flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-green-800">
-        <MenuIcon className="w-5 h-5" aria-hidden="true" />
-      </button>
-
-      {/* Drawer Component */}
-      {isDrawerOpen && (
-        <div id="drawer-navigation" className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform transform bg-gray-100 dark:bg-gray-800" tabIndex="-1">
-          <h5 className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Dashboard</h5>
-          
-          <ul className="space-y-2 font-medium mt-4">
-            {renderLinks()}
-          </ul>
-          <button onClick={openLogoutModal} className="flex items-center text-red-500 mt-8 hover:text-red-700">
-            <LogoutIcon className="w-5 h-5 mr-2" />
-            Logout
+      {userId && (
+        <div
+          className={` w-64 h-screen p-4 bg-gray-600 dark:bg-gray-800 ${className}`}
+        >
+          <button
+            onClick={toggleDrawer}
+            className="text-gray-100 bg-gray-300 hover:bg-gray-300 focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-3 inline-flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-green-800"
+          >
+            <MenuIcon className="w-5 h-5" aria-hidden="true" />
           </button>
-        </div>
-      )}
 
-      {/* Logout Modal */}
-      {isLogoutModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded-md shadow-md dark:bg-gray-800">
-            <p className="mb-4 text-gray-700 dark:text-gray-200">¿Estás seguro de que deseas cerrar sesión?</p>
-            <button onClick={confirmLogout} className="bg-red-500 text-white px-4 py-2 rounded mr-2 hover:bg-red-700">Sí</button>
-            <button onClick={closeLogoutModal} className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">No</button>
-          </div>
+          {/* Drawer Component */}
+          {isDrawerOpen && (
+            <div
+              id="drawer-navigation"
+              className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform transform bg-gray-200 dark:bg-gray-800"
+              tabIndex="-1"
+            >
+              <h5 className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
+                Dashboard
+              </h5>
+
+              <ul className="space-y-2 font-medium mt-4">{renderLinks()}</ul>
+              <button
+                onClick={openLogoutModal}
+                className="flex items-center text-red-500 mt-8 hover:text-red-700"
+              >
+                <LogoutIcon className="w-5 h-5 mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
+
+          {/* Logout Modal */}
+          {isLogoutModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800 max-w-sm w-full">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                  Cerrar Sesión
+                </h2>
+                <p className="mb-6 text-gray-700 dark:text-gray-300">
+                  ¿Estás seguro de que deseas cerrar sesión?
+                </p>
+                <div className="flex justify-end space-x-4">
+                  <button
+                    onClick={confirmLogout}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    Sí
+                  </button>
+                  <button
+                    onClick={closeLogoutModal}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
-    )}
     </>
   );
 }

@@ -10,6 +10,8 @@ export default async function handler(req, res) {
         where: {
           school_id: parseInt(schoolId),
         },
+        orderBy: { date: 'asc' }, // Ordena por fecha ascendente
+
       });
       console.log("events:", events);
       res.status(200).json({ events });

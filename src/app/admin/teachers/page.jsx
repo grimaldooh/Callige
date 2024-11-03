@@ -85,7 +85,7 @@ const TeachersPage = () => {
     setSearchTerm(term);
 
     const filtered = teachers.filter((teacher) =>
-      teacher.name.toLowerCase().includes(term)
+      teacher.name.toLowerCase().includes(term) || teacher.id.toString().includes(term)
     );
 
     setFilteredTeachers(filtered);
@@ -117,7 +117,7 @@ const TeachersPage = () => {
 
       <input
         type="text"
-        placeholder="Buscar por nombre"
+        placeholder="Buscar por nombre o Id..."
         className="mb-4 p-2 border border-gray-300 rounded w-full"
         value={searchTerm}
         onChange={handleSearch}

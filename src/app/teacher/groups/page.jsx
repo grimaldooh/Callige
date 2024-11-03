@@ -8,9 +8,8 @@ import { useAuth } from '../../context/AuthContext';
 import { PencilIcon, ClipboardListIcon } from '@heroicons/react/solid';
 
 const Page = ({ groups, openModal }) => {
-  const colors = ['bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-red-100', 'bg-purple-100'];
-
-  return (
+  const colors = ['bg-blue-800', 'bg-gray-400', 'bg-blue-400', 'bg-gray-700', 'bg-blue-400'];
+    return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8">Grupos Vinculados</h1>
 

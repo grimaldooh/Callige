@@ -10,6 +10,9 @@ export default async function handler(req, res) {
         where : {
           school_id: parseInt(schoolId),
         },
+        include: {
+          groups: true,
+        },
       });
       res.status(200).json({ teachers });
     } catch (error) {

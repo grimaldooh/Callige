@@ -21,8 +21,11 @@ const LinkTeacherModal = ({ groupId, onClose }) => {
 
         const response = await fetch(`/api/admin/teachers?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setTeachers(data.teachers);
-        setFilteredTeachers(data.teachers); // Inicialmente mostrar todos
+        const filteredTeachers = data.teachers.filter(
+          (teacher) => !teacher.groups.some((group) => group.id === groupId)
+        );
+        setTeachers(filteredTeachers);
+        setFilteredTeachers(filteredTeachers); // Inicialmente mostrar todos
       } catch (error) {
         console.error('Error fetching teachers:', error);
       }
