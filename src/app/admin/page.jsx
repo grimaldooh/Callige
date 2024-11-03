@@ -498,7 +498,7 @@ export default function AdminPage() {
       </div>
 
       <div className="flex space-x-4 mb-8 z-20">
-        <div className="flex-1 h-full">
+        <div className="flex-1 h-full z-20">
           <SchoolStudents students={filteredStudents} />
         </div>
         <div className="flex-1 h-full">

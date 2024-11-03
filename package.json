@@ -19,7 +19,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
-    "chart.js": "^4.4.4",
+    "chart.js": "^4.4.6",
     "cookie": "^1.0.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AttendanceList from './AttendanceList';
 
 const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
+  const router = useRouter(); 
   const [students, setStudents] = useState([]);
+
 
   useEffect(() => {
     if (data && data.students) {
@@ -28,6 +31,10 @@ const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
     }
   };
 
+  const handleViewGroup = (groupId) => {
+    router.push(`/admin/group/${groupId}`);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -36,6 +43,11 @@ const GroupList = ({ isOpen, onClose, data, selectedGroup }) => {
         <h2 className="text-2xl font-bold mb-4 text-gray-800">
           Estudiantes del Grupo {selectedGroup}
         </h2>
+
+        <button onClick={() => handleViewGroup(selectedGroup)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 ease-in-out mb-4">
+          Ver detalles del grupo
+        </button>
+
         <ul className="space-y-4">
           {Array.isArray(students) && students.length > 0 ? (
             students.map((student) => (

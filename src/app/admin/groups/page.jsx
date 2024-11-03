@@ -1,16 +1,19 @@
 'use client';
 //src/app/admin/groups/page.jsx
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import LinkStudentModal from '../../../components/Modales/Groups/ModalLinkStudent';
 import LinkTeacherModal from '../../../components/Modales/Groups/ModalLinkTeacher';
 import ListaAsistentes from '../../../components/Modales/Groups/ListaAsistentes';
-import { TrashIcon, PencilIcon, UserAddIcon, ClipboardListIcon, UserGroupIcon } from '@heroicons/react/solid';
+import { TrashIcon, PencilIcon, UserAddIcon, ClipboardListIcon, UserGroupIcon , EyeIcon} from '@heroicons/react/solid';
 
 
 import EditGroupModal from '../../../components/Modales/Groups/ModalEditGroup';
 import { useAuth } from '../../context/AuthContext';
 
 const GroupsPage = () => {
+
+  const router = useRouter();
   const { schoolId } = useAuth();
   const globalSchoolId = schoolId;
 
@@ -124,6 +127,11 @@ const GroupsPage = () => {
     }
   };
 
+  const handleViewGroup = (groupId) => {
+    console.log('Ver detalles del grupo:', groupId);
+    router.push(`/admin/group/${groupId}`);
+  };
+
   return (
     <div className="container mx-auto mt-4 p-4">
       <h1 className="text-4xl font-bold ">Listado de grupos</h1>
@@ -139,61 +147,68 @@ const GroupsPage = () => {
         />
       </div>
 
-     {/* Lista de grupos */}
-{Array.isArray(filteredGroups) && filteredGroups.length > 0 ? (
-  <ul className="list-none">
-    {filteredGroups.map((group) => (
-      <li
-        key={group.id}
-        className="flex justify-between items-center p-4 bg-gray-100 mb-4 rounded shadow-md mr-4 "
-      >
-        <div className="flex flex-col">
-          <span className="font-bold">ID: {group.id}</span>
-          <span>{group.name}</span>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => handleDelete(group.id)}
-            className="bg-red-500 text-white p-3 rounded hover:bg-red-700 transition-colors"
-            title="Borrar"
-          >
-            <TrashIcon className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => openEditModal(group.id, group, filteredGroups)}
-            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-700 transition-colors"
-            title="Editar"
-          >
-            <PencilIcon className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => openModalTeacher(group.id)}
-            className="bg-green-500 text-white p-3 rounded hover:bg-green-700 transition-colors"
-            title="Vincular profesor"
-          >
-            <UserAddIcon className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => openModalStudents(group.id)}
-            className="bg-orange-500 text-white p-3 rounded hover:bg-orange-700 transition-colors"
-            title="Vincular alumno"
-          >
-            <UserGroupIcon className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => openListaAsistentesModal(group.id)}
-            className="bg-yellow-500 text-white p-3 rounded hover:bg-yellow-700 transition-colors "
-            title="Ver lista de alumnos y profesores"
-          >
-            <ClipboardListIcon className="w-5 h-5" />
-          </button>
-        </div>
-      </li>
-    ))}
-  </ul>
-) : (
-  <p>No hay grupos disponibles.</p>
-)}
+      {/* Lista de grupos */}
+      {Array.isArray(filteredGroups) && filteredGroups.length > 0 ? (
+        <ul className="list-none">
+          {filteredGroups.map((group) => (
+            <li
+              key={group.id}
+              className="flex justify-between items-center p-4 bg-gray-100 mb-4 rounded shadow-md mr-4 "
+            >
+              <div className="flex flex-col">
+                <span className="font-bold">ID: {group.id}</span>
+                <span>{group.name}</span>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleDelete(group.id)}
+                  className="bg-red-500 text-white p-3 rounded hover:bg-red-700 transition-colors"
+                  title="Borrar"
+                >
+                  <TrashIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => openEditModal(group.id, group, filteredGroups)}
+                  className="bg-blue-500 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+                  title="Editar"
+                >
+                  <PencilIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => openModalTeacher(group.id)}
+                  className="bg-green-500 text-white p-3 rounded hover:bg-green-700 transition-colors"
+                  title="Vincular profesor"
+                >
+                  <UserAddIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => openModalStudents(group.id)}
+                  className="bg-orange-500 text-white p-3 rounded hover:bg-orange-700 transition-colors"
+                  title="Vincular alumno"
+                >
+                  <UserGroupIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => openListaAsistentesModal(group.id)}
+                  className="bg-yellow-500 text-white p-3 rounded hover:bg-yellow-700 transition-colors "
+                  title="Ver lista de alumnos y profesores"
+                >
+                  <ClipboardListIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleViewGroup(group.id)}
+                  className="bg-purple-500 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+                  title="Ver detalles del grupo"
+                >
+                  <EyeIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No hay grupos disponibles.</p>
+      )}
       {showModalStudent && (
         <LinkStudentModal groupId={selectedGroup} onClose={closeModal} />
       )}
@@ -201,10 +216,18 @@ const GroupsPage = () => {
         <LinkTeacherModal groupId={selectedGroup} onClose={closeModal} />
       )}
       {showEditModal && (
-        <EditGroupModal groupId={selectedGroup} setCurrentGroup={setCurrentGroup} setGroups={setFilteredGroups} onClose={closeModal} />
+        <EditGroupModal
+          groupId={selectedGroup}
+          setCurrentGroup={setCurrentGroup}
+          setGroups={setFilteredGroups}
+          onClose={closeModal}
+        />
       )}
       {showListaAsistentesModal && (
-        <ListaAsistentes groupId={selectedGroup} onClose={closeListaAsistentesModal} />
+        <ListaAsistentes
+          groupId={selectedGroup}
+          onClose={closeListaAsistentesModal}
+        />
       )}
     </div>
   );

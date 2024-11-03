@@ -14,6 +14,10 @@ const AttendanceList = ({ groupId }) => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [attendanceData, setAttendanceData] = useState([]);
 
+  const [monthlyAttendanceRate, setMonthlyAttendanceRate] = useState({});
+  const [perfectAttendanceStudents, setPerfectAttendanceStudents] = useState([]);
+  const [lowAttendanceStudents, setLowAttendanceStudents] = useState([]);
+
   const MAX_ABSENCES = 20; // Máximo de inasistencias permitidas
 
   useEffect(() => {
@@ -59,6 +63,13 @@ const AttendanceList = ({ groupId }) => {
     console.log('attendanceLists:', attendanceLists);
     console.log('students:', students);
   }, [attendanceLists, students]);
+
+  useEffect(() => {
+    if (attendanceLists.length > 0) {
+      calculateMonthlyAttendanceRate();
+      generateStudentAttendanceRanking();
+    }
+  }, [attendanceLists]);
 
   useEffect(() => {
     if (group) {
@@ -167,13 +178,70 @@ const AttendanceList = ({ groupId }) => {
     setShowConfirmModal(true);
   };
 
+  // Calcula el porcentaje de asistencia por grupo
+  const calculateGroupAttendancePercentage = () => {
+    let totalAttendances = 0;
+    let totalPresent = 0;
+
+    attendanceLists.forEach(list => {
+      totalAttendances += list.attendances.length;
+      totalPresent += list.attendances.filter(a => a.present === 1).length;
+    });
+
+    return totalAttendances > 0 ? ((totalPresent / totalAttendances) * 100).toFixed(2) : "0.00";
+  };
+
+  // Calcula la tasa de asistencia mensual
+  const calculateMonthlyAttendanceRate = () => {
+    const monthlyData = {};
+
+    attendanceLists.forEach(list => {
+      const month = new Date(list.fecha).getMonth();
+      if (!monthlyData[month]) monthlyData[month] = { total: 0, present: 0 };
+      monthlyData[month].total += list.attendances.length;
+      monthlyData[month].present += list.attendances.filter(a => a.present === 1).length;
+    });
+
+    const rate = {};
+    Object.keys(monthlyData).forEach(month => {
+      rate[month] = ((monthlyData[month].present / monthlyData[month].total) * 100).toFixed(2);
+    });
+
+    setMonthlyAttendanceRate(rate);
+  };
+
+  // Genera el ranking de estudiantes con asistencia perfecta o baja
+  const generateStudentAttendanceRanking = () => {
+    const perfectAttendance = [];
+    const lowAttendance = [];
+
+    students.forEach(student => {
+      const totalAttendances = attendanceLists.reduce((count, list) => 
+        count + list.attendances.filter(a => a.student_id === student.id).length, 0
+      );
+      const presentAttendances = attendanceLists.reduce((count, list) => 
+        count + list.attendances.filter(a => a.student_id === student.id && a.present === 1).length, 0
+      );
+
+      if (totalAttendances === presentAttendances && totalAttendances > 0) {
+        perfectAttendance.push(student);
+      } else if (totalAttendances > 0 && presentAttendances / totalAttendances <= 0.5) {
+        lowAttendance.push(student);
+      }
+    });
+
+    setPerfectAttendanceStudents(perfectAttendance);
+    setLowAttendanceStudents(lowAttendance);
+  };
+
+
 
   return (
     <div
       className=" ml-52 mt-2 overflow-x-auto scrollbar-hide"
       style={{
         msOverflowStyle: "none", // Para IE y Edge
-        scrollbarWidth: "none",  // Para Firefox
+        scrollbarWidth: "none", // Para Firefox
       }}
     >
       <h2 className="text-2xl font-bold mb-4 sticky">Lista de Asistencia</h2>
@@ -200,39 +268,58 @@ const AttendanceList = ({ groupId }) => {
         <table className="min-w-full border-collapse border border-gray-200">
           <thead>
             <tr>
-              <th className="border border-gray-200 p-2 sticky left-0 bg-white z-10">Alumno</th>
-              {attendanceLists.map(attendanceList => (
-                <th key={attendanceList.id} className="border border-gray-200 p-2 min-w-[150px]">
+              <th className="border border-gray-200 p-2 sticky left-0 bg-white z-10">
+                Alumno
+              </th>
+              {attendanceLists.map((attendanceList) => (
+                <th
+                  key={attendanceList.id}
+                  className="border border-gray-200 p-2 min-w-[150px]"
+                >
                   {formattedDate(attendanceList.fecha)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {students.map(student => {
+            {students.map((student) => {
               const absences = calculateAbsences(student.id);
               return (
                 <tr key={student.id}>
                   <td className="border border-gray-200 p-2 flex items-center w-80 sticky left-0 bg-white z-10">
                     {/* Icono de correo */}
-                    <a href={`mailto:${student.email}`} target="_blank" rel="noopener noreferrer" className="mr-2">
-                      <FontAwesomeIcon icon={faEnvelope} className="text-blue-500 hover:text-blue-700" />
+                    <a
+                      href={`mailto:${student.email}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mr-2"
+                    >
+                      <FontAwesomeIcon
+                        icon={faEnvelope}
+                        className="text-blue-500 hover:text-blue-700"
+                      />
                     </a>
                     {/* Cuadrado de color */}
                     <span
-                      className={`inline-block w-4 h-4 mr-2 ${getAbsenceColor(absences)}`}
-                      style={{ borderRadius: '4px' }}
+                      className={`inline-block w-4 h-4 mr-2 ${getAbsenceColor(
+                        absences
+                      )}`}
+                      style={{ borderRadius: "4px" }}
                     ></span>
                     {/* Nombre del estudiante con inasistencias */}
                     {student.name} - {absences}/{maxAbsences}
                   </td>
-                  {attendanceLists.map(attendanceList => {
-                    const attendance = attendanceList.attendances.find(a => a.student_id === student.id);
+                  {attendanceLists.map((attendanceList) => {
+                    const attendance = attendanceList.attendances.find(
+                      (a) => a.student_id === student.id
+                    );
                     return (
                       <td
                         key={attendanceList.id}
                         className="border border-gray-200 p-2"
-                        onClick={() => handleAttendanceClick(attendance, student)}
+                        onClick={() =>
+                          handleAttendanceClick(attendance, student)
+                        }
                       >
                         {attendance ? (
                           attendance.present === 1 ? (
@@ -272,14 +359,65 @@ const AttendanceList = ({ groupId }) => {
       ) : (
         <p>No hay listas de asistencia disponibles para este grupo.</p>
       )}
+
+      {/* Porcentaje de Asistencia por Grupo */}
+      <div className="mb-8 mt-8 p-4 bg-gray-50 shadow rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">
+          Porcentaje de Asistencia del Grupo
+        </h3>
+        <p className="text-2xl text-blue-600 font-bold">
+          {calculateGroupAttendancePercentage()}%
+        </p>
+      </div>
+
+      {/* Tasa de Asistencia Mensual */}
+      <div className="mb-8 p-4 bg-ray-100 shadow rounded-lg">
+        <h3 className="text-lg font-semibold mb-4">
+          Tasa de Asistencia Mensual
+        </h3>
+        <ul className="space-y-2">
+          {Object.keys(monthlyAttendanceRate).map((month) => (
+            <li key={month} className="flex justify-between items-center">
+              <span className="font-medium">Mes {Number(month) + 1}: {monthlyAttendanceRate[month]}%</span>
+              
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Ranking de Estudiantes */}
+      <div className="mb-8 p-4 bg-gray-200 shadow rounded-lg">
+        <h3 className="text-lg font-semibold mb-4">Ranking de Estudiantes</h3>
+        <div className="mb-4">
+          <h4 className="font-semibold text-green-600 mb-2">
+            Asistencia Perfecta
+          </h4>
+          <ul className="list-disc list-inside space-y-1">
+            {perfectAttendanceStudents.map((student) => (
+              <li key={student.id}>{student.name}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold text-red-600 mb-2">Asistencia Baja</h4>
+          <ul className="list-disc list-inside space-y-1">
+            {lowAttendanceStudents.map((student) => (
+              <li key={student.id}>{student.name}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
       {/* Modal de Confirmación */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-10">
           <div className="bg-white p-4 rounded shadow-md w-1/3">
-            <h3 className="text-xl font-semibold mb-4">¿Confirmar cambio de asistencia?</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              ¿Confirmar cambio de asistencia?
+            </h3>
             <p className="mb-4">
               {`¿Quieres marcar a ${selectedStudent.name} como ${
-                selectedAttendance.present ? 'Ausente' : 'Presente'
+                selectedAttendance.present ? "Ausente" : "Presente"
               }?`}
             </p>
             <div className="flex justify-end">

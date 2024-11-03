@@ -145,7 +145,19 @@ export default function Navbar({ className }) {
                 </li>
               </Link>
             </li>
+            <li>
+              <Link href="/admin/stats">
+                <li
+                  onClick={() => handleLinkClick('/admin/stats')}
+                  className={`flex items-center p-2 ${currentPath === '/admin/stats' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+                >
+                  <DocumentReportIcon className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">Estadísticas</span>
+                </li>
+              </Link>
+            </li>
           </>
+
         );
       case 'teacher':
         return (
