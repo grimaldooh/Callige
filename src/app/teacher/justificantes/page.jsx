@@ -105,7 +105,7 @@ const TeacherJustificantesPage = () => {
           justificantes.map((justificante) => (
             <div
               key={justificante.id}
-              className="flex items-center bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
+              className="flex items-center bg-gray-100 rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
             >
               {/* Imagen del estudiante */}
               <img

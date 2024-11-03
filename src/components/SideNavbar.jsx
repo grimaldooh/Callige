@@ -181,6 +181,21 @@ export default function Navbar({ className }) {
               </Link>
             </li>
             <li>
+              <Link href="/teacher/groups">
+                <li
+                  onClick={() => handleLinkClick("/teacher/groups")}
+                  className={`flex items-center p-2 ${
+                    currentPath === "/teacher/groups"
+                      ? "text-blue-500"
+                      : "text-gray-700"
+                  } hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
+                >
+                  <UserGroupIcon className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">Grupos</span>
+                </li>
+              </Link>
+            </li>
+            <li>
               <Link href="/teacher/justificantes">
                 <li
                   onClick={() => handleLinkClick("/teacher/justificantes")}

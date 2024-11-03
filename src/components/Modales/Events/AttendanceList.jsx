@@ -31,6 +31,7 @@ const AttendanceList = ({ eventId, showModal }) => {
   }
 
   const handleAttendanceClick = (attendance) => {
+    console.log('attendance:', attendance);
     setSelectedAttendance(attendance);
     setShowConfirmModal(true);
   };

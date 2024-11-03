@@ -9,6 +9,11 @@ const AttendanceList = ({ groupId }) => {
   const [newMaxAbsences, setNewMaxAbsences] = useState(""); // Para el input de max_absences
   const [group, setGroup] = useState(null);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedAttendance, setSelectedAttendance] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [attendanceData, setAttendanceData] = useState([]);
+
   const MAX_ABSENCES = 20; // Máximo de inasistencias permitidas
 
   useEffect(() => {
@@ -122,6 +127,47 @@ const AttendanceList = ({ groupId }) => {
     }
   }
 
+  const handleConfirmChange = async () => {
+    if (!selectedAttendance) return;
+
+    try {
+      const response = await fetch('/api/teacher/updateAttendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attendanceId: selectedAttendance.id }),
+      });
+
+      if (response.ok) {
+        const updatedAttendance = await response.json();
+        setAttendanceData((prevData) =>
+          prevData.map((att) =>
+            att.id === updatedAttendance.id ? { ...att, present: updatedAttendance.present } : att
+          )
+        );
+        setShowConfirmModal(false);
+        selectedAttendance.present = updatedAttendance.present;
+        setSelectedAttendance(null);
+      } else {
+        console.error('Error al actualizar la asistencia');
+      }
+    } catch (error) {
+      
+      console.error('Error al conectar con la API', error);
+    }
+  };
+
+  const handleAttendanceClick = (attendance, student) => {
+    if (!attendance) {
+      console.error('No se encontró la asistencia.');
+      return;
+    }
+    console.log('Selected attendance:', attendance);
+    setSelectedAttendance(attendance);
+    setSelectedStudent(student);
+    setShowConfirmModal(true);
+  };
+
+
   return (
     <div
       className=" ml-52 mt-2 overflow-x-auto scrollbar-hide"
@@ -186,6 +232,7 @@ const AttendanceList = ({ groupId }) => {
                       <td
                         key={attendanceList.id}
                         className="border border-gray-200 p-2"
+                        onClick={() => handleAttendanceClick(attendance, student)}
                       >
                         {attendance ? (
                           attendance.present === 1 ? (
@@ -224,6 +271,33 @@ const AttendanceList = ({ groupId }) => {
         </table>
       ) : (
         <p>No hay listas de asistencia disponibles para este grupo.</p>
+      )}
+      {/* Modal de Confirmación */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-10">
+          <div className="bg-white p-4 rounded shadow-md w-1/3">
+            <h3 className="text-xl font-semibold mb-4">¿Confirmar cambio de asistencia?</h3>
+            <p className="mb-4">
+              {`¿Quieres marcar a ${selectedStudent.name} como ${
+                selectedAttendance.present ? 'Ausente' : 'Presente'
+              }?`}
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-2"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmChange}
+                className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -58,6 +58,7 @@ model Admin {
 model Group {
   id        Int          @id @default(autoincrement())
   name      String
+  imageUrl  String?      // Campo para la URL de la imagen 
   max_absences Int?
   school    School?       @relation(fields: [school_id], references: [id])
   school_id Int?
