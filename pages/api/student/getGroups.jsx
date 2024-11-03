@@ -17,7 +17,11 @@ export default async function handler(req, res) {
       const studentGroups = await prisma.student.findUnique({
         where: { id: parseInt(studentId, 10) },
         select: {
-          groups: true, // Obtener los grupos vinculados
+          groups: {
+            include: {
+              teachers: true, // Incluir los profesores vinculados a cada grupo
+            },
+          },
         },
       });
 

@@ -119,7 +119,7 @@ const EventsPage = () => {
   };
 
   return (
-    <div className="container mx-auto mt-4">
+    <div className="container mx-auto mt-4 p-4">
       <h1 className="text-4xl font-bold">Listado de eventos</h1>
 
       {/* Toggle para eventos pasados y próximos */}

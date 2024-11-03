@@ -130,98 +130,101 @@ const GroupAttendancePage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mt-20 mb-4">
+      <h1 className="text-xl font-bold mt-16 mb-6 text-center text-gray-900">
         {group
           ? `Asistencias del Grupo de ${group.name}`
           : "Cargando datos del grupo..."}
       </h1>
 
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-2">
+      <div className="mt-8 px-4 flex flex-col items-center bg-white rounded-lg shadow-md py-6">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
           Porcentaje de Inasistencias
         </h2>
+
         <div
-          className={`w-16 h-16 mt-10 rounded-full ${absenceColor} flex items-center justify-center`}
+          className={`w-20 h-20 rounded-full ${absenceColor} flex items-center justify-center shadow-lg`}
         >
-          <span className="text-white text-center block">
+          <span className="text-white text-xl font-medium">
             {absencePercentage}%
           </span>
         </div>
-        <p className="mt-4 text-gray-700">
-          {group
-            ? `Faltas en el semestre : ${absences} / ${group.max_absences}`
-            : "Cargando datos del grupo..."}
-        </p>
-        <p className="mt-4 text-gray-700">
-          {group
-            ? `Número máximo de faltas: ${group.max_absences}`
-            : "Cargando datos del grupo..."}
-        </p>
+
+        <div className="mt-6 text-center">
+          <p className="text-gray-600">
+            {group
+              ? `Faltas en el semestre: ${absences} / ${group.max_absences}`
+              : "Cargando datos del grupo..."}
+          </p>
+          <p className="mt-2 text-gray-500">
+            {group ? `Número máximo de faltas: ${group.max_absences}` : ""}
+          </p>
+        </div>
       </div>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Lista de Asistencias</h2>
-        <table className="table-auto w-full">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">Fecha</th>
-              <th className="px-4 py-2">Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(attendances) && attendances.length > 0 ? (
-              attendances.map((att) => (
-                <tr key={att.id}>
-                  <td className="border px-4 py-2">
-                    {formattedDate(att.attendanceList.fecha)}
-                  </td>
-                  <td
-                    className={`border px-4 py-2 ${
-                      att.present === 1
-                        ? "bg-green-200"
-                        : att.present === 2
-                        ? "bg-blue-200"
-                        : att.present === 3
-                        ? "bg-red-200"
-                        : att.present === 0
-                        ? "bg-red-200"
-                        : ""
-                    }`}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+          Lista de Asistencias
+        </h2>
+        <div className="overflow-x-auto px-4">
+          <table className="min-w-full bg-white rounded-lg shadow-md">
+            <thead>
+              <tr className="bg-gray-100 text-gray-600 uppercase text-sm font-semibold whitespace-nowrap">
+                <th className="py-4 px-6 text-left">Fecha</th>
+                <th className="py-4 px-6 text-left">Estado</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-600 text-sm">
+              {Array.isArray(attendances) && attendances.length > 0 ? (
+                attendances.map((att) => (
+                  <tr
+                    key={att.id}
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
-                    {att.present === 1
-                      ? "Asistió"
-                      : att.present === 2
-                      ? "Justificación en proceso"
-                      : att.present === 3
-                      ? "Faltó"
-                      : att.present === 0
-                      ? "Faltó"
-                      : "N/A"}
-                    {att.present === 0 && (
-                      <button
-                        className="ml-4 bg-blue-500 text-white px-2 py-1 rounded"
-                        onClick={() =>
-                          openJustificationModal(
-                            att.attendanceList.fecha,
-                            att.id
-                          )
-                        }
-                      >
-                        Solicitar Justificante
-                      </button>
-                    )}
+                    <td className="py-3 px-6 text-left">
+                      {formattedDate(att.attendanceList.fecha)}
+                    </td>
+                    <td
+                      className={`py-3 px-6 text-left rounded-lg font-medium ${
+                        att.present === 1
+                          ? "bg-green-50 text-green-700"
+                          : att.present === 2
+                          ? "bg-yellow-50 text-yellow-700"
+                          : att.present === 3 || att.present === 0
+                          ? "bg-red-50 text-red-700"
+                          : "bg-gray-50 text-gray-500"
+                      }`}
+                    >
+                      {att.present === 1
+                        ? "Asistió"
+                        : att.present === 2
+                        ? "Justificación en proceso"
+                        : "Faltó"}
+                      {att.present === 0 && (
+                        <button
+                          className="ml-3 bg-blue-500 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-600 transition-colors"
+                          onClick={() =>
+                            openJustificationModal(
+                              att.attendanceList.fecha,
+                              att.id
+                            )
+                          }
+                        >
+                          Solicitar Justificante
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="2" className="text-center py-4 text-gray-500">
+                    No hay registros de asistencia disponibles.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" className="text-center text-gray-600">
-                  No hay registros de asistencia disponibles.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
         {/* Modal */}
         <JustificationModal
           isOpen={isModalOpen}

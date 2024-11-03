@@ -5,6 +5,8 @@ import EventList from '../../../components/EventList';
 import { useAuth } from '../../context/AuthContext';
 
 const EventsPage = () => {
+
+  const today = new Date();
   const { schoolId, userId } = useAuth();
   const studentId = userId;
   const globalSchoolId = schoolId;
@@ -21,7 +23,10 @@ const EventsPage = () => {
       try {
         const response = await fetch(`/api/admin/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
-        setEvents(data.events);
+        const upcomingEvents = data.events
+          .filter((event) => new Date(event.date) >= today)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+        setEvents(upcomingEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
       }

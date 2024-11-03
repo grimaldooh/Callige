@@ -47,88 +47,97 @@ const JustificantesPage = () => {
   const justificantesRechazados = justificantes.filter((j) => j.status === 3);
 
   return (
-    <div className="container mx-auto p-4 mt-12 ">
-      <h1 className="text-2xl font-bold mt-4">Justificantes</h1>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4 mt-12">Pendientes</h2>
+    <div className="container mx-auto p-4 mt-20">
+      <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Justificantes</h1>
+  
+      {/* Sección de justificantes pendientes */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold text-yellow-500 mb-6">Pendientes</h2>
         {justificantesPendientes.length > 0 ? (
-          <table className="table-auto w-full mb-4">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Fecha</th>
-                <th className="px-4 py-2">Razón</th>
-                <th className="px-4 py-2">Grupo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {justificantesPendientes.map((j) => (
-                <tr key={j.id}>
-                  <td className="border px-4 py-2">{formattedDate(j.fecha)}</td>
-                  <td className="border px-4 py-2">{j.razon}</td>
-                  <td className="border px-4 py-2">{j.group?.name || j.group_id}</td>
+          <div className="overflow-x-auto shadow-md rounded-lg">
+            <table className="min-w-full bg-white rounded-lg">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 border-b">
+                  <th className="px-6 py-3 text-left text-sm font-medium">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium">Razón</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium">Grupo</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {justificantesPendientes.map((j) => (
+                  <tr key={j.id} className="border-b hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-600">{formattedDate(j.fecha)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{j.razon}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{j.group?.name || j.group_id}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p>No hay justificantes pendientes.</p>
+          <p className="text-gray-500 italic mt-4">No hay justificantes pendientes.</p>
         )}
       </div>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Aprobados</h2>
+  
+      {/* Sección de justificantes aprobados */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold text-green-500 mb-6">Aprobados</h2>
         {justificantesAprobados.length > 0 ? (
-          <table className="table-auto w-full mb-4">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Fecha</th>
-                <th className="px-4 py-2">Razón</th>
-                <th className="px-4 py-2">Grupo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {justificantesAprobados.map((j) => (
-                <tr key={j.id}>
-                  <td className="border px-4 py-2">{formattedDate(j.fecha)}</td>
-                  <td className="border px-4 py-2">{j.razon}</td>
-                  <td className="border px-4 py-2">{j.group?.name || j.group_id}</td>
+          <div className="overflow-x-auto shadow-md rounded-lg">
+            <table className="min-w-full bg-white rounded-lg">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 border-b">
+                  <th className="px-6 py-3 text-left text-sm font-medium">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium">Razón</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium">Grupo</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {justificantesAprobados.map((j) => (
+                  <tr key={j.id} className="border-b hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-600">{formattedDate(j.fecha)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{j.razon}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{j.group?.name || j.group_id}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p>No hay justificantes aprobados.</p>
+          <p className="text-gray-500 italic mt-4">No hay justificantes aprobados.</p>
         )}
       </div>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Rechazados</h2>
+  
+      {/* Sección de justificantes rechazados */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold text-red-500 mb-6">Rechazados</h2>
         {justificantesRechazados.length > 0 ? (
-          <table className="table-auto w-full mb-4">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Fecha</th>
-                <th className="px-4 py-2">Razón</th>
-                <th className="px-4 py-2">Grupo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {justificantesRechazados.map((j) => (
-                <tr key={j.id}>
-                  <td className="border px-4 py-2">{formattedDate(j.fecha)}</td>
-                  <td className="border px-4 py-2">{j.razon}</td>
-                  <td className="border px-4 py-2">{j.group?.name || j.group_id}</td>
+          <div className="overflow-x-auto shadow-md rounded-lg">
+            <table className="min-w-full bg-white rounded-lg">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 border-b">
+                  <th className="px-6 py-3 text-left text-sm font-medium">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium">Razón</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium">Grupo</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {justificantesRechazados.map((j) => (
+                  <tr key={j.id} className="border-b hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-600">{formattedDate(j.fecha)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{j.razon}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{j.group?.name || j.group_id}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p>No hay justificantes rechazados.</p>
+          <p className="text-gray-500 italic mt-4">No hay justificantes rechazados.</p>
         )}
       </div>
     </div>
   );
-};
+}
 
 export default JustificantesPage;

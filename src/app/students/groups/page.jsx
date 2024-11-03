@@ -23,6 +23,7 @@ const StudentGroups = () => {
       try {
         const response = await fetch(`/api/student/getGroups?studentId=${studentId}`);
         const data = await response.json();
+        console.log('Fetched groups:', data);
         setGroups(data);
       } catch (error) {
         console.error('Error fetching groups:', error);
@@ -37,24 +38,44 @@ const StudentGroups = () => {
       <h1 className="text-3xl font-bold mb-12 text-center text-gray-800">
         Mis Clases
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
         {Array.isArray(groups) && groups.length > 0 ? (
-          groups.map((group) => (
-            <Link href={`/students/groups/${group.id}`} key={group.id}>
-              <div
-                key={group.id}
-                className="bg-gradient-to-r from-green-400 to-blue-500 shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105 hover:shadow-2xl"
-              >
-                <h2 className="text-2xl font-semibold mb-2 text-gray-950">
-                  {group.name}
-                </h2>
-                <p className="text-gray-950">Grupo : {group.id}</p>
+          groups.map((group, index) => (
+            <Link href={`/students/groups/${group.id}`} key={group.id} passHref>
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
+                {/* Imagen del grupo o fondo alternativo */}
+                {group.imageUrl ? (
+                  <img
+                    src={group.imageUrl}
+                    alt={`${group.name}`}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div
+                    className={`h-48 bg-gradient-to-br ${
+                      index % 2 === 0
+                        ? "from-purple-400 to-indigo-600"
+                        : "from-teal-400 to-green-500"
+                    }`}
+                  ></div>
+                )}
+                <div className="p-6 flex flex-col justify-between">
+                  {/* Nombre del grupo */}
+                  <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                    {group.name}
+                  </h2>
+
+                  {/* Nombre del profesor */}
+                  <p className="text-gray-700 text-sm mb-3">
+                    Profesor: {group.teachers[0].name}
+                  </p>
+                </div>
               </div>
             </Link>
           ))
         ) : (
-          <p className="text-center text-gray-600">
-            No estás vinculado a ningún grupo.
+          <p className="text-center text-gray-600 w-full">
+            No tienes grupos vinculados.
           </p>
         )}
       </div>
