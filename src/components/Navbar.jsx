@@ -63,6 +63,8 @@ export default function Navbar() {
             <li><Link href="/admin/teachers" className={linkClasses('/admin/teachers')} onClick={() => handleLinkClick('/admin/teachers')}>Profesores</Link></li>
             <li><Link href="/admin/groups" className={linkClasses('/admin/groups')} onClick={() => handleLinkClick('/admin/groups')}>Grupos</Link></li>
             <li><Link href="/admin/events" className={linkClasses('/admin/events')} onClick={() => handleLinkClick('/admin/events')}>Eventos</Link></li>
+            <li><Link href="/admin/stats" className={linkClasses('/admin/stats')} onClick={() => handleLinkClick('/admin/stats')}>Estadísticas</Link></li>
+
           </>
         );
       case 'teacher':
