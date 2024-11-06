@@ -38,7 +38,7 @@ export default function NavbarHandler() {
     } else if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'teacher') {
       return <SideNavbar className="w-64" />;
     } else {
-      return <Navbar />;
+      return null;
     }
   };
 
