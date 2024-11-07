@@ -23,8 +23,8 @@ import { set } from 'date-fns';
 
 export default function AdminPage() {
 
-  const token = localStorage.getItem('token');
-  console.log('token:', token);
+  // const token = localStorage.getItem('token');
+  // console.log('token:', token);
   const { userId, schoolId, role, login, logout } = useAuth();
   console.log('userId:', userId);
 
@@ -108,11 +108,7 @@ export default function AdminPage() {
 
     async function fetchStats() {
       try {
-        const response = await fetch(`/api/stats?schoolId=${globalSchoolId}`,{
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });        
+        const response = await fetch(`/api/stats?schoolId=${globalSchoolId}`); 
         const data = await response.json();
         setTotalStudents(data.totalStudents);
         setTotalTeachers(data.totalTeachers);
