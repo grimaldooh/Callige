@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function ModalAddAdmin({ isOpen, onClose, onSubmit }) {
+export default function ModalAddAdmin({ isOpen, onClose, onSubmit, error }) {
   if (!isOpen) return null;
 
   return (
@@ -11,7 +11,7 @@ export default function ModalAddAdmin({ isOpen, onClose, onSubmit }) {
         <h2 className="text-2xl font-bold mb-4">Añadir Admin</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Nombre del Admin</label>
+            <label className="block text-sm font-medium text-gray-700">Nombre</label>
             <input
               type="text"
               name="name"
@@ -20,13 +20,14 @@ export default function ModalAddAdmin({ isOpen, onClose, onSubmit }) {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email del Admin</label>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
               name="email"
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
             />
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Contraseña</label>

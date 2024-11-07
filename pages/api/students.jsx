@@ -45,6 +45,25 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
       }
 
+      const existingStudent = await prisma.student.findUnique({
+        where: { email },
+      });
+      const existingAdmin = await prisma.admin.findUnique({
+        where: { email },
+      });
+      const existingTeacher = await prisma.teacher.findUnique({
+        where: { email },
+      });
+      const existingSuperAdmin = await prisma.superadmin.findUnique({
+        where: { email },
+      });
+
+      if (existingStudent || existingAdmin || existingTeacher || existingSuperAdmin) {
+        return res
+          .status(400)
+          .json({ error: "El correo electrónico ya está en uso" });
+      }
+
       try {
         // Subir imagen a Azure Blob Storage si hay archivo
         let imageUrl = null;

@@ -1,12 +1,12 @@
 // components/Modales/ModalAddTeacher.js
 import React from 'react';
 
-const ModalAddTeacher = ({ isOpen, onClose, onSubmit }) => {
+const ModalAddTeacher = ({ isOpen, onClose, onSubmit , error, setError}) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
         <h2 className="text-2xl font-bold mb-4">Añadir Profesor</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
@@ -26,6 +26,7 @@ const ModalAddTeacher = ({ isOpen, onClose, onSubmit }) => {
               className="w-full p-2 border border-gray-300 rounded mt-2"
               required
             />
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Contraseña</label>

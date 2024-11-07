@@ -99,6 +99,7 @@ model Student {
   name     String
   email    String   @unique
   password String
+  enableNotifications Boolean? @default(false)
   status   Int?
   imageUrl String?  // Campo para la URL de la imagen
   groups   Group[]  @relation("GroupStudents") // Relación muchos a muchos con grupos

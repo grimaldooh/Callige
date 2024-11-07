@@ -16,7 +16,8 @@ import GroupList from '../../components/Group/GroupList'; // Importa el componen
 import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
 import ListaAsistentes from '../../components/Modales/Events/ListaAsistentes'; // Importa el componente para mostrar la lista de asistentes
 import { useAuth } from '../context/AuthContext';
-import { PlusIcon, UserAddIcon, UserGroupIcon, UserIcon, AcademicCapIcon, CalendarIcon, UserCircleIcon } from '@heroicons/react/solid'; // Asegúrate de tener instalada la biblioteca heroicons
+import { PlusIcon, UserAddIcon, UserGroupIcon, UserIcon, AcademicCapIcon, CalendarIcon, UserCircleIcon, MailIcon} from '@heroicons/react/solid'; // Asegúrate de tener instalada la biblioteca heroicons
+import { set } from 'date-fns';
 
 
 
@@ -36,6 +37,7 @@ export default function AdminPage() {
   const [totalGroups, setTotalGroups] = useState(0); // Nuevo estado para contar grupos
   const [events, setEvents] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState(null);
 
 
   // Estados para manejar los modales
@@ -82,6 +84,10 @@ export default function AdminPage() {
 
   const handleOpenEventModal = () => setIsModalEventOpen(true);
   const handleCloseEventModal = () => setIsModalEventOpen(false);
+
+  useEffect(() => {
+    setError(null);
+  } , [isModalAdminOpen, isModalSuperAdminOpen, isModalStudentOpen, isModalTeacherOpen, isModalGroupOpen, isModalEventOpen]);
 
 
   useEffect(() => {
@@ -256,6 +262,7 @@ export default function AdminPage() {
         // setTotalAdmins(totalAdmins + 1);
         handleCloseSuperAdminModal(); // Cierra el modal
       } else {
+        setError('El correo electrónico ya está en uso');
         console.error("Failed to add superadmin");
       }
     } catch (error) {
@@ -285,6 +292,7 @@ export default function AdminPage() {
         // setTotalAdmins(totalAdmins + 1);
         handleCloseAdminModal(); // Cierra el modal
       } else {
+        setError('El correo electrónico ya está en uso');
         console.error("Failed to add admin");
       }
     } catch (error) {
@@ -307,7 +315,9 @@ export default function AdminPage() {
       if (response.ok) {
         setTotalStudents(totalStudents + 1);
         handleCloseStudentModal(); // Cierra el modal
+        setError(null);
       } else {
+        setError('El correo electrónico ya está en uso');
         console.error("Failed to add student");
       }
     } catch (error) {
@@ -336,6 +346,7 @@ export default function AdminPage() {
         setTotalTeachers(totalTeachers + 1); // Actualiza el contador de profesores
         handleCloseTeacherModal(); // Cierra el modal
       } else {
+        setError('El correo electrónico ya está en uso');
         console.error("Failed to add teacher");
       }
     } catch (error) {
@@ -397,6 +408,25 @@ export default function AdminPage() {
         break;
     }
   };
+
+  const handleSendEmails = async () => {
+    try {
+      // Hacer la solicitud POST a la API que enviará los correos
+      const response = await fetch('/api/dailyAttendanceNotification', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        alert('Correos enviados exitosamente');
+      } else {
+        alert('Hubo un error al enviar los correos');
+      }
+    } catch (error) {
+      console.error('Error al hacer la solicitud:', error);
+      alert('Hubo un error al hacer la solicitud');
+    }
+  };
+
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -474,6 +504,15 @@ export default function AdminPage() {
                 >
                   <UserCircleIcon className="w-5 h-5 mr-2" />
                   Añadir SuperAdmin
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={handleSendEmails}
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <MailIcon className="w-5 h-5 mr-2" />
+                  Enviar correos de asistencia
                 </button>
               </li>
             </ul>
@@ -605,6 +644,7 @@ export default function AdminPage() {
         isOpen={isModalAdminOpen}
         onClose={handleCloseAdminModal}
         onSubmit={handleAddAdmin}
+        error={error}
       />
 
       {/* Modal para añadir superadmin */}
@@ -612,6 +652,7 @@ export default function AdminPage() {
         isOpen={isModalSuperAdminOpen}
         onClose={handleCloseSuperAdminModal}
         onSubmit={handleAddSuperAdmin}
+        error={error}
       />
 
       {/* Modal para añadir estudiantes */}
@@ -619,6 +660,7 @@ export default function AdminPage() {
         isOpen={isModalStudentOpen}
         onClose={handleCloseStudentModal}
         onSubmit={handleAddStudent}
+        error={error}
       />
 
       {/* Modal para añadir profesores */}
@@ -626,6 +668,7 @@ export default function AdminPage() {
         isOpen={isModalTeacherOpen}
         onClose={handleCloseTeacherModal}
         onSubmit={handleAddTeacher}
+        error={error}
       />
 
       {/* Modal para añadir grupos */}

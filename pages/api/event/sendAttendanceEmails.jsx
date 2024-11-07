@@ -28,14 +28,11 @@ export default async function handler(req, res) {
           from: process.env.EMAIL_USER,
           to: email,
           subject: `Resumen de Asistencia al Evento`,
-          text: `
-            Hola ${attendance.student.name},
-            
-            Te informamos que ${asistenciaEstado} al evento.
-            Si no has sido registrado correctamente, por favor contacta con uno de los responsables del evento.
-            
-            Saludos,
-            Equipo del Evento
+          html: `
+            <p>Hola <strong>${attendance.student.name}</strong>,</p>
+            <p>Te informamos que <strong>${asistenciaEstado}</strong> al evento.</p>
+            <p>Si no has sido registrado correctamente, por favor contacta con uno de los responsables del evento.</p>
+            <p>Saludos,<br>Equipo del Evento</p>
           `,
         };
 

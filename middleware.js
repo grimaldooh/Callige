@@ -8,13 +8,23 @@ export async function middleware(req) {
   const tokenCookie = cookies(req).get("token");
   const { pathname } = req.nextUrl;
 
+  const allowedPaths = [
+    "/auth/login",
+    "/api/login",
+    "/api/dailyAttendanceNotification"
+  ];
+
+  const isGroupPath = pathname.startsWith("/groups/") && pathname.split("/").length === 3;
+  const isEventPath = pathname.startsWith("/events/") && pathname.split("/").length === 3;
+
   // Si no está autenticado, redirigir al login
 
   //console.log("Token:", tokenCookie);
   if (!tokenCookie) {
     if (
-      pathname !== "/auth/login" &&
-      pathname !== "/api/login" && // Permitir la ruta /api/login
+      !allowedPaths.includes(pathname) &&
+      !isGroupPath &&
+      !isEventPath &&
       !pathname.startsWith("/_next/") && // Para cargar archivos estáticos como estilos
       !pathname.startsWith("/favicon.ico") // Icono de la página
     ) {
@@ -37,7 +47,7 @@ export async function middleware(req) {
     if (pathname.startsWith("/teacher") && userRole !== "teacher") {
       return NextResponse.redirect(new URL("/restricted", req.url));
     }
-    if (pathname.startsWith("/students") && userRole !== "student") {
+    if (pathname.startsWith("/students") && (userRole !== "student")){
       return NextResponse.redirect(new URL("/restricted", req.url));
     }
     if (pathname.startsWith("/superadmin") && userRole !== "superadmin") {

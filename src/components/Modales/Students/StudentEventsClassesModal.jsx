@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { EyeIcon } from '@heroicons/react/solid';
+import { EyeIcon, UsersIcon } from '@heroicons/react/solid';
+import { useAuth } from '../../../app/context/AuthContext';
 
 
 const StudentEventsClassesModal = ({ studentId, onClose }) => {
@@ -10,6 +11,9 @@ const StudentEventsClassesModal = ({ studentId, onClose }) => {
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
+
+  const { setTempStudent } = useAuth(); // Usa el contexto
+ 
 
   const router = useRouter();
 
@@ -54,6 +58,11 @@ const StudentEventsClassesModal = ({ studentId, onClose }) => {
     router.push(`/admin/group/${groupId}`);
   };
 
+  const handleViewStudentGroupList = async (groupId) => {
+    await setTempStudent(studentId);
+    router.push(`/admin/students/groups/${groupId}`);
+  };
+
   const handleDeleteGroup = (groupId) => {
     // Implement delete group functionality here
   };
@@ -85,6 +94,13 @@ const StudentEventsClassesModal = ({ studentId, onClose }) => {
                         onClick={() => handleViewGroup(group.id)}
                         className=" text-white p-2 rounded hover:bg-blue-50 transition-colors"
                         title="Ver grupo"
+                      >
+                        <UsersIcon className="w-6 h-6 text-blue-400" />
+                      </button>
+                      <button
+                        onClick={() => handleViewStudentGroupList(group.id)}
+                        className=" text-white p-2 rounded hover:bg-blue-50 transition-colors"
+                        title="Ver asistencias"
                       >
                         <EyeIcon className="w-6 h-6 text-blue-400" />
                       </button>

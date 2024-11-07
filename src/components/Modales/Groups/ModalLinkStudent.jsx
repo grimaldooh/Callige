@@ -43,7 +43,7 @@ const LinkStudentModal = ({ groupId, onClose }) => {
   // Filtrar estudiantes por el término de búsqueda
   useEffect(() => {
     const filtered = students.filter(student => 
-      student.name.toLowerCase().includes(searchTerm.toLowerCase())
+      student.name.toLowerCase().includes(searchTerm.toLowerCase()) || student.id.toString().includes(searchTerm)
     );
     setFilteredStudents(filtered);
   }, [searchTerm, students]);
@@ -77,7 +77,7 @@ const LinkStudentModal = ({ groupId, onClose }) => {
         </h2>
         <input
           type="text"
-          placeholder="Buscar estudiantes..."
+          placeholder="Buscar estudiantes por nombre o ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border border-gray-300 p-2 rounded w-full mb-4"

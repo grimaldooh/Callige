@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [schoolId, setSchoolId] = useState(null);
   const [role, setRole] = useState('');
+  const [tempStudentId, setTempStudentId] = useState(null);
   const router = useRouter();
 
   // Cargar los datos desde localStorage al iniciar
@@ -26,6 +27,11 @@ export const AuthProvider = ({ children }) => {
       setRole(storedRole);
     }
   }, []);
+
+  const setTempStudent = (id) => {
+    setTempStudentId(id);
+    localStorage.setItem('tempStudentId', id);
+  }
 
   const login = (id, schoolId, role) => {
     setUserId(id);
@@ -53,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ userId, schoolId, role, login, logout }}>
+    <AuthContext.Provider value={{ userId, schoolId, role, tempStudentId,login, logout, setTempStudent }}>
       {children}
     </AuthContext.Provider>
   );

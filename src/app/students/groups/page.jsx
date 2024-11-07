@@ -8,6 +8,7 @@ const StudentGroups = () => {
 
   const {userId} = useAuth();
   const [groups, setGroups] = useState([]);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const studentId = userId;
 
   useEffect(() => {
@@ -32,6 +33,26 @@ const StudentGroups = () => {
 
     fetchGroups();
   }, [studentId]);
+
+  const handleSwitchChange = async () => {
+    try {
+      const newStatus = !notificationsEnabled;
+      const response = await fetch(`/api/student/updateNotifications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId, enableNotifications: newStatus }),
+      });
+
+      if (response.ok) {
+        console.log('Notificaciones actualizadas correctamente');
+        setNotificationsEnabled(newStatus);
+      } else {
+        console.error('Error al actualizar notificaciones');
+      }
+    } catch (error) {
+      console.error('Error al conectar con la API', error);
+    }
+  };
 
   return (
     <div className="p-4 mt-28">
@@ -78,6 +99,30 @@ const StudentGroups = () => {
             No tienes grupos vinculados.
           </p>
         )}
+      </div>
+      {/* Switch de Notificaciones */}
+      <div className="flex items-center justify-center mt-12">
+        <label className="flex items-center space-x-3">
+          <span className="text-gray-800">Habilitar Notificaciones</span>
+          <div className="relative">
+            <input
+              type="checkbox"
+              checked={notificationsEnabled}
+              onChange={handleSwitchChange}
+              className="sr-only"
+            />
+            <div
+              className={`block w-14 h-8 rounded-full transition-colors ${
+                notificationsEnabled ? 'bg-green-500' : 'bg-gray-300'
+              }`}
+            ></div>
+            <div
+              className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${
+                notificationsEnabled ? 'transform translate-x-6' : ''
+              }`}
+            ></div>
+          </div>
+        </label>
       </div>
     </div>
   );
