@@ -468,6 +468,15 @@ export default function AdminPage() {
               </li>
               <li>
                 <button
+                  onClick={() => handleSelect("admin")}
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <UserAddIcon className="w-5 h-5 mr-2" />
+                  Añadir Admin
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => handleSelect("group")}
                   className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
@@ -484,16 +493,8 @@ export default function AdminPage() {
                   Añadir Evento
                 </button>
               </li>
-              <li>
-                <button
-                  onClick={() => handleSelect("admin")}
-                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  <UserAddIcon className="w-5 h-5 mr-2" />
-                  Añadir Admin
-                </button>
-              </li>
-              <li>
+              
+              {/* <li>
                 <button
                   onClick={() => handleSelect("superadmin")}
                   className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -501,7 +502,7 @@ export default function AdminPage() {
                   <UserCircleIcon className="w-5 h-5 mr-2" />
                   Añadir SuperAdmin
                 </button>
-              </li>
+              </li> */}
               <li>
                 <button
                   onClick={handleSendEmails}
