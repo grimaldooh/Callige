@@ -4,11 +4,8 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const token = req.headers.authorization?.split(" ")[1]; // Obtener el token del header
 
-    if (!token) {
-      return res.redirect('/auth/login');
-    }
+  
     const { schoolId } = req.query; // Obtener el schoolId de la query
     console.log('schoolId:', schoolId);
 
