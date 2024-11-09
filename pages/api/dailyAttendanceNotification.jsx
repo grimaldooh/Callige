@@ -16,11 +16,13 @@ const transporter = nodemailer.createTransport({
 
 // Función para obtener las asistencias y enviar correos
 const sendAttendanceSummaryEmails = async () => {
+
   try {
     // Obtén la fecha de hoy
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    const addedSubjects = new Set();
 
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
@@ -43,7 +45,7 @@ const sendAttendanceSummaryEmails = async () => {
           },
         },
       },
-    });
+    }); 
 
     console.log('Listas de asistencias:', attendancelists);
 
@@ -85,7 +87,10 @@ const sendAttendanceSummaryEmails = async () => {
         for (const attendance of student.attendances) {
           const subject = attendance.attendanceList.grupo.name || "Materia no especificada";
           const status = attendance.present ? "Asistió" : "Ausente";
-          attendanceSummary += `<li><strong>${subject}</strong>: ${status}</li>`;
+          if (!addedSubjects.has(subject)) {
+            attendanceSummary += `<li><strong>${subject}</strong>: ${status}</li>`;
+            addedSubjects.add(subject); // Añade el nombre de la materia al conjunto
+          }
         }
 
         attendanceSummary += `
