@@ -30,6 +30,12 @@ const sendAttendanceSummaryEmails = async () => {
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
+    console.log('Hoy:', today);
+    console.log('yesterdat:', yesterday);
+
+    const pastYesterday = new Date(today);
+    pastYesterday.setDate(today.getDate() - 2);
+
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
@@ -46,8 +52,7 @@ const sendAttendanceSummaryEmails = async () => {
     const attendancelists = await prisma.attendanceList.findMany({
       where: {
         fecha: {
-          gte: yesterday,
-          
+          gt: yesterday,
         },
       },
       include: {
@@ -69,7 +74,7 @@ const sendAttendanceSummaryEmails = async () => {
           where: {
             attendanceList: {
               fecha: {
-                gte: yesterday,
+                gt: yesterday,
               },
             },
           },
