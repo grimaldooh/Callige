@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import dotenv from 'dotenv';
+import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 
 dotenv.config(); // Cargar variables de entorno
 
@@ -18,10 +19,12 @@ const transporter = nodemailer.createTransport({
 const sendAttendanceSummaryEmails = async () => {
 
   try {
-    // Obtén la fecha de hoy
-    const today = new Date();
+    // Obtén la fecha de hoy en la zona horaria de Tijuana
+    const timeZone = 'America/Tijuana';
+    const now = new Date();
+    const today = toZonedTime(now, timeZone);
     today.setHours(0, 0, 0, 0);
-    
+
     const addedSubjects = new Set();
 
     const yesterday = new Date(today);
@@ -29,6 +32,15 @@ const sendAttendanceSummaryEmails = async () => {
 
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
+
+    // Formatea las fechas para asegurarte de que están en la zona horaria correcta
+    const formattedToday = formatInTimeZone(today, timeZone, 'yyyy-MM-dd HH:mm:ssXXX');
+    const formattedYesterday = formatInTimeZone(yesterday, timeZone, 'yyyy-MM-dd HH:mm:ssXXX');
+    const formattedTomorrow = formatInTimeZone(tomorrow, timeZone, 'yyyy-MM-dd HH:mm:ssXXX');
+
+    console.log('Hoy:', formattedToday);
+    console.log('Ayer:', formattedYesterday);
+    console.log('Mañana:', formattedTomorrow);
 
     // Obtiene todas las listas de asistencia de hoy
     const attendancelists = await prisma.attendanceList.findMany({
