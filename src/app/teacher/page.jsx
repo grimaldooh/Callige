@@ -61,7 +61,7 @@ const TeachersPage = () => {
 
   return (
     <div className="container mx-auto px-6 py-12">
-      <h1 className="text-5xl font-extrabold text-center mt-10 mb-16">Panel del Docente</h1>
+      <h1 className="text-5xl font-extrabold text-center mt-2 mb-16">Panel del Docente</h1>
 
       {/* Sección de Eventos */}
       <div className="events-section mb-16">

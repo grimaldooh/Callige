@@ -18,7 +18,9 @@ export default async function handler(req, res) {
             include: {
                 justificantes: {
                     where: {
-                        status: 2, // Solo justificantes pendientes
+                        status: {
+                            in : [1,2,3] // aceptado, pendiente, rechazado
+                        }
                     },
                     include: {
                         student: true,

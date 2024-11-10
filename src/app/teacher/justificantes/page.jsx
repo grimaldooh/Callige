@@ -3,14 +3,16 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import {useAuth} from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const TeacherJustificantesPage = () => {
-  const {userId} = useAuth();
-  const teacherId = userId; 
-  console.log('teacherId:', teacherId);
+  const { userId } = useAuth();
+  const teacherId = userId;
 
   const [justificantes, setJustificantes] = useState([]);
+  const [filteredJustificantes, setFilteredJustificantes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showResolved, setShowResolved] = useState(false);
   const [selectedJustificante, setSelectedJustificante] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -18,22 +20,15 @@ const TeacherJustificantesPage = () => {
 
   useEffect(() => {
     if (!teacherId) {
-        console.log('teacherId no está disponible');
-        return; // No hace la solicitud si teacherId es null o undefined
-      }
+      return;
+    }
+
     const fetchJustificantes = async () => {
       try {
-        if (!teacherId) {
-            console.log('teacherId is not defined');
-            return;
-          }
         const response = await axios.get('/api/teacher/justificantes', {
-          params: {
-            teacherId,
-          },
+          params: { teacherId },
         });
-        const { data } = response;
-        setJustificantes(data.justificantes);
+        setJustificantes(response.data.justificantes);
       } catch (error) {
         console.error('Error fetching justificantes:', error);
       }
@@ -42,11 +37,29 @@ const TeacherJustificantesPage = () => {
     fetchJustificantes();
   }, [teacherId]);
 
+  useEffect(() => {
+    filterJustificantes();
+  }, [justificantes, searchTerm, showResolved]);
+
+  const filterJustificantes = () => {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    const filtered = justificantes.filter(justificante => {
+      const matchesSearchTerm = justificante.student.name
+        .toLowerCase()
+        .includes(lowerSearchTerm);
+      
+      const isPending = justificante.status === 2;
+      const isResolved = showResolved && (justificante.status === 1 || justificante.status === 3);
+
+      return matchesSearchTerm && (isPending || isResolved);
+    });
+
+    setFilteredJustificantes(filtered);
+  };
+
   const formattedDate = (fecha) => {
     const date = new Date(fecha);
-    const adjustedDate = new Date(
-      date.getTime() + date.getTimezoneOffset() * 60000
-    );
+    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
     return adjustedDate.toLocaleDateString();
   };
 
@@ -56,17 +69,15 @@ const TeacherJustificantesPage = () => {
 
   const handleJustificanteAction = async (justificanteId, action) => {
     try {
-      const response = await axios.post('/api/teacher/attendanceStatus', {
+      await axios.post('/api/teacher/attendanceStatus', {
         justificanteId,
         action,
       });
-      console.log('Response:', response.data);
       setAlertMessage(`Justificante ${action === 'approved' ? 'aprobado' : 'rechazado'} exitosamente.`);
       setShowModal(false);
-      // Actualizar el estado de los justificantes para quitar el justificante procesado
-      setJustificantes((prevJustificantes) =>
-      prevJustificantes.filter((justificante) => justificante.id !== justificanteId)
-    );
+      setJustificantes(prevJustificantes =>
+        prevJustificantes.filter(justificante => justificante.id !== justificanteId)
+      );
     } catch (error) {
       console.error('Error updating justificante status:', error);
     }
@@ -86,9 +97,39 @@ const TeacherJustificantesPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mt-20 mb-4">
-        Justificantes Pendientes
-      </h1>
+      <h1 className="text-2xl font-bold mt-6 mb-4">Justificantes</h1>
+
+      {/* Barra de búsqueda */}
+      <input
+        type="text"
+        placeholder="Buscar por nombre de estudiante..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="border p-2 rounded mb-4 w-full"
+      />
+
+      {/* Switch para mostrar justificantes resueltos */}
+      <label className="flex items-center mb-4">
+        <span className="mr-2">Mostrar justificantes resueltos</span>
+        <div className="relative">
+          <input
+            type="checkbox"
+            checked={showResolved}
+            onChange={() => setShowResolved(!showResolved)}
+            className="sr-only"
+          />
+          <div
+            className={`block w-14 h-8 rounded-full transition-colors ${
+              showResolved ? 'bg-blue-500' : 'bg-gray-300'
+            }`}
+          ></div>
+          <div
+            className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${
+              showResolved ? 'transform translate-x-6' : ''
+            }`}
+          ></div>
+        </div>
+      </label>
 
       {/* Alerta */}
       {alertMessage && (
@@ -98,14 +139,13 @@ const TeacherJustificantesPage = () => {
       )}
 
       <div className="mt-8 space-y-4">
-        {Array.isArray(justificantes) && justificantes.length === 0 ? (
-          <p>No hay justificantes pendientes.</p>
+        {filteredJustificantes.length === 0 ? (
+          <p>No hay justificantes para mostrar.</p>
         ) : (
-          Array.isArray(justificantes) &&
-          justificantes.map((justificante) => (
+          filteredJustificantes.map((justificante) => (
             <div
               key={justificante.id}
-              className="flex items-center bg-gray-100 rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
+              className={`flex items-center rounded-lg shadow-lg p-6 max-w-4xl mx-auto ${justificante.status === 1 ? 'bg-green-100' : justificante.status === 3 ? 'bg-red-100' : 'bg-gray-100'} mt-4`}
             >
               {/* Imagen del estudiante */}
               <img
@@ -120,37 +160,32 @@ const TeacherJustificantesPage = () => {
                   {justificante.razon} - {formattedDate(justificante.fecha)}
                 </p>
                 <p className="text-gray-600 mt-2 break-words max-w-full">
-                  <span className="font-bold">Descripción:</span>{" "}
-                  {justificante.descripcion}
+                  <span className="font-bold">Descripción:</span> {justificante.descripcion}
                 </p>
                 <p className="text-gray-600 mt-2">
-                  <span className="font-bold">Estudiante:</span>{" "}
-                  {justificante.student.name}
+                  <span className="font-bold">Estudiante:</span> {justificante.student.name}
                 </p>
                 <p className="text-gray-600 mt-2">
-                  <span className="font-bold">Grupo:</span>{" "}
-                  {justificante.group.name}
+                  <span className="font-bold">Grupo:</span> {justificante.group.name}
                 </p>
 
                 {/* Botones para aprobar o rechazar */}
-                <div className="mt-4">
-                  <button
-                    onClick={() =>
-                      openConfirmationModal(justificante, "approved")
-                    }
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Aprobar
-                  </button>
-                  <button
-                    onClick={() =>
-                      openConfirmationModal(justificante, "rejected")
-                    }
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
-                  >
-                    Rechazar
-                  </button>
-                </div>
+                {justificante.status === 2 && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => openConfirmationModal(justificante, "approved")}
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Aprobar
+                    </button>
+                    <button
+                      onClick={() => openConfirmationModal(justificante, "rejected")}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
+                    >
+                      Rechazar
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Imagen del justificante */}
@@ -191,9 +226,7 @@ const TeacherJustificantesPage = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <p className="text-lg font-semibold mb-4">
-              ¿Estás seguro que deseas{" "}
-              {actionType === "approved" ? "aprobar" : "rechazar"} este
-              justificante?
+              ¿Estás seguro que deseas {actionType === "approved" ? "aprobar" : "rechazar"} este justificante?
             </p>
             <div className="flex justify-end">
               <button

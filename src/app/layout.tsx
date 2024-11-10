@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import SideNavbar from "../components/SideNavbar";
 import NavbarHandler from "../components/NavbarHandler";
 import { AuthProvider } from './context/AuthContext';
+import { ErrorProvider } from './context/ErrorContext';
 import React from 'react';
 
 const geistSans = localFont({
@@ -36,12 +37,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Agregamos el Navbar aquí para que esté disponible en todas las páginas */}
+        <ErrorProvider>
         <AuthProvider>
           <div className="flex">
             <NavbarHandler />
             <main className="flex-1">{children}</main>
           </div>
         </AuthProvider>
+        </ErrorProvider>
       </body>
     </html>
   );

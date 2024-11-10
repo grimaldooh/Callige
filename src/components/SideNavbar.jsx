@@ -34,8 +34,9 @@ export default function Navbar({ className }) {
           },
         });
         const { data } = response;
+        const justificantesPendientes = data.justificantes.filter(justificante => justificante.status === 2);
         console.log('data:', data.justificantes.length);
-        setJustificantesCount(data.justificantes.length);
+        setJustificantesCount(justificantesPendientes.length);
       } catch (error) {
         console.error('Error fetching justificantes:', error);
       }
