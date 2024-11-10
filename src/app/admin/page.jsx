@@ -96,7 +96,6 @@ export default function AdminPage() {
     console.log('globalSchoolId:', globalSchoolId);
     async function fetchGroups() {
       try {
-        //const response = await fetch("/api/groups?schoolId=1");
         console.log('globalSchoolId:', globalSchoolId);
         const response = await fetch(`/api/groups?schoolId=${globalSchoolId}`);
         const data = await response.json();
@@ -300,7 +299,8 @@ export default function AdminPage() {
   const handleAddStudent = async (event) => {
     event.preventDefault();
   
-    const formData = new FormData(event.target); // Ya no necesitas obtener campos por separado
+    const formData = new FormData(event.target); 
+    formData.append('globalSchoolId', globalSchoolId); // Agregar schoolId al formData
   
     try {
       const response = await fetch("/api/students", {
@@ -313,7 +313,9 @@ export default function AdminPage() {
         handleCloseStudentModal(); // Cierra el modal
         setError(null);
       } else {
-        setError('El correo electrónico ya está en uso');
+        if(response.status === 400){
+          setError('El correo electrónico ya está en uso');
+        }
         console.error("Failed to add student");
       }
     } catch (error) {
@@ -328,6 +330,7 @@ export default function AdminPage() {
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
+    const school_id = globalSchoolId;
 
     try {
       const response = await fetch("/api/teacher/teachers", {
@@ -335,7 +338,7 @@ export default function AdminPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, school_id }),
       });
 
       if (response.ok) {

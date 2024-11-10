@@ -27,63 +27,57 @@ export default async function handler(req, res) {
     } finally {
       await prisma.$disconnect();
     }
-  } else if (req.method === 'POST') {
-    // Usa el middleware de multer para manejar la subida de archivos
-    const globalSchoolId = 1; 
-    upload.single('image')(req, res, async function (err) {
+  }else if (req.method === 'POST') {
+    // Cambia la configuración para recibir ambos archivos
+    upload.fields([{ name: 'image', maxCount: 1 }, { name: 'secondImage', maxCount: 1 }])(req, res, async function (err) {
       if (err) {
-        return res.status(500).json({ error: 'Error uploading image' });
+        console.error('Error uploading images:', err);
+        return res.status(500).json({ error: 'Error uploading images' });
       }
-
-      const { name, email, password} = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
-
       console.log('req.body:', req.body);
-
-      // Valida que los datos están completos
-      if (!name || !email || !password ) {
+      const { name, email, password, globalSchoolId } = req.body;
+      console.log('schoolId:', globalSchoolId);
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      if (!name || !email || !password) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
       }
-
-      const existingStudent = await prisma.student.findUnique({
-        where: { email },
-      });
-      const existingAdmin = await prisma.admin.findUnique({
-        where: { email },
-      });
-      const existingTeacher = await prisma.teacher.findUnique({
-        where: { email },
-      });
-      const existingSuperAdmin = await prisma.superadmin.findUnique({
-        where: { email },
-      });
-
+  
+      const existingStudent = await prisma.student.findUnique({ where: { email } });
+      const existingAdmin = await prisma.admin.findUnique({ where: { email } });
+      const existingTeacher = await prisma.teacher.findUnique({ where: { email } });
+      const existingSuperAdmin = await prisma.superadmin.findUnique({ where: { email } });
+  
       if (existingStudent || existingAdmin || existingTeacher || existingSuperAdmin) {
-        return res
-          .status(400)
-          .json({ error: "El correo electrónico ya está en uso" });
+        console.log('El correo electrónico ya está en uso');
+        return res.status(400).json({ error: "El correo electrónico ya está en uso" });
       }
-
+  
       try {
-        // Subir imagen a Azure Blob Storage si hay archivo
+        // Subir ambas imágenes si están presentes y obtener sus URLs
         let imageUrl = null;
-        if (req.file) {
-          imageUrl = await uploadImage(req.file) // Sube la imagen y obtén la URL
-          console.log('URL de la imagen:', imageUrl);
+        let imageUrl2 = null;
+  
+        if (req.files['image']) {
+          imageUrl = await uploadImage(req.files['image'][0]);
         }
-
-        // Crear un nuevo estudiante con la URL de la imagen
+  
+        if (req.files['secondImage']) {
+          imageUrl2 = await uploadImage(req.files['secondImage'][0]);
+        }
+  
         const newStudent = await prisma.student.create({
           data: {
             name,
             email,
             status: 1,
-            password : hashedPassword,
-            school_id : globalSchoolId,
-            imageUrl, // Guarda la URL de la imagen
+            password: hashedPassword,
+            school_id: parseInt(globalSchoolId),
+            imageUrl,
+            imageUrl2, // Guarda la URL de la segunda imagen
           },
         });
-
+  
         res.status(201).json(newStudent);
       } catch (error) {
         console.error('Error creando el estudiante:', error);

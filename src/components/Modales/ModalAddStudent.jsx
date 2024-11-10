@@ -47,7 +47,7 @@ export default function Modal({ isOpen, onClose, onSubmit , error}) {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Foto del Estudiante
+              Foto del estudiante
             </label>
             <input
               type="file"
@@ -55,6 +55,18 @@ export default function Modal({ isOpen, onClose, onSubmit , error}) {
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               accept="image/jpeg, image/png"
               required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Foto secundaria del estudiante
+            </label>
+            <input
+              type="file"
+              name="secondImage"
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              accept="image/jpeg, image/png"
             />
           </div>
           <div className="flex justify-end space-x-4">

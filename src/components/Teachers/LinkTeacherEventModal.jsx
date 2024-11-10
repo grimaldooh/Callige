@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../app/context/AuthContext';
 
 const LinkTeacherEventModal = ({ teacherId, onClose }) => {
+  const { schoolId } = useAuth();
+  const globalSchoolId = schoolId;
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Fetch all Events for the school with ID 1
+    if (!globalSchoolId) return;
+    console.log('globalSchoolId:', globalSchoolId);
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/events?schoolId=1');
+        const response = await fetch(`/api/events?schoolId=${globalSchoolId}`);
         const data = await response.json();
         setEvents(data);
         setFilteredEvents(data); // Inicialmente muestra todos
@@ -19,7 +24,7 @@ const LinkTeacherEventModal = ({ teacherId, onClose }) => {
     };
 
     fetchEvents();
-  }, []);
+  }, [globalSchoolId]);
 
   // Filtrar grupos por el término de búsqueda
   useEffect(() => {

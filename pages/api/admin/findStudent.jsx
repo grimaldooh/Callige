@@ -1,9 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+import multer from 'multer';
+import { uploadImage } from '../../../azure/blob';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const prisma = new PrismaClient();
+const upload = multer({ storage: multer.memoryStorage() });
 
 export default async function handler(req, res) {
-  const { id } = req.query; // Se obtiene el id de req.query para usarlo en la URL
-    console.log('id:', id);
+  const { id } = req.query;
+
   if (req.method === 'GET') {
     try {
       const student = await prisma.student.findUnique({
@@ -22,19 +32,35 @@ export default async function handler(req, res) {
       await prisma.$disconnect();
     }
   } else if (req.method === 'PUT') {
-    const { name, email } = req.body;
-    try {
-      const updatedStudent = await prisma.student.update({
-        where: { id: parseInt(id) },
-        data: { name, email },
-      });
-      res.status(200).json(updatedStudent);
-    } catch (error) {
-      console.error('Error updating student:', error);
-      res.status(500).json({ error: 'Error updating student' });
-    } finally {
-      await prisma.$disconnect();
-    }
+    upload.fields([{ name: 'image1' }, { name: 'image2' }])(req, res, async (err) => {
+      if (err) return res.status(500).json({ error: 'Error uploading files' });
+
+      const { name, email } = req.body;
+      const updatedData = { name, email };
+
+      try {
+        if (req.files?.image1) {
+          const imageUrl1 = await uploadImage(req.files.image1[0]);
+          updatedData.imageUrl = imageUrl1;
+        }
+        if (req.files?.image2) {
+          const imageUrl2 = await uploadImage(req.files.image2[0]);
+          updatedData.imageUrl2 = imageUrl2;
+        }
+
+        const updatedStudent = await prisma.student.update({
+          where: { id: parseInt(id) },
+          data: updatedData,
+        });
+
+        res.status(200).json(updatedStudent);
+      } catch (error) {
+        console.error('Error updating student:', error);
+        res.status(500).json({ error: 'Error updating student' });
+      } finally {
+        await prisma.$disconnect();
+      }
+    });
   } else {
     res.setHeader('Allow', ['GET', 'PUT']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../app/context/AuthContext';
 
 const LinkTeacherModal = ({ teacherId, onClose }) => {
+  const { schoolId } = useAuth();
+  const globalSchoolId = schoolId;
+
   const [groups, setGroups] = useState([]);
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Fetch all groups for the school with ID 1
+    if (!globalSchoolId) return;
     const fetchGroups = async () => {
       try {
-        const response = await fetch('/api/groups?schoolId=1');
+        const response = await fetch(`/api/groups?schoolId=${globalSchoolId}`);
         const data = await response.json();
         setGroups(data);
         setFilteredGroups(data); // Inicialmente muestra todos
@@ -19,7 +24,7 @@ const LinkTeacherModal = ({ teacherId, onClose }) => {
     };
 
     fetchGroups();
-  }, []);
+  }, [globalSchoolId]);
 
   // Filtrar grupos por el término de búsqueda
   useEffect(() => {

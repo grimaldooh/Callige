@@ -101,7 +101,8 @@ model Student {
   password String
   enableNotifications Boolean? @default(false)
   status   Int?
-  imageUrl String?  // Campo para la URL de la imagen
+  imageUrl String?  
+  imageUrl2 String?
   groups   Group[]  @relation("GroupStudents") // Relación muchos a muchos con grupos
   attendances Attendance[] // Relación uno a muchos con las asistencias
   events   Event[]  // Relación uno a muchos con eventos
