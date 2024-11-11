@@ -27,6 +27,8 @@ const GroupsPage = () => {
   const [activeGroup, setActiveGroup] = useState(false);
   const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(null); 
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+
 
   const openModalTeacher = (groupId) => {
     setSelectedGroup(groupId);
@@ -59,6 +61,11 @@ const GroupsPage = () => {
   const closeListaAsistentesModal = () => {
     setShowListaAsistentesModal(false);
     setSelectedGroup(null);
+  };
+
+  const handleOpenDeleteModal = (groupId) => {
+    setSelectedGroup(groupId);
+    setIsModalDeleteOpen(true);
   };
 
   useEffect(() => {
@@ -161,7 +168,7 @@ const GroupsPage = () => {
               </div>
               <div className="flex space-x-2">
                 <button
-                  onClick={() => handleDelete(group.id)}
+                  onClick={() => handleOpenDeleteModal(group.id)}
                   className="bg-red-500 text-white p-3 rounded hover:bg-red-700 transition-colors"
                   title="Borrar"
                 >
@@ -209,6 +216,30 @@ const GroupsPage = () => {
       ) : (
         <p>No hay grupos disponibles.</p>
       )}
+
+      {isModalDeleteOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded shadow-lg text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">¿Estás seguro de eliminar el grupo?</h2>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => setIsModalDeleteOpen(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => { handleDelete(selectedGroup); setIsModalDeleteOpen(false); }}
+                className="bg-red-500 text-white p-2 rounded hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )  
+      }
+
       {showModalStudent && (
         <LinkStudentModal groupId={selectedGroup} onClose={closeModal} />
       )}

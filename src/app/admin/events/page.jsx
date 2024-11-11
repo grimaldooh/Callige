@@ -20,6 +20,8 @@ const EventsPage = () => {
   const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
   const [showAsistentesModal, setShowAsistentesModal] = useState(false);
   const [showPastEvents, setShowPastEvents] = useState(false); // Estado del switch
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+
 
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Resetear la hora para comparar solo la fecha
@@ -59,6 +61,11 @@ const EventsPage = () => {
   const closeListaAsistentesModal = () => {
     setShowListaAsistentesModal(false);
     setSelectedEvent(null);
+  };
+
+  const handleOpenDeleteModal = (eventId) => {
+    setSelectedEvent(eventId);
+    setIsModalDeleteOpen(true);
   };
 
   useEffect(() => {
@@ -177,7 +184,7 @@ const EventsPage = () => {
                 </p>
                 <div className="flex space-x-4">
                   <button
-                    onClick={() => handleDelete(event.id)}
+                    onClick={() => handleOpenDeleteModal(event.id)}
                     className="text-red-500 hover:text-red-700 transition-colors"
                     title="Borrar"
                   >
@@ -221,6 +228,33 @@ const EventsPage = () => {
       ) : (
         <p className="text-center text-gray-600">No hay eventos disponibles.</p>
       )}
+
+      {/* Modal de confirmación de eliminación */}
+      {isModalDeleteOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded shadow-lg text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              ¿Estás seguro de eliminar el evento?
+            </h2>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => setIsModalDeleteOpen(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => { handleDelete(selectedEvent); setIsModalDeleteOpen(false); }}
+                className="bg-red-500 text-white p-2 rounded hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modales */}
 
       {showModalTeacher && (
         <LinkTeacherModal eventId={selectedEvent} onClose={closeModal} />

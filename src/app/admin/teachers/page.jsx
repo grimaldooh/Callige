@@ -6,6 +6,7 @@ import LinkTeacherEventModal from '../../../components/Teachers/LinkTeacherEvent
 import EditTeacherModal from '../../../components/Modales/Teachers/EditTeacherModal';
 import TeacherEventsClassesModal from '../../../components/Modales/Teachers/TeacherEventsClassesModal'; // Nueva importación
 import { useAuth } from '../../context/AuthContext';
+import { TrashIcon, PencilIcon, UserAddIcon, CalendarIcon, ClipboardListIcon } from '@heroicons/react/solid';
 
 const TeachersPage = () => {
   const { schoolId } = useAuth();
@@ -19,6 +20,12 @@ const TeachersPage = () => {
   const [showModalEvento, setShowModalEvento] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEventsClassesModal, setShowEventsClassesModal] = useState(false); // Nuevo estado
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+
+  const handleOpenDeleteModal = (teacherId) => {
+    setSelectedTeacher(teacherId);
+    setIsModalDeleteOpen(true);
+  };
 
   const openModal = (teacherId) => {
     setSelectedTeacher(teacherId);
@@ -91,6 +98,7 @@ const TeachersPage = () => {
     setFilteredTeachers(filtered);
   };
 
+
   const handleDelete = async (teacherId) => {
     try {
       const response = await fetch('/api/admin/teachers', {
@@ -131,39 +139,44 @@ const TeachersPage = () => {
               className="flex justify-between items-center p-4 bg-gray-100 mb-2 rounded shadow-md"
             >
               <div>
-                <span className="font-bold">ID:</span> {teacher.id} -{" "}
-                {teacher.name}
+                <h3 className="text-xl font-bold text-gray-800 mb-2">{teacher.name}</h3>
+                <p className="text-gray-600 text-sm">ID: {teacher.id}</p>
               </div>
               <div className="flex space-x-4">
                 <button
-                  onClick={() => handleDelete(teacher.id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  onClick={() => handleOpenDeleteModal(teacher.id)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                  title="Borrar"
                 >
-                  Borrar
+                  <TrashIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openEditModal(teacher.id)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  className="text-blue-500 hover:text-blue-700 transition-colors"
+                  title="Editar"
                 >
-                  Editar
+                  <PencilIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openModal(teacher.id)}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                  className="text-green-500 hover:text-green-700 transition-colors"
+                  title="Vincular a grupo"
                 >
-                  Vincular a grupo
+                  <UserAddIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openModalEvento(teacher.id)}
-                  className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                  className="text-orange-500 hover:text-orange-700 transition-colors"
+                  title="Vincular a evento"
                 >
-                  Vincular a evento
+                  <CalendarIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openEventsClassesModal(teacher.id)}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                  className="text-yellow-500 hover:text-yellow-700 transition-colors"
+                  title="Eventos y clases"
                 >
-                  Eventos y clases vinculadas
+                  <ClipboardListIcon className="w-6 h-6" />
                 </button>
               </div>
             </li>
@@ -171,6 +184,32 @@ const TeachersPage = () => {
         </ul>
       ) : (
         <p>No se encontraron profesores.</p>
+      )}
+
+      {/* Modales */}
+      {isModalDeleteOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded shadow-md">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">¿Estás seguro de que quieres eliminar al profesor?</h2>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setIsModalDeleteOpen(false)}
+                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  handleDelete(selectedTeacher);
+                  setIsModalDeleteOpen(false);
+                }}
+                className="bg-red-500 text-white p-2 rounded hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showModal && (

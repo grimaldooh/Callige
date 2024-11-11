@@ -25,6 +25,12 @@ const StudentsPage = () => {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEventsClassesModal, setShowEventsClassesModal] = useState(false); // Estado para controlar la nueva modal
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+
+  const handleOpenDeleteModal = (studentId) => {
+    setSelectedStudent(studentId);
+    setIsModalDeleteOpen(true);
+  };
 
   const openModal = (studentId) => {
     setSelectedStudent(studentId);
@@ -139,7 +145,7 @@ const StudentsPage = () => {
               </div>
               <div className="flex space-x-4">
                 <button
-                  onClick={() => handleDelete(student.id)}
+                  onClick={() => handleOpenDeleteModal(student.id)}
                   className="text-red-500 hover:text-red-700 transition-colors"
                   title="Borrar"
                 >
@@ -173,6 +179,29 @@ const StudentsPage = () => {
       ) : (
         <p>No hay estudiantes disponibles.</p>
       )}
+
+      {isModalDeleteOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded shadow-lg text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">¿Estás seguro de eliminar al estudiante?</h2>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => setIsModalDeleteOpen(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => { handleDelete(selectedStudent); setIsModalDeleteOpen(false); }}
+                className="bg-red-500 text-white p-2 rounded hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )  
+      }
       
       {showModal && (
         <LinkStudentModal
