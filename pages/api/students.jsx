@@ -77,7 +77,8 @@ export default async function handler(req, res) {
             imageUrl2, // Guarda la URL de la segunda imagen
           },
         });
-  
+        //res.status(200).json({ message: 'Correos enviados exitosamente' });
+
         res.status(201).json(newStudent);
       } catch (error) {
         console.error('Error creando el estudiante:', error);

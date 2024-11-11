@@ -25,3 +25,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

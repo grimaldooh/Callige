@@ -16,6 +16,8 @@ import GroupList from '../../components/Group/GroupList'; // Importa el componen
 import AttendanceList from '../../components/Group/AttendanceList'; // Importa el componente para mostrar la lista de asistencia
 import ListaAsistentes from '../../components/Modales/Events/ListaAsistentes'; // Importa el componente para mostrar la lista de asistentes
 import { useAuth } from '../context/AuthContext';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { PlusIcon, UserAddIcon, UserGroupIcon, UserIcon, AcademicCapIcon, CalendarIcon, UserCircleIcon, MailIcon} from '@heroicons/react/solid'; // Asegúrate de tener instalada la biblioteca heroicons
 import { set } from 'date-fns';
 
@@ -226,8 +228,11 @@ export default function AdminPage() {
         setEvents((prevEvents) => [...prevEvents, newEvent]);
 
         handleCloseEventModal(); // Close modal after submission
+        toast.success('Evento añadido exitosamente. Haz clic aquí para añadir otro evento', {
+          onClick: () => handleSelect("event"),
+        }); 
       } else {
-        
+        toast.error('Error al añadir evento');
         console.error('Failed to add event');
       }
     } catch (error) {
@@ -256,11 +261,16 @@ export default function AdminPage() {
         // Actualiza el estado si es necesario, por ejemplo:
         // setTotalAdmins(totalAdmins + 1);
         handleCloseSuperAdminModal(); // Cierra el modal
+        toast.success('SuperAdmin añadido exitosamente. Haz clic aquí para añadir otro superadmin', {
+          onClick: () => handleSelect("superadmin"),
+        });
       } else {
+        toast.error('Error al añadir superadmin');
         setError('El correo electrónico ya está en uso');
         console.error("Failed to add superadmin");
       }
     } catch (error) {
+      toast.error('Error al añadir superadmin');
       console.error("Error adding superadmin:", error);
     }
   };
@@ -286,11 +296,16 @@ export default function AdminPage() {
         // Actualiza el estado si es necesario, por ejemplo:
         // setTotalAdmins(totalAdmins + 1);
         handleCloseAdminModal(); // Cierra el modal
+        toast.success('Admin añadido exitosamente. Haz clic aquí para añadir otro admin', {
+          onClick: () => handleSelect("admin"),
+        });
       } else {
+        toast.error('Error al añadir admin');
         setError('El correo electrónico ya está en uso');
         console.error("Failed to add admin");
       }
     } catch (error) {
+      toast.error('Error al añadir admin');
       console.error("Error adding admin:", error);
     }
   };
@@ -311,14 +326,20 @@ export default function AdminPage() {
       if (response.ok) {
         setTotalStudents(totalStudents + 1);
         handleCloseStudentModal(); // Cierra el modal
+        toast.success('Estudiante añadido exitosamente. Haz clic aquí para añadir otro alumno.', {
+          onClick: () => handleSelect("student"),
+        });
         setError(null);
       } else {
         if(response.status === 400){
           setError('El correo electrónico ya está en uso');
         }
+        toast.error('Error al añadir estudiante');
         console.error("Failed to add student");
       }
+
     } catch (error) {
+      toast.error('Error al añadir estudiante');
       console.error("Error adding student:", error);
     }
   };
@@ -344,11 +365,16 @@ export default function AdminPage() {
       if (response.ok) {
         setTotalTeachers(totalTeachers + 1); // Actualiza el contador de profesores
         handleCloseTeacherModal(); // Cierra el modal
+        toast.success('Profesor añadido exitosamente. Haz clic aquí para añadir otro profesor', {
+          onClick: () => handleSelect("teacher"),
+        });
       } else {
+        toast.error('Error al añadir profesor');
         setError('El correo electrónico ya está en uso');
         console.error("Failed to add teacher");
       }
     } catch (error) {
+      toast.error('Error al añadir profesor');
       console.error("Error adding teacher:", error);
     }
   };
@@ -373,12 +399,17 @@ export default function AdminPage() {
         setGroups((prevGroups) => [...prevGroups, newGroup]);
 
         setTotalGroups(totalGroups + 1); // Incrementa el total de grupos
+        toast.success('Grupo añadido exitosamente, haz clic aqui para añadir otro grupo', {
+          onClick: () => handleSelect("group"),
+        });
         handleCloseGroupModal(); // Cierra el modal
 
       } else {
+        toast.error('Error al añadir grupo');
         console.error("Failed to add group");
       }
     } catch (error) {
+      toast.error('Error al añadir grupo');
       console.error("Error adding group:", error);
     }
   };
@@ -430,6 +461,8 @@ export default function AdminPage() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mt-4 mb-6">Panel de Administración</h1>
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <div className="absolute top-8 right-6">
         <button
           id="dropdownHoverButton"
@@ -604,6 +637,7 @@ export default function AdminPage() {
           <div className="relative inline-block text-left"></div>
         </div>
       </div>
+
 
       {/* Componente para mostrar la lista de asistencia si hay un grupo seleccionado */}
       {selectedGroup && <AttendanceList groupId={selectedGroup} />}
