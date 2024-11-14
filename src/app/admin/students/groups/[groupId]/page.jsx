@@ -68,7 +68,7 @@ const GroupAttendancePage = () => {
   useEffect(() => {
     if (!group) return;
     const percentage = (absences / (group.max_absences )) * 100;
-    setAbsencePercentage(percentage);
+    setAbsencePercentage(Math.round(percentage));
   }, [absences, group]);
 
   useEffect(() => {

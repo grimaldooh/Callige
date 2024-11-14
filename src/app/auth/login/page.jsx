@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
@@ -9,7 +9,12 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth(); // Usa el contexto
+  const { login, logout } = useAuth(); // Usa el contexto
+
+  useEffect(() => {
+    logout(); // Cerrar sesión al cargar la página
+  }, []);
+
 
   const router = useRouter();
 
