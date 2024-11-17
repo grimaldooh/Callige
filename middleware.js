@@ -6,7 +6,6 @@ import { jwtVerify } from "jose";
 export async function middleware(req) {
   //console.log('Middleware:', req);
   const tokenCookie = cookies(req).get("token");
-  const roleCookie = cookies(req).get("role");
   const { pathname } = req.nextUrl;
 
   const allowedPaths = [

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 
@@ -10,7 +10,17 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const { login } = useAuth(); // Usa el contexto
 
+  const [isImageLoaded, setIsImageLoaded] = useState(false); // Estado para controlar si la imagen ha cargado
   const router = useRouter();
+
+  // Pre-cargar la imagen de fondo
+  useEffect(() => {
+    const img = new Image();
+    img.src = 'https://images.unsplash.com/photo-1542296481-4ce13717ea85?q=80&w=3131&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+    img.onload = () => {
+      setIsImageLoaded(true); // Cambiar el estado cuando la imagen esté cargada
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,10 +82,11 @@ const LoginPage = () => {
 
   return (
     <div
-      className="flex items-center justify-center h-screen bg-cover bg-[url('/pictures/callige.avif')]"
+      className={`flex items-center justify-center h-screen bg-cover bg-[url('/pictures/callige.avif')] ${isImageLoaded ? '' : 'bg-gray-900'}`}
       style={{
-        backgroundImage:
-          "url(https://images.unsplash.com/photo-1542296481-4ce13717ea85?q=80&w=3131&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+        backgroundImage: isImageLoaded
+          ? "url(https://images.unsplash.com/photo-1542296481-4ce13717ea85?q=80&w=3131&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)"
+          : '', // Mostrar el fondo solo cuando esté cargado
       }}
     >
       <div className="bg-black bg-opacity-70 p-10 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-md">

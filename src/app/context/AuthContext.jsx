@@ -59,8 +59,22 @@ export const AuthProvider = ({ children }) => {
     router.push('/auth/login'); // Redirigir al usuario a la página de login
   };
 
+  const load = () => {
+    setUserId(null);
+    setSchoolId(null);
+    setRole('');
+
+    // Limpiar localStorage
+    localStorage.removeItem('userId');
+    localStorage.removeItem('schoolId');
+    localStorage.removeItem('role');
+    //localStorage.setItem('navbar', false)
+
+    Cookies.remove('token'); // Eliminar la cookie
+  };
+
   return (
-    <AuthContext.Provider value={{ userId, schoolId, role, tempStudentId,login, logout, setTempStudent }}>
+    <AuthContext.Provider value={{ userId, schoolId, role, tempStudentId,login, logout, setTempStudent, load }}>
       {children}
     </AuthContext.Provider>
   );
