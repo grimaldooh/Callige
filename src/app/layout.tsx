@@ -39,8 +39,7 @@ export default function RootLayout({
         {/* Agregamos el Navbar aquí para que esté disponible en todas las páginas */}
         <ErrorProvider>
         <AuthProvider>
-          <div className="flex">
-            <NavbarHandler />
+          <div className="flex ">
             <main className="flex-1">{children}</main>
           </div>
         </AuthProvider>

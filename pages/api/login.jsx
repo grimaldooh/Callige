@@ -70,7 +70,6 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1w' }
     );
-
     //console.log('Generated token:', token);
 
     // Establecer la cookie

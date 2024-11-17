@@ -88,142 +88,135 @@ export default function Navbar({ className }) {
 
   const renderLinks = () => {
     switch (role) {
-      case 'admin':
+      case "admin":
         return (
           <>
             <li>
-              <Link href="/admin">
-                <li
-                  onClick={() => handleLinkClick('/admin')}
-                  className={`flex items-center p-2 ${currentPath === '/admin' ? 'text-blue-500' : 'text-gray-700'} hover:bg-blue-50 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <HomeIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Home</span>
-                </li>
+              <Link
+                href="/admin"
+                onClick={() => handleLinkClick("/admin")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/admin" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-blue-50 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <HomeIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Home</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/students">
-                <li
-                  onClick={() => handleLinkClick('/admin/students')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/students' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <UserIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Alumnos</span>
-                </li>
+              <Link
+                href="/admin/students"
+                onClick={() => handleLinkClick("/admin/students")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/admin/students" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <UserIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Alumnos</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/teachers">
-                <li
-                  onClick={() => handleLinkClick('/admin/teachers')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/teachers' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <UsersIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Profesores</span>
-                </li>
+              <Link
+                href="/admin/teachers"
+                onClick={() => handleLinkClick("/admin/teachers")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/admin/teachers" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <UsersIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Profesores</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/groups">
-                <li
-                  onClick={() => handleLinkClick('/admin/groups')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/groups' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <UserGroupIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Grupos</span>
-                </li>
+              <Link
+                href="/admin/groups"
+                onClick={() => handleLinkClick("/admin/groups")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/admin/groups" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <UserGroupIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Grupos</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/events">
-                <li
-                  onClick={() => handleLinkClick('/admin/events')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/events' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <NewspaperIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Eventos</span>
-                </li>
+              <Link
+                href="/admin/events"
+                onClick={() => handleLinkClick("/admin/events")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/admin/events" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <NewspaperIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Eventos</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/stats">
-                <li
-                  onClick={() => handleLinkClick('/admin/stats')}
-                  className={`flex items-center p-2 ${currentPath === '/admin/stats' ? 'text-blue-500' : 'text-gray-700'} hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <DocumentReportIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Estadísticas</span>
-                </li>
+              <Link
+                href="/admin/stats"
+                onClick={() => handleLinkClick("/admin/stats")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/admin/stats" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <DocumentReportIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Estadísticas</span>
               </Link>
             </li>
           </>
-
         );
-      case 'teacher':
+      case "teacher":
         return (
           <>
             <li>
-              <Link href="/teacher">
-                <li
-                  onClick={() => handleLinkClick("/teacher")}
-                  className={`flex items-center p-2 ${
-                    currentPath === "/teacher"
-                      ? "text-blue-500"
-                      : "text-gray-700"
-                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <MenuIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Dashboard</span>
-                </li>
+              <Link
+                href="/teacher"
+                onClick={() => handleLinkClick("/teacher")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/teacher" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <MenuIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Dashboard</span>
               </Link>
             </li>
             <li>
-              <Link href="/teacher/events">
-                <li
-                  onClick={() => handleLinkClick("/teacher/events")}
-                  className={`flex items-center p-2 ${
-                    currentPath === "/teacher/events"
-                      ? "text-blue-500"
-                      : "text-gray-700"
-                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
-                >
-                  <NewspaperIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Eventos</span>
-                </li>
+              <Link
+                href="/teacher/events"
+                onClick={() => handleLinkClick("/teacher/events")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/teacher/events" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700`}
+              >
+                <NewspaperIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Eventos</span>
               </Link>
             </li>
             <li>
-              <Link href="/teacher/groups">
-                <li
-                  onClick={() => handleLinkClick("/teacher/groups")}
-                  className={`flex items-center p-2 ${
-                    currentPath === "/teacher/groups"
-                      ? "text-blue-500"
-                      : "text-gray-700"
-                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
-                >
-                  <UserGroupIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Grupos</span>
-                </li>
+              <Link
+                href="/teacher/groups"
+                onClick={() => handleLinkClick("/teacher/groups")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/teacher/groups" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
+              >
+                <UserGroupIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Grupos</span>
               </Link>
             </li>
             <li>
-              <Link href="/teacher/justificantes">
-                <li
-                  onClick={() => handleLinkClick("/teacher/justificantes")}
-                  className={`flex items-center p-2 ${
-                    currentPath === "/teacher/justificantes"
-                      ? "text-blue-500"
-                      : "text-gray-700"
-                  } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
-                >
-                  <DocumentReportIcon className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Justificantes</span>
-                  <span className="absolute top-0 right-4 mr-5 mt-1 ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
-                    {justificantesCount}
-                  </span>
-                </li>
+              <Link
+                href="/teacher/justificantes"
+                onClick={() => handleLinkClick("/teacher/justificantes")}
+                className={`flex items-center p-2 ${
+                  currentPath === "/teacher/justificantes" ? "text-blue-500" : "text-gray-700"
+                } hover:bg-gray-300 rounded-lg dark:text-gray-200 dark:hover:bg-gray-700 relative`}
+              >
+                <DocumentReportIcon className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Justificantes</span>
+                <span className="absolute top-0 right-4 mr-5 mt-1 ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                  {justificantesCount}
+                </span>
               </Link>
             </li>
           </>
@@ -232,6 +225,8 @@ export default function Navbar({ className }) {
         return null;
     }
   };
+  
+
 
   return (
     <>

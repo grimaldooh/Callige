@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 
@@ -9,12 +8,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, logout } = useAuth(); // Usa el contexto
-
-  useEffect(() => {
-    logout(); // Cerrar sesión al cargar la página
-  }, []);
-
+  const { login } = useAuth(); // Usa el contexto
 
   const router = useRouter();
 
@@ -78,7 +72,7 @@ const LoginPage = () => {
 
   return (
     <div
-      className="flex items-center justify-center h-screen bg-cover bg-center p-8"
+      className="flex items-center justify-center h-screen bg-cover bg-[url('/pictures/callige.avif')]"
       style={{
         backgroundImage:
           "url(https://images.unsplash.com/photo-1542296481-4ce13717ea85?q=80&w=3131&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",

@@ -26,7 +26,6 @@ import { set } from 'date-fns';
 
 export default function AdminPage() {
 
-  // const token = localStorage.getItem('token');
   // console.log('token:', token);
   const { userId, schoolId, role, login, logout } = useAuth();
   console.log('userId:', userId);

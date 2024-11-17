@@ -6,16 +6,19 @@ import { jwtVerify } from "jose";
 export async function middleware(req) {
   //console.log('Middleware:', req);
   const tokenCookie = cookies(req).get("token");
+  const roleCookie = cookies(req).get("role");
   const { pathname } = req.nextUrl;
 
   const allowedPaths = [
     "/auth/login",
     "/api/login",
-    "/api/dailyAttendanceNotification"
+    "/api/dailyAttendanceNotification",
   ];
 
   const isGroupPath = pathname.startsWith("/groups/") && pathname.split("/").length === 3;
   const isEventPath = pathname.startsWith("/events/") && pathname.split("/").length === 3;
+  const isExternalImage = pathname.startsWith("https://images.unsplash.com");
+
 
   // Si no está autenticado, redirigir al login
 
@@ -25,6 +28,8 @@ export async function middleware(req) {
       !allowedPaths.includes(pathname) &&
       !isGroupPath &&
       !isEventPath &&
+      !pathname.startsWith("/pictures/") &&
+      !isExternalImage &&// Permitir imágenes externas
       !pathname.startsWith("/_next/") && // Para cargar archivos estáticos como estilos
       !pathname.startsWith("/favicon.ico") // Icono de la página
     ) {
@@ -38,6 +43,7 @@ export async function middleware(req) {
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
     const userRole = payload.role;
+
     //console.log("Role:", userRole);
 
     // Proteger rutas según el rol

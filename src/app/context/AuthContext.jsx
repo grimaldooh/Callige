@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     localStorage.removeItem('schoolId');
     localStorage.removeItem('role');
+    //localStorage.setItem('navbar', false)
 
     Cookies.remove('token'); // Eliminar la cookie
     router.push('/auth/login'); // Redirigir al usuario a la página de login

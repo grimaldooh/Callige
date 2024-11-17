@@ -33,6 +33,8 @@ export default function NavbarHandler() {
   }, []);
 
   const renderNavbar = () => {
+    if(!userRole) return 
+
     if (isMobile || userRole === 'student') {
       return <Navbar />;
     } else if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'teacher') {
