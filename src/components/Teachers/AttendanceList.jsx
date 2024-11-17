@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useAuth } from '@/app/context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faFileAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 const AttendanceList = ({ groupId }) => {
+  const { schoolId : globalSchoolId} = useAuth();
+
   const [attendanceLists, setAttendanceLists] = useState([]);
   const [students, setStudents] = useState([]);
   const [maxAbsences, setMaxAbsences] = useState(20); // Inicializa con un valor predeterminado
   const [newMaxAbsences, setNewMaxAbsences] = useState(""); // Para el input de max_absences
   const [group, setGroup] = useState(null);
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedAttendance, setSelectedAttendance] = useState(null);
@@ -21,15 +26,6 @@ const AttendanceList = ({ groupId }) => {
   const MAX_ABSENCES = 20; // Máximo de inasistencias permitidas
 
   useEffect(() => {
-    const fetchAttendanceLists = async () => {
-      try {
-        const response = await fetch(`/api/attendance?groupId=${groupId}`);
-        const data = await response.json();
-        setAttendanceLists(data);
-      } catch (error) {
-        console.error("Error fetching attendance lists:", error);
-      }
-    };
 
     const fetchStudents = async () => {
       try {
@@ -54,10 +50,83 @@ const AttendanceList = ({ groupId }) => {
 
     if (groupId) {
       fetchGroup();
-      fetchAttendanceLists();
       fetchStudents();
     }
   }, [groupId]);
+
+  useEffect(() => {
+    if(!globalSchoolId) return;
+    const fetchSchoolPeriod = async () => {
+      try {
+        // Obtener los datos actuales de la escuela
+        const response = await fetch(`/api/schools?schoolId=${globalSchoolId}`);
+        if (response.ok) {
+          const { startDate, endDate } = await response.json();
+          setStartDate(startDate ? startDate.split('T')[0] : ''); // Convertir a formato YYYY-MM-DD
+          setEndDate(endDate ? endDate.split('T')[0] : '');
+          console.log(startDate,endDate)
+        } else {
+          console.error('Error al obtener los datos de la escuela');
+        }
+      } catch (error) {
+        console.error('Error al abrir el modal:', error);
+      }
+    }
+    fetchSchoolPeriod();
+  }, [globalSchoolId])
+
+  useEffect(() => {
+    const fetchAttendanceLists = async () => {
+      try {
+        const response = await fetch(`/api/attendance?groupId=${groupId}`);
+        const data = await response.json();
+
+        console.log('Attendance lists:', data);
+
+        const generateAttendanceDates = () => {
+          const dates = [];
+          //const currentDate = data[0] ? new Date(data[0].fecha) : new Date();
+          //const endDate1 = new Date(currentDate.getFullYear(), 11, 15); // 15 de diciembre
+          //console.log('working start date' , currentDate, 'working end date : ' , endDate1)
+          const currentDate = new Date(startDate);
+          const finalDate = new Date(endDate);
+  
+          console.log('global start date : ', startDate, 'global end date : ' ,endDate)
+          while (currentDate <= finalDate) {
+            const day = currentDate.getDay();
+            // Solo lunes (1), miércoles (3) y viernes (5)
+            console.log('group:', group);
+            if (group.classDays.includes(day)) {
+              const formattedDate = currentDate.toISOString().split("T")[0];
+              dates.push(formattedDate);
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+          return dates;
+        };
+
+        const requiredDates = generateAttendanceDates();
+      // Completa `attendanceLists` con fechas faltantes
+      const updatedAttendanceLists = requiredDates.map(date => {
+        return data.find(list => list.fecha.startsWith(date)) || {
+          fecha: date,
+          attendances: students.map(student => ({
+            student_id: student.id,
+            present: null, // Inicializa como no presente
+          })),
+        };
+      });
+
+      setAttendanceLists(updatedAttendanceLists);
+       // setAttendanceLists(data);
+      } catch (error) {
+        console.error("Error fetching attendance lists:", error);
+      }
+    };
+
+    fetchAttendanceLists();
+
+  }, [startDate, endDate, group, students]);
 
   useEffect(() => { 
     console.log('attendanceLists:', attendanceLists);
@@ -357,7 +426,7 @@ const AttendanceList = ({ groupId }) => {
           </tbody>
         </table>
       ) : (
-        <p>No hay listas de asistencia disponibles para este grupo.</p>
+        <p>Cargando listas de asistencia...</p>
       )}
 
       {/* Porcentaje de Asistencia por Grupo */}

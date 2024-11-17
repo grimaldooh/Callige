@@ -8,6 +8,7 @@ import ModalAddTeacher from '../../components/Modales/ModalAddTeacher'; // Modal
 import ModalAddGroup from '../../components/Modales/ModalAddClass'; // Importa el modal para añadir grupos
 import ModalAddAdmin from '../../components/Modales/ModalAddAdmin'; // Importa el modal para añadir admin
 import ModalAddEvent from '../../components/Modales/Events/ModalAddEvent'; // Importa el modal para añadir eventos
+import EditSchoolPeriod from '../../components/Modales/EditSchoolPeriod';
 import ModalEventDetails from '../../components/Modales/Events/EventDetails'; // Importa el modal para ver detalles de eventos
 import SchoolGroups from '../../components/Group/SchoolGroups'; // Importa el componente para mostrar grupos
 import SchoolTeachers from '../../components/SchoolTeachers'; // Importa el componente para mostrar profesores
@@ -50,6 +51,7 @@ export default function AdminPage() {
   const [isModalGroupOpen, setIsModalGroupOpen] = useState(false); // Estado para el modal de grupo
   const [isModalEventOpen, setIsModalEventOpen] = useState(false);
   const [isModalEventDetailsOpen, setIsModalEventDetailsOpen] = useState(false);
+  const [isModalPeriodOpen, setIsModalPeriodOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showListaAsistentesModal, setShowListaAsistentesModal] = useState(false);
 
@@ -86,6 +88,9 @@ export default function AdminPage() {
 
   const handleOpenEventModal = () => setIsModalEventOpen(true);
   const handleCloseEventModal = () => setIsModalEventOpen(false);
+
+  const handleOpenPeriodModal = () => setIsModalPeriodOpen(true);
+  const handleClosePeriodModal = () => setIsModalPeriodOpen(false);
 
   useEffect(() => {
     setError(null);
@@ -384,6 +389,7 @@ export default function AdminPage() {
     event.preventDefault();
     const formData = new FormData(event.target);
     const name = formData.get("name");
+    const classDays = Array.from(formData.getAll("classDays")).map(Number); // Convertir a número
     const school_id = globalSchoolId;
     try {
       const response = await fetch("/api/groups", {
@@ -391,7 +397,7 @@ export default function AdminPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, school_id}),
+        body: JSON.stringify({ name, school_id, classDays }),
       });
 
       if (response.ok) {
@@ -434,6 +440,8 @@ export default function AdminPage() {
       case 'event':
         handleOpenEventModal();
         break;
+      case 'period':
+        handleOpenPeriodModal();
       default:
         break;
     }
@@ -529,7 +537,15 @@ export default function AdminPage() {
                   Añadir Evento
                 </button>
               </li>
-              
+              <li>
+                <button
+                  onClick={() => handleSelect("period")}
+                  className="flex items-center w-full text-left px-4 py-2 font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <CalendarIcon className="w-5 h-5 mr-2" />
+                  Actualizar Periodo
+                </button>
+              </li>
               {/* <li>
                 <button
                   onClick={() => handleSelect("superadmin")}
@@ -710,6 +726,11 @@ export default function AdminPage() {
         isOpen={isModalGroupOpen} // Nuevo modal para grupos
         onClose={handleCloseGroupModal}
         onSubmit={handleAddGroup}
+      />
+      {/* Modal para añadir periodos */}
+      <EditSchoolPeriod
+        isOpen={isModalPeriodOpen}
+        onClose={handleClosePeriodModal}
       />
     </div>
   );

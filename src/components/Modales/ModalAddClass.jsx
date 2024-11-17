@@ -11,7 +11,9 @@ export default function ModalAddGroup({ isOpen, onClose, onSubmit }) {
         <h2 className="text-2xl font-bold mb-4">Añadir Grupo</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Nombre del Grupo</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Nombre del Grupo
+            </label>
             <input
               type="text"
               name="name"
@@ -19,12 +21,39 @@ export default function ModalAddGroup({ isOpen, onClose, onSubmit }) {
               required
             />
           </div>
-          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Días de Clase
+            </label>
+            <div className="flex space-x-4 mt-2">
+              {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map(
+                (day, index) => (
+                  <label key={index} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="classDays"
+                      value={index}
+                      className="mr-2"
+                    />
+                    {day}
+                  </label>
+                )
+              )}
+            </div>
+          </div>
+
           <div className="flex justify-end space-x-4">
-            <button type="button" onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 text-white px-4 py-2 rounded"
+            >
               Cancelar
             </button>
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
               Añadir Grupo
             </button>
           </div>

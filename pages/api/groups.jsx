@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     }
   }  else if (req.method === 'POST') {
     // Añadir un nuevo grupo
-    const { name, school_id} = req.body;
+    const { name, school_id, classDays} = req.body;
     console.log('name:', name);
     console.log('school_id:', school_id);
 
@@ -46,6 +46,7 @@ export default async function handler(req, res) {
         data: {
           name,
           school_id : parseInt(school_id),
+          classDays,
         },
       });
       res.status(201).json(newGroup);

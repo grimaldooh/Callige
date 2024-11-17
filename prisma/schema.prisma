@@ -20,6 +20,8 @@ model School {
   teachers Teacher[]  // Relación uno a muchos con profesores
   students Student[]  // Relación uno a muchos con estudiantes
   events   Event[]  // Relación uno a muchos con eventos
+  startDate DateTime?
+  endDate DateTime?
 }
 
 model Event {
@@ -60,6 +62,7 @@ model Group {
   name      String
   imageUrl  String?      // Campo para la URL de la imagen 
   max_absences Int?
+  classDays Int[]            // Array para almacenar los días de clase (0 = lunes, 1 = martes, etc.)
   school    School?       @relation(fields: [school_id], references: [id])
   school_id Int?
   students  Student[]     @relation("GroupStudents") // Relación muchos a muchos con estudiantes

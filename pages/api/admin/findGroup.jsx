@@ -20,11 +20,11 @@ export default async function handler(req, res) {
       res.status(500).json({ error: 'Error fetching group' });
     }
   } else if (req.method === 'PUT') {
-    const { name } = req.body;
+    const { name, classDays } = req.body;
     try {
       const updatedGroup = await prisma.group.update({
         where: { id: parseInt(id) },
-        data: { name }, // Solo actualizamos el nombre del grupo
+        data: { name, classDays }, // Solo actualizamos el nombre del grupo
       });
       res.status(200).json(updatedGroup);
     } catch (error) {
