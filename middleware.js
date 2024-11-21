@@ -28,6 +28,8 @@ export async function middleware(req) {
       !isGroupPath &&
       !isEventPath &&
       !pathname.startsWith("/pictures/") &&
+      !pathname.startsWith("/api/group/attendance") &&
+      !pathname.startsWith("/api/event/attendance") &&
       !isExternalImage &&// Permitir imágenes externas
       !pathname.startsWith("/_next/") && // Para cargar archivos estáticos como estilos
       !pathname.startsWith("/favicon.ico") // Icono de la página

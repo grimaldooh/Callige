@@ -9,6 +9,7 @@ const AttendanceList = ({ eventId }) => {
   const [selectedAttendance, setSelectedAttendance] = useState(null);
 
   useEffect(() => {
+    console.log('eventId:', eventId);
     const fetchAttendanceList = async () => {
       try {
         const response = await fetch(`/api/group/attendanceList?groupId=${eventId}`);

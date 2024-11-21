@@ -8,6 +8,7 @@ export default async function handler(req, res) {
   }
 
   const { groupId } = req.query;
+  console.log('groupId:', groupId);
 
   if (!groupId) {
     return res.status(400).json({ error: 'groupId is required' });
