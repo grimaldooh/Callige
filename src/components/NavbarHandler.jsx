@@ -35,7 +35,7 @@ export default function NavbarHandler() {
   const renderNavbar = () => {
     if(!userRole) return 
 
-    if (isMobile || userRole === 'student') {
+    if (isMobile || userRole !== 'student') {
       return <Navbar />;
     } else if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'teacher') {
       return <SideNavbar className="w-64" />;

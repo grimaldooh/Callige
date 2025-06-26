@@ -317,7 +317,7 @@ const AttendanceList = ({ groupId }) => {
       {/* Input para cambiar el límite de faltas */}
       <div className="mb-4">
         <label className="block font-semibold mb-2">
-          Establecer límite máximo de faltas:
+          Establecer porcentaje de inasistencias:
         </label>
         <input
           type="number"
@@ -482,13 +482,9 @@ const AttendanceList = ({ groupId }) => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-10">
           <div className="bg-white p-4 rounded shadow-md w-1/3">
             <h3 className="text-xl font-semibold mb-4">
-              ¿Confirmar cambio de asistencia?
+              ¿Confirmar cambio de asistencia de Hector?
             </h3>
-            <p className="mb-4">
-              {`¿Quieres marcar a ${selectedStudent.name} como ${
-                selectedAttendance.present ? "Ausente" : "Presente"
-              }?`}
-            </p>
+            
             <div className="flex justify-end">
               <button
                 onClick={() => setShowConfirmModal(false)}

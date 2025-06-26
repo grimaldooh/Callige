@@ -112,7 +112,7 @@ const AttendanceList = ({ eventId, showModal }) => {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-md w-1/3">
-            <h3 className="text-xl font-semibold mb-4">¿Confirmar cambio de asistencia?</h3>
+            <h3 className="text-xl font-semibold mb-4">¿Confirmar cambio de asistenciaaa?</h3>
             <p className="mb-4">
               {`¿Quieres marcar a ${selectedAttendance.student.name} como ${
                 selectedAttendance.present ? 'Ausente' : 'Presente'

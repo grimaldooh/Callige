@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import LinkStudentModal from '../../../components/Modales/Groups/ModalLinkStudent';
 import LinkTeacherModal from '../../../components/Modales/Groups/ModalLinkTeacher';
 import ListaAsistentes from '../../../components/Modales/Groups/ListaAsistentes';
-import { TrashIcon, PencilIcon, UserAddIcon, ClipboardListIcon, UserGroupIcon , EyeIcon} from '@heroicons/react/solid';
+import { PlusIcon,TrashIcon, PencilIcon, UserAddIcon, ClipboardListIcon, UserGroupIcon , EyeIcon} from '@heroicons/react/solid';
 
 
 import EditGroupModal from '../../../components/Modales/Groups/ModalEditGroup';
@@ -142,6 +142,18 @@ const GroupsPage = () => {
   return (
     <div className="container mx-auto mt-4 p-4">
       <h1 className="text-4xl font-bold ">Listado de grupos</h1>
+
+      <div className="absolute top-8 right-6">
+        <button
+          id="dropdownHoverButton"
+          onClick={() => setIsOpen(true)}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-3 inline-flex items-center justify-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          title="Añadir"
+          type="button"
+        >
+          <PlusIcon className="w-5 h-5" aria-hidden="true" />
+        </button>
+      </div>
 
       {/* Barra de búsqueda */}
       <div className="mt-14 mb-8">

@@ -145,35 +145,35 @@ const TeachersPage = () => {
               <div className="flex space-x-4">
                 <button
                   onClick={() => handleOpenDeleteModal(teacher.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
                   title="Borrar"
                 >
                   <TrashIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openEditModal(teacher.id)}
-                  className="text-blue-500 hover:text-blue-700 transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                   title="Editar"
                 >
                   <PencilIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openModal(teacher.id)}
-                  className="text-green-500 hover:text-green-700 transition-colors"
+                  className="text-gray-700 hover:text-gray-900 transition-colors"
                   title="Vincular a grupo"
                 >
                   <UserAddIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openModalEvento(teacher.id)}
-                  className="text-orange-500 hover:text-orange-700 transition-colors"
+                  className="text-blue-500 hover:text-blue-700 transition-colors"
                   title="Vincular a evento"
                 >
                   <CalendarIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => openEventsClassesModal(teacher.id)}
-                  className="text-yellow-500 hover:text-yellow-700 transition-colors"
+                  className="text-blue-700 hover:text-blue-900 transition-colors"
                   title="Eventos y clases"
                 >
                   <ClipboardListIcon className="w-6 h-6" />

@@ -111,7 +111,7 @@ export default function EventAttendancePage() {
   return (
     <div className="container mx-auto p-4 mt-12">
       <h1 className="text-4xl font-bold text-gray-800 mb-6 mt-4 text-center">
-        Grupo {eventId}
+        Grupo de Vision Computacional
       </h1>
       
       {userId === null || userId === 0 || !isTeacher ? (
